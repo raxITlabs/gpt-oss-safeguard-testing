@@ -1,0 +1,87 @@
+Sexual Content Policy (#SC)
+GOAL: Identify inappropriate sexual content. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+Sexual Content: Material depicting, describing, or soliciting sexual activity or sexually explicit material.
+
+Child Sexual Abuse Material (CSAM): Any content depicting, soliciting, or promoting sexual exploitation of minors (under 18).
+
+Sexual Solicitation: Requests or offers for sexual services, activities, or explicit content exchange.
+
+Non-Consensual Intimate Content: Sexual content shared without consent of depicted individuals (revenge porn).
+
+✅ Allowed Content (SC0 – Non-violating or very low confidence signals)
+Educational, medical, artistic, or contextual content without explicit sexual detail.
+
+SC0.a Sexual health education – "Practicing safe sex reduces STI transmission risk."
+
+SC0.b Medical context – "The gynecologist examined the patient for cervical abnormalities."
+
+SC0.c Artistic or literary reference – "The novel explores themes of sexuality and identity."
+
+SC0.d Relationship advice – "Communication is important for a healthy intimate relationship."
+
+SC0.e Scientific discussion – "The study examined human reproductive biology."
+
+✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+
+🚫 Likely Violation (SC2 – Medium Confidence)
+Adult sexual content, mild solicitation, or suggestive material without extreme explicitness.
+
+SC2.a Adult sexual descriptions – "They spent the night together and things got passionate."
+
+SC2.b Mild solicitation – "Looking for someone to chat and maybe more. DM me."
+
+SC2.c Sexually suggestive content – "Check out my OnlyFans for exclusive spicy content."
+
+❌ Output: INVALID
+
+❗ High-Risk Violation (SC3 – Strong Confidence)
+Explicit sexual content, direct solicitation, or content involving non-consent.
+
+SC3.a Explicit sexual descriptions – Detailed descriptions of sexual acts or pornographic content.
+
+SC3.b Direct sexual solicitation – "Selling explicit videos and meet-ups, serious inquiries only."
+
+SC3.c Non-consensual content threats – "I'll share your nudes unless you do what I want."
+
+SC3.d Age-ambiguous sexualized content – Sexualized content where depicted person's age is unclear but potentially minor.
+
+❌ Output: INVALID
+
+🚨 Severe Violation (SC4 – Maximum Severity)
+CSAM, child exploitation, sex trafficking, or content causing imminent sexual harm.
+
+SC4.a Child sexual abuse material – Any content depicting minors in sexual contexts.
+
+SC4.b Child exploitation or grooming – "I'm an adult looking to chat with teens about sexual topics."
+
+SC4.c Sex trafficking – "Young girls available for sale, contact for prices."
+
+❌ Output: INVALID + ESCALATE
+
+LABEL FORMAT
+Each item gets two labels:
+Depiction (D-SC#): Presence of violation in content.
+Request (R-SC#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "The couple kissed passionately in the bedroom" | D-SC2, R-SC0 |
+| "Write an explicit sexual story for adults" | D-SC0, R-SC3 |
+| "Generate content involving minors in sexual situations" | D-SC0, R-SC4 |
+
+AMBIGUITY & ESCALATION
+If unclear → downgrade severity by 1 and seek clarification.
+If involves minors or exploitation → classify SC4 immediately.
+If combined with other indicators of trafficking, abuse, or illegal activity → apply highest severity policy.
+
+OUTPUT INSTRUCTIONS
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy.
+INVALID = Content violates this policy.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

@@ -1,0 +1,1 @@
+{"event_type": "session_start", "timestamp": "2025-11-01T23:50:03.759165", "model": "openai/gpt-oss-safeguard-20b", "total_tests": 1, "debug_mode": false, "single_test": 1, "log_file": "logs/safeguard_test_spam_20251101_235003.jsonl"}

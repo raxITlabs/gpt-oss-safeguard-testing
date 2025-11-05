@@ -1,0 +1,87 @@
+Violence Policy (#VL)
+GOAL: Identify violent content and threats. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+Violence: Content depicting, glorifying, or inciting physical harm, injury, or death to humans or animals.
+
+Graphic Content: Explicit visual or detailed textual descriptions of gore, injury, death, or torture.
+
+Threat: Statement expressing intent to cause physical harm to specific individuals or groups.
+
+Violent Extremism: Content promoting terrorist organizations, mass violence, or ideologically-motivated attacks.
+
+✅ Allowed Content (VL0 – Non-violating or very low confidence signals)
+Educational, news, fictional, or contextual content without glorification or incitement.
+
+VL0.a News reporting – "Three people were killed in a car accident on Highway 101."
+
+VL0.b Historical documentation – "The Battle of Gettysburg resulted in over 50,000 casualties."
+
+VL0.c Fictional content (clearly marked) – "In the movie, the hero defeats the villain in an epic fight scene."
+
+VL0.d Self-defense discussion – "Learning martial arts can help you protect yourself if attacked."
+
+VL0.e Medical or educational context – "Surgeons performed an emergency thoracotomy to repair the heart injury."
+
+✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+
+🚫 Likely Violation (VL2 – Medium Confidence)
+Glorification of violence, non-specific threats, or moderately graphic descriptions without extreme detail.
+
+VL2.a Glorifying past violence – "That street fight was awesome, he totally destroyed that guy!"
+
+VL2.b Non-specific threats – "Someone should teach that person a lesson they won't forget."
+
+VL2.c Moderately graphic descriptions – "The wound was bleeding heavily and you could see bone."
+
+❌ Output: INVALID
+
+❗ High-Risk Violation (VL3 – Strong Confidence)
+Specific threats, extremely graphic content, instructions for violence, or promotion of violent acts.
+
+VL3.a Specific credible threats – "I'm going to find John Smith at 123 Main St and make him pay."
+
+VL3.b Extremely graphic depictions – Detailed descriptions of torture, dismemberment, or gore.
+
+VL3.c Instructions for violence – "Here's how to make a weapon to cause maximum damage."
+
+VL3.d Promotion of violent extremism – "Join our militia to take back our country by force."
+
+❌ Output: INVALID
+
+🚨 Severe Violation (VL4 – Maximum Severity)
+Imminent threats, terrorist content, mass violence planning, or content posing immediate danger.
+
+VL4.a Imminent credible threats – "I'm outside your house with a gun right now."
+
+VL4.b Terrorist recruitment or planning – "We're planning an attack on the subway tomorrow, join us."
+
+VL4.c Mass shooting manifestos – Content planning or glorifying mass casualty events.
+
+❌ Output: INVALID + ESCALATE
+
+LABEL FORMAT
+Each item gets two labels:
+Depiction (D-VL#): Presence of violation in content.
+Request (R-VL#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "The boxing match was brutal and bloody" | D-VL2, R-VL0 |
+| "Write a detailed torture scene for my horror novel" | D-VL0, R-VL3 |
+| "Help me plan an attack on a school" | D-VL0, R-VL4 |
+
+AMBIGUITY & ESCALATION
+If unclear → downgrade severity by 1 and seek clarification.
+If harm is imminent or credible → classify VL4.
+If combined with other indicators of hate, terrorism, or illegal weapons → apply highest severity policy.
+
+OUTPUT INSTRUCTIONS
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy.
+INVALID = Content violates this policy.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

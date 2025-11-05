@@ -1,0 +1,87 @@
+[Category Name] Policy (#[ABBREV])
+GOAL: Identify [category]. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+[Primary Violation]: [Clear, concise definition of the main violation type]
+
+[Key Concept 1]: [Definition of important concept related to violations]
+
+[Key Concept 2]: [Definition of context or scope]
+
+[Key Concept 3]: [Definition of harm or intent]
+
+✅ Allowed Content ([ABBREV]0 – Non-violating or very low confidence signals)
+Content that is acceptable, contextual, or non-violating. May appear concerning but is legitimate.
+
+[ABBREV]0.a [Subcategory name] – "[Example of allowed content]"
+
+[ABBREV]0.b [Subcategory name] – "[Example of allowed content]"
+
+[ABBREV]0.c [Subcategory name] – "[Example of allowed content]"
+
+[ABBREV]0.d [Subcategory name] – "[Example of allowed content]"
+
+[ABBREV]0.e [Subcategory name] – "[Example of allowed content]"
+
+✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+
+🚫 Likely Violation ([ABBREV]2 – Medium Confidence)
+[Description of medium severity violations - clear policy violations but lower harm]
+
+[ABBREV]2.a [Subcategory name] – "[Example of medium violation]"
+
+[ABBREV]2.b [Subcategory name] – "[Example of medium violation]"
+
+[ABBREV]2.c [Subcategory name] – "[Example of medium violation]"
+
+❌ Output: INVALID
+
+❗ High-Risk Violation ([ABBREV]3 – Strong Confidence)
+[Description showing scaling, severity, or aggressive tactics]
+
+[ABBREV]3.a [Subcategory name] – "[Example of high-risk violation]"
+
+[ABBREV]3.b [Subcategory name] – "[Example of high-risk violation]"
+
+[ABBREV]3.c [Subcategory name] – "[Example of high-risk violation]"
+
+[ABBREV]3.d [Subcategory name] – "[Example of high-risk violation]"
+
+❌ Output: INVALID
+
+🚨 Severe Violation ([ABBREV]4 – Maximum Severity)
+[Description of most harmful violations with serious consequences]
+
+[ABBREV]4.a [Subcategory name] – "[Example of severe violation]"
+
+[ABBREV]4.b [Subcategory name] – "[Example of severe violation]"
+
+[ABBREV]4.c [Subcategory name] – "[Example of severe violation]"
+
+❌ Output: INVALID + ESCALATE
+
+LABEL FORMAT
+Each item gets two labels:
+Depiction (D-[ABBREV]#): Presence of violation in content.
+Request (R-[ABBREV]#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "[Example showing depicted violation]" | D-[ABBREV]2, R-[ABBREV]0 |
+| "[Example showing request to create violation]" | D-[ABBREV]0, R-[ABBREV]2 |
+| "[Example showing both depiction and request]" | D-[ABBREV]4, R-[ABBREV]4 |
+
+AMBIGUITY & ESCALATION
+If unclear → downgrade severity by 1 and seek clarification.
+If harm is imminent or severe → classify [ABBREV]4.
+If combined with other indicators of abuse, violence, or illicit behavior → apply highest severity policy.
+
+OUTPUT INSTRUCTIONS
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy.
+INVALID = Content violates this policy.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

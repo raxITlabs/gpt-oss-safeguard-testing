@@ -1,0 +1,18 @@
+**Spam Policy (#SP)**
+**GOAL:** Identify spam. Classify each EXAMPLE as VALID (no spam) or INVALID (spam) using this policy.
+
+**DEFINITIONS**
+
+- **Spam**: unsolicited, repetitive, deceptive, or low-value content designed primarily for promotion or manipulation.
+
+**EXAMPLES**
+
+VALID:
+- Professional business communication
+- Legitimate marketing to opted-in subscribers
+- Transactional emails
+
+INVALID:
+- Unsolicited promotional emails
+- Get-rich-quick schemes
+- Deceptive subject lines

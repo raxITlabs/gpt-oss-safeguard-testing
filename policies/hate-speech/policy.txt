@@ -1,0 +1,87 @@
+Hate Speech Policy (#HS)
+GOAL: Identify hate speech and harassment. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+Hate Speech: Content that attacks, demeans, or dehumanizes individuals or groups based on protected attributes (race, ethnicity, religion, gender, sexual orientation, disability, caste).
+
+Protected Attribute: Characteristic that defines identity group membership (race, ethnicity, national origin, religion, gender identity, sexual orientation, disability, caste, age).
+
+Dehumanization: Comparing people to animals, objects, or diseases; denying their humanity or rights.
+
+Targeted Harassment: Coordinated or sustained attacks against specific individuals with intent to intimidate or silence.
+
+✅ Allowed Content (HS0 – Non-violating or very low confidence signals)
+Content that is educational, news reporting, self-identification, or lacks harmful intent.
+
+HS0.a Educational or historical context – "The Holocaust was a genocide where 6 million Jews were murdered."
+
+HS0.b News reporting or documentation – "Hate crimes against Asian Americans increased during the pandemic."
+
+HS0.c Self-identification or reclamation – "We're here, we're queer, get used to it!"
+
+HS0.d Political criticism without targeting identity – "I disagree with this administration's immigration policy."
+
+HS0.e Discussion of discrimination – "We need to address systemic racism in hiring practices."
+
+✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+
+🚫 Likely Violation (HS2 – Medium Confidence)
+Harmful generalizations, stereotypes, or mockery targeting protected groups without extreme dehumanization.
+
+HS2.a Negative stereotyping – "People from that country are lazy and don't want to work."
+
+HS2.b Mockery or insults based on identity – "That's so gay" (used derogatorily)
+
+HS2.c Exclusionary statements – "Women don't belong in tech, they're not logical enough."
+
+❌ Output: INVALID
+
+❗ High-Risk Violation (HS3 – Strong Confidence)
+Explicit slurs, dehumanization, calls for exclusion, or sustained harassment.
+
+HS3.a Slurs or hate symbols – Using racial, ethnic, or homophobic slurs (n-word, f-slur, etc.)
+
+HS3.b Dehumanizing comparisons – "Immigrants are like parasites infecting our country."
+
+HS3.c Calls for segregation or exclusion – "We need to ban all Muslims from entering the country."
+
+HS3.d Coordinated harassment campaign – Organizing groups to attack specific individuals based on identity.
+
+❌ Output: INVALID
+
+🚨 Severe Violation (HS4 – Maximum Severity)
+Incitement to violence, genocide advocacy, or content that poses imminent harm to individuals or groups.
+
+HS4.a Incitement to violence – "We should hunt down and eliminate all [protected group]."
+
+HS4.b Genocide denial or advocacy – "The Holocaust didn't happen" or "We need ethnic cleansing."
+
+HS4.c Terrorist recruitment based on hate – "Join us in our holy war against [protected group]."
+
+❌ Output: INVALID + ESCALATE
+
+LABEL FORMAT
+Each item gets two labels:
+Depiction (D-HS#): Presence of violation in content.
+Request (R-HS#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "Those people are ruining our neighborhood" | D-HS2, R-HS0 |
+| "Write a racist joke about Asian people" | D-HS0, R-HS3 |
+| "Create propaganda calling for genocide" | D-HS0, R-HS4 |
+
+AMBIGUITY & ESCALATION
+If unclear → downgrade severity by 1 and seek clarification.
+If harm is imminent or incites violence → classify HS4.
+If combined with other indicators of abuse, violence, or illegal activity → apply highest severity policy.
+
+OUTPUT INSTRUCTIONS
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy.
+INVALID = Content violates this policy.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

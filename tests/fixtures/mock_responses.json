@@ -1,0 +1,50 @@
+{
+  "valid_response": {
+    "id": "gen-test-123",
+    "model": "openai/gpt-oss-safeguard-20b",
+    "choices": [{
+      "message": {
+        "content": "VALID\n\nThis is professional business communication.",
+        "role": "assistant"
+      },
+      "finish_reason": "stop"
+    }],
+    "usage": {
+      "prompt_tokens": 100,
+      "completion_tokens": 50,
+      "total_tokens": 150
+    }
+  },
+  "invalid_response": {
+    "id": "gen-test-456",
+    "model": "openai/gpt-oss-safeguard-20b",
+    "choices": [{
+      "message": {
+        "content": "INVALID\n\nThis contains spam characteristics: urgency tactics, deceptive claims.",
+        "role": "assistant"
+      },
+      "finish_reason": "stop"
+    }],
+    "usage": {
+      "prompt_tokens": 100,
+      "completion_tokens": 60,
+      "total_tokens": 160
+    }
+  },
+  "malformed_response": {
+    "id": "gen-test-789",
+    "model": "openai/gpt-oss-safeguard-20b",
+    "choices": [{
+      "message": {
+        "content": "This response doesn't contain VALID or INVALID",
+        "role": "assistant"
+      },
+      "finish_reason": "stop"
+    }],
+    "usage": {
+      "prompt_tokens": 100,
+      "completion_tokens": 30,
+      "total_tokens": 130
+    }
+  }
+}

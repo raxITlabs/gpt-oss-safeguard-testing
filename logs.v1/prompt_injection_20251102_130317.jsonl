@@ -1,0 +1,1 @@
+{"event_type": "session_start", "timestamp": "2025-11-02T13:03:17.412301", "model": "openai/gpt-oss-safeguard-20b", "test_type": "prompt-injection", "category": null, "debug_mode": false, "log_file": "logs/prompt_injection_20251102_130317.jsonl"}
