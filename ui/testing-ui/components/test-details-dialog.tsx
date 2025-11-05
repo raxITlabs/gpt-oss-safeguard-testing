@@ -11,14 +11,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, MessageSquare, Bot, Brain, BarChart3 } from "lucide-react";
+import { FileText, MessageSquare, Bot, Brain, Zap, DollarSign, Clock } from "lucide-react";
 import type { InferenceEvent } from "@/types/test-results";
 import { StatusBadge } from "./status-badge";
 import { PolicyViewer } from "./policy-viewer";
 import { PolicyHighlighter } from "./policy-highlighter";
+import { TokenBreakdown } from "./token-breakdown";
+import { CostDisplay } from "./cost-display";
 import { extractPolicy } from "@/lib/policy-utils";
-import { formatCurrency, formatLatency } from "@/lib/format-utils";
 import { analyzeFailure } from "@/lib/failure-analyzer";
+import { formatLatency } from "@/lib/format-utils";
 
 function getQualityScoreColor(score: number): string {
   if (score >= 80) return "text-[color:var(--status-success)]";
@@ -43,23 +45,27 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            <span>Test #{test.test_number}: {test.test_name}</span>
+      <DialogContent className="max-w-[95vw] lg:max-w-[1400px] max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="pb-3">
+          <DialogTitle className="flex items-center gap-3 text-lg">
+            <span>Test #{test.test_number || "N/A"}{test.test_name ? `: ${test.test_name}` : ""}</span>
             <StatusBadge passed={isPassed} />
           </DialogTitle>
           <DialogDescription className="flex items-center justify-between">
-            <span>{new Date(test.timestamp).toLocaleString()}</span>
-            <span className="flex items-center gap-4 text-sm">
-              <span>Expected: <Badge variant="outline">{test.test_result?.expected ?? "N/A"}</Badge></span>
-              <span>Actual: <Badge variant="outline">{test.test_result?.actual ?? "N/A"}</Badge></span>
+            <span className="text-xs">{new Date(test.timestamp).toLocaleString()}</span>
+            <span className="flex items-center gap-3 text-xs">
+              <span>Expected: <Badge variant="outline" className="text-xs">{test.test_result?.expected ?? "N/A"}</Badge></span>
+              <span>Actual: <Badge variant="outline" className="text-xs">{test.test_result?.actual ?? "N/A"}</Badge></span>
             </span>
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="policy" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+        {/* Two-column layout: tabs on left, metrics on right (desktop), stacked on mobile */}
+        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row gap-3 mt-3 min-h-0">
+          {/* LEFT COLUMN: Tabs (60% on desktop) */}
+          <div className="flex-1 lg:w-3/5 overflow-hidden flex flex-col lg:border-r lg:pr-4 h-full">
+            <Tabs defaultValue="policy" className="flex-1 flex flex-col overflow-hidden h-full">
+              <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="policy" className="flex items-center gap-1">
               <FileText className="h-4 w-4" />
               Policy
@@ -76,34 +82,33 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
               <Brain className="h-4 w-4" />
               Reasoning
             </TabsTrigger>
-            <TabsTrigger value="metrics" className="flex items-center gap-1">
-              <BarChart3 className="h-4 w-4" />
-              Metrics
-            </TabsTrigger>
           </TabsList>
 
+          {/* Tab Content with overflow */}
+          <div className="overflow-y-auto mt-3 h-0 flex-1">
+
           {/* Policy Tab */}
-          <TabsContent value="policy" className="mt-4">
+          <TabsContent value="policy" className="mt-3 h-full">
             {policyText ? (
               <PolicyViewer policyText={policyText} />
             ) : (
-              <div className="text-center text-muted-foreground py-8">
+              <div className="text-center text-muted-foreground py-6">
                 No policy information available
               </div>
             )}
           </TabsContent>
 
           {/* Input Tab */}
-          <TabsContent value="input" className="mt-4">
-            <div className="space-y-4">
+          <TabsContent value="input" className="mt-3 h-full">
+            <div className="space-y-3">
               <div>
-                <h3 className="text-lg font-semibold mb-3">Test Content (User Input)</h3>
-                <div className="bg-muted p-6 rounded-md border-2 border-primary/20">
+                <h3 className="text-base font-semibold mb-2">Test Content (User Input)</h3>
+                <div className="bg-muted p-4 rounded-md border-2 border-primary/20">
                   <p className="text-sm whitespace-pre-wrap font-mono">{userMessage}</p>
                 </div>
               </div>
               <Separator />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Expected Classification</p>
                   <Badge variant="outline" className="text-lg p-2">{test.test_result?.expected ?? "N/A"}</Badge>
@@ -122,21 +127,21 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
           </TabsContent>
 
           {/* Output Tab */}
-          <TabsContent value="output" className="mt-4">
-            <div className="space-y-4">
+          <TabsContent value="output" className="mt-3 h-full">
+            <div className="space-y-3">
               <div>
-                <h3 className="text-lg font-semibold mb-3">Model Classification</h3>
-                <div className="bg-muted p-6 rounded-md text-center">
+                <h3 className="text-base font-semibold mb-2">Model Classification</h3>
+                <div className="bg-muted p-4 rounded-md text-center">
                   <Badge
                     variant={test.test_result?.passed ? "default" : "destructive"}
-                    className="text-3xl p-4"
+                    className="text-2xl p-3"
                   >
                     {test.response.content}
                   </Badge>
                 </div>
               </div>
               <Separator />
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="space-y-2">
                   <p className="font-semibold">Expected:</p>
                   <Badge variant="outline" className="text-xl p-3">{test.test_result?.expected ?? "N/A"}</Badge>
@@ -160,14 +165,14 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
           </TabsContent>
 
           {/* Reasoning Tab */}
-          <TabsContent value="reasoning" className="mt-4">
-            <ScrollArea className="h-[500px]">
-              <div className="space-y-4">
+          <TabsContent value="reasoning" className="mt-3 h-full">
+            <ScrollArea className="h-[600px]">
+              <div className="space-y-3">
                 {test.reasoning && (
                   <>
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Model's Reasoning Process</h3>
-                      <div className="bg-muted p-6 rounded-md border-l-4 border-primary">
+                      <h3 className="text-base font-semibold mb-2">Model's Reasoning Process</h3>
+                      <div className="bg-muted p-4 rounded-md border-l-4 border-primary">
                         <p className="text-sm whitespace-pre-wrap leading-relaxed">{test.reasoning}</p>
                       </div>
                     </div>
@@ -176,7 +181,7 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
 
                     {/* Policy Analysis */}
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Policy Reference Analysis</h3>
+                      <h3 className="text-base font-semibold mb-2">Policy Reference Analysis</h3>
                       <PolicyHighlighter
                         reasoning={test.reasoning}
                         expectedClassification={test.test_result?.expected ?? ""}
@@ -190,8 +195,8 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
                   <>
                     <Separator />
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Reasoning Quality Metrics</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-base font-semibold mb-2">Reasoning Quality Metrics</h3>
+                      <div className="grid grid-cols-2 gap-3">
                         <div className="bg-muted p-4 rounded-md">
                           <p className="text-sm text-muted-foreground mb-1">Quality Score</p>
                           <p className={`text-3xl font-bold ${getQualityScoreColor(test.reasoning_validation.quality_score)}`}>
@@ -223,60 +228,96 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
             </ScrollArea>
           </TabsContent>
 
-          {/* Metrics Tab */}
-          <TabsContent value="metrics" className="mt-4">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Performance Metrics</h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-muted p-6 rounded-md text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Total Tokens</p>
-                    <p className="text-4xl font-bold font-mono">{test.usage?.total_tokens || 0}</p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {test.usage?.prompt_tokens || 0} prompt + {test.usage?.completion_tokens || 0} completion
-                    </p>
-                  </div>
-                  <div className="bg-muted p-6 rounded-md text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Cost</p>
-                    <p className="text-4xl font-bold font-mono">{formatCurrency(test.metrics?.cost_usd || 0)}</p>
-                  </div>
-                  <div className="bg-muted p-6 rounded-md text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Latency</p>
-                    <p className="text-4xl font-bold font-mono">{formatLatency(test.metrics?.latency_ms || 0)}</p>
-                  </div>
+          </div>
+        </Tabs>
+      </div>
+
+      {/* RIGHT COLUMN: Metrics Sidebar (40% on desktop) */}
+      <div className="lg:w-2/5 overflow-y-auto h-full">
+        <div className="bg-card border rounded-lg p-3 h-full flex flex-col">
+          {/* Performance Metrics Section */}
+          <div>
+            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Performance Metrics
+            </h3>
+
+            {/* Token Breakdown */}
+            <div className="bg-muted/50 p-2 rounded-md mb-3">
+              <TokenBreakdown test={test} variant="compact" />
+            </div>
+
+            {/* Cost & Latency */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <DollarSign className="h-3 w-3" />
+                  <span>Cost</span>
                 </div>
+                <CostDisplay cost={test.metrics?.cost_usd || test.cost_usd || 0} showDetails={true} size="sm" />
               </div>
 
-              <Separator />
-
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Test Information</h3>
-                <div className="bg-muted p-6 rounded-md space-y-3 text-sm">
-                  <div className="grid grid-cols-2 gap-2">
-                    <span className="text-muted-foreground">Test Number:</span>
-                    <span className="font-mono">{test.test_number}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <span className="text-muted-foreground">Test Name:</span>
-                    <span className="font-mono">{test.test_name}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <span className="text-muted-foreground">Timestamp:</span>
-                    <span className="font-mono">{new Date(test.timestamp).toISOString()}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <span className="text-muted-foreground">Model:</span>
-                    <span className="font-mono text-xs">{test.request.model}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <span className="text-muted-foreground">Response ID:</span>
-                    <span className="font-mono text-xs">{test.response.id}</span>
-                  </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>Latency</span>
                 </div>
+                <p className="font-mono text-lg font-bold">{formatLatency(test.metrics?.latency_ms || test.latency_ms || 0)}</p>
+                {(test.metrics?.latency_ms || test.latency_ms || 0) > 3000 && (
+                  <Badge variant="destructive" className="text-xs">Slow</Badge>
+                )}
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+
+            {/* Cost Efficiency */}
+            {(test.usage?.total_tokens || test.tokens?.total || 0) > 0 && (
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 p-2 rounded text-xs mb-3">
+                <p className="text-muted-foreground">
+                  Cost per 1K tokens: <span className="font-mono font-semibold">
+                    ${(((test.metrics?.cost_usd || test.cost_usd || 0) / (test.usage?.total_tokens || test.tokens?.total || 0)) * 1000).toFixed(4)}
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+
+          <Separator className="my-3" />
+
+          {/* Token Details Section */}
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold mb-2">Token Details</h3>
+            <TokenBreakdown test={test} variant="detailed" />
+          </div>
+
+          <Separator className="my-3" />
+
+          {/* Test Information Section */}
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold mb-2">Test Information</h3>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Test Number:</span>
+                <span className="font-mono">{test.test_number ?? "N/A"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Model:</span>
+                <span className="font-mono text-xs">{test.request.model}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Response ID:</span>
+                <span className="font-mono text-xs truncate max-w-[200px]" title={test.response.id}>
+                  {test.response.id}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Finish Reason:</span>
+                <span className="font-mono text-xs">{test.response.finish_reason}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       </DialogContent>
     </Dialog>
   );

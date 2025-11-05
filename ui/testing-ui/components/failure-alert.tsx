@@ -37,7 +37,7 @@ export function FailureAlert({ inferences, strictPolicyValidation = true, onView
           </Badge>
         </span>
       </AlertTitle>
-      <AlertDescription className="mt-2">
+      {/* <AlertDescription className="mt-2">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <span className="text-sm flex-1 leading-relaxed">
             Review failed tests to identify policy violations or model issues
@@ -93,7 +93,7 @@ export function FailureAlert({ inferences, strictPolicyValidation = true, onView
             </Collapsible>
           </div>
         </div>
-      </AlertDescription>
+      </AlertDescription> */}
     </Alert>
   );
 }

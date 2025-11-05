@@ -25,16 +25,21 @@ import {
 export interface CostAnalysisDashboardProps {
   inferences: InferenceEvent[];
   onTestClick?: (testNumber: number) => void;
+  strictPolicyValidation?: boolean;
   className?: string;
 }
 
 export function CostAnalysisDashboard({
   inferences,
   onTestClick,
+  strictPolicyValidation = true,
   className,
 }: CostAnalysisDashboardProps) {
-  // Prepare all cost data
-  const scatterData = useMemo(() => prepareCostAccuracyScatterData(inferences), [inferences]);
+  // Prepare all cost data with strict policy validation support
+  const scatterData = useMemo(
+    () => prepareCostAccuracyScatterData(inferences, strictPolicyValidation),
+    [inferences, strictPolicyValidation]
+  );
   const costEfficiency = useMemo(() => calculateCostEfficiency(inferences), [inferences]);
   const categoryBreakdown = useMemo(() => analyzeCostByCategory(inferences), [inferences]);
   const tokenEconomics = useMemo(() => analyzeTokenEconomics(inferences), [inferences]);
@@ -97,6 +102,7 @@ export function CostAnalysisDashboard({
           <CostAccuracyScatter
             data={scatterData}
             onPointClick={(point) => onTestClick?.(point.testNumber)}
+            strictPolicyValidation={strictPolicyValidation}
           />
         </TabsContent>
 

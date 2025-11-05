@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GPT-OSS-Safeguard Testing Dashboard",
-  description: "Monitor and analyze test results for GPT-OSS-Safeguard content moderation policies",
+  title: "raxIT | AI Safety Testing Dashboard",
+  description: "Monitor and analyze AI safety and security testing results for content moderation policies using openai gpt oss safeguard",
 };
 
 export default function RootLayout({

@@ -6,11 +6,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Database, DollarSign, Activity, AlertTriangle, FileText } from "lucide-react";
-import type { TestRunData, LogFileInfo, TestCategory } from "@/types/test-results";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { AlertCircle, Database, DollarSign, Activity, AlertTriangle, FileText, Settings } from "lucide-react";
+import type { TestRunData, TestCategory } from "@/types/test-results";
 import { ResultsTable } from "@/components/results-table";
-import { LogSelector } from "@/components/log-selector";
-import { SettingsPanel } from "@/components/settings-panel";
 import { CompactMetricsBar } from "@/components/compact-metrics-bar";
 import { FailureAlert } from "@/components/failure-alert";
 import { CostAnalysisDashboard } from "@/components/dashboards/cost-analysis-dashboard";
@@ -18,64 +18,25 @@ import { PerformanceDashboard } from "@/components/dashboards/performance-dashbo
 import { FailureAnalysisDashboard } from "@/components/dashboards/failure-analysis-dashboard";
 import { AttackScenarioSummary } from "@/components/attack-scenario-summary";
 import { useSettings } from "@/contexts/settings-context";
-
-// Special value for merged mode
-const MERGED_MODE = "__MERGED_LATEST__";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 export default function Home() {
-  const { strictPolicyValidation } = useSettings();
+  const { strictPolicyValidation, setStrictPolicyValidation } = useSettings();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [testData, setTestData] = useState<TestRunData | null>(null);
-  const [logFiles, setLogFiles] = useState<LogFileInfo[]>([]);
-  const [selectedLog, setSelectedLog] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<TestCategory | "all">("all");
   const [selectedTestType, setSelectedTestType] = useState<string | "all">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "passed" | "failed">("all");
 
-  // Fetch log files list on mount
+  // Fetch test data (always use merged mode)
   useEffect(() => {
-    async function fetchLogFiles() {
-      try {
-        const response = await fetch("/api/logs");
-        if (!response.ok) throw new Error("Failed to fetch log files");
-        const files: LogFileInfo[] = await response.json();
-
-        // Convert timestamp strings back to Date objects
-        const filesWithDates = files.map(file => ({
-          ...file,
-          timestamp: new Date(file.timestamp)
-        }));
-
-        setLogFiles(filesWithDates);
-
-        // Auto-select merged mode by default if available
-        if (filesWithDates.length > 0 && !selectedLog) {
-          setSelectedLog(MERGED_MODE);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load log files");
-      }
-    }
-
-    fetchLogFiles();
-  }, []);
-
-  // Fetch test data when log file is selected
-  useEffect(() => {
-    if (!selectedLog) return;
-
     async function fetchTestData() {
       setLoading(true);
       setError(null);
 
       try {
-        // Use merged endpoint for merged mode, otherwise use single file endpoint
-        const endpoint = selectedLog === MERGED_MODE
-          ? '/api/logs/latest'
-          : `/api/logs/${selectedLog}`;
-
-        const response = await fetch(endpoint);
+        const response = await fetch('/api/logs/latest');
         if (!response.ok) throw new Error("Failed to fetch test data");
 
         const data: TestRunData = await response.json();
@@ -89,20 +50,13 @@ export default function Home() {
     }
 
     fetchTestData();
-  }, [selectedLog]);
+  }, []);
 
   // Filter inferences by category and test type
   const filteredInferences = testData?.inferences.filter((inference) => {
     // Category filter
     if (selectedCategory !== "all") {
-      // In merged mode, filter by inference.category
-      if (selectedLog === MERGED_MODE) {
-        if (inference.category !== selectedCategory) return false;
-      } else {
-        // In single-file mode, match by log file category
-        const currentLogFile = logFiles.find(f => f.filename === selectedLog);
-        if (currentLogFile?.category !== selectedCategory) return false;
-      }
+      if (inference.category !== selectedCategory) return false;
     }
 
     // Test type filter
@@ -114,48 +68,196 @@ export default function Home() {
     return true;
   }) || [];
 
-  const handleLogChange = (filename: string) => {
-    setSelectedLog(filename);
-    setSelectedCategory("all"); // Reset category filter when changing logs
-  };
-
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-4 sm:py-6 lg:py-8 px-3 sm:px-4 space-y-3 sm:space-y-4">
-        {/* Compact Header */}
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-                Safeguard Testing Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Monitor test results for content moderation policies
-              </p>
+      <div className="container mx-auto py-2 sm:py-3 px-3 sm:px-4 space-y-2">
+        {/* Integrated Header with Filters */}
+        <Card className="py-2 gap-2" role="banner" aria-label="Dashboard header with test filters and settings">
+          <CardContent className="px-3 py-2">
+            <div className="flex flex-col md:flex-row md:items-start lg:items-center gap-2.5 sm:gap-3">
+          {/* Left: Title Section */}
+          <div className="flex-shrink-0 md:flex-1" aria-labelledby="dashboard-title">
+            <div className="flex items-center gap-3">
+              <BrandLogo size="sm" className="sm:hidden" />
+              <BrandLogo size="md" className="hidden sm:block md:hidden" />
+              <BrandLogo size="lg" className="hidden md:block" />
+              <div className="space-y-1.5">
+                <h1
+                  id="dashboard-title"
+                  className="text-xl sm:text-2xl font-bold tracking-tight"
+                >
+                  AI Safety and Security Testing
+                </h1>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] sm:text-xs px-2 h-5 sm:h-6 border-[color:var(--status-info)] text-foreground bg-[color:var(--status-info-bg)]"
+                  >
+                    Model: OpenAI: gpt-oss-safeguard
+                  </Badge>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Inline Log Selector */}
-          <div className="bg-muted/30 p-3 rounded-lg border">
-            <LogSelector
-              logFiles={logFiles}
-              selectedFile={selectedLog}
-              onFileChange={handleLogChange}
-              mergedMode={MERGED_MODE}
-            />
-            {selectedLog === MERGED_MODE && (
-              <div className="mt-2 flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
-                  <span className="mr-1">📊</span>
-                  Viewing merged data from all categories
-                </Badge>
+          {/* Right: Controls Container */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 md:flex-shrink-0">
+            {/* Settings Group */}
+            <div
+              className="flex items-center gap-2 pb-2 sm:pb-0 border-b sm:border-b-0 border-border/40"
+              role="group"
+              aria-label="Dashboard settings"
+            >
+              <Settings
+                className="h-3.5 w-3.5 text-muted-foreground shrink-0"
+                aria-hidden="true"
+              />
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="strict-policy-inline"
+                  checked={strictPolicyValidation}
+                  onCheckedChange={setStrictPolicyValidation}
+                  className="scale-75"
+                  aria-describedby="strict-mode-status"
+                />
+                <Label
+                  htmlFor="strict-policy-inline"
+                  className="text-[10px] sm:text-xs cursor-pointer whitespace-nowrap"
+                >
+                  Strict Mode
+                </Label>
               </div>
-            )}
-          </div>
+              <Badge
+                id="strict-mode-status"
+                variant={strictPolicyValidation ? "default" : "secondary"}
+                className="text-[11px] px-2 h-6"
+                aria-live="polite"
+              >
+                {strictPolicyValidation ? "ON" : "OFF"}
+              </Badge>
+            </div>
 
-          {/* Settings Panel */}
-          <SettingsPanel />
-        </div>
+            {/* Visual Divider - Desktop only */}
+            <div
+              className="hidden md:block h-8 w-px bg-border/60"
+              aria-hidden="true"
+            />
+
+            {/* Filter Badges Group - Only shown when data is loaded */}
+            {!loading && testData && (
+              <nav
+                className="flex items-center gap-1.5 flex-wrap"
+                role="navigation"
+                aria-label="Test type filters"
+              >
+                <Badge
+                  role="button"
+                  tabIndex={0}
+                  variant={selectedTestType === "all" ? "default" : "outline"}
+                  className="h-6 text-[11px] px-2 cursor-pointer transition-all duration-200
+                             hover:bg-primary/90 active:scale-[0.97]
+                             focus-visible:outline-none focus-visible:ring-2
+                             focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-pressed={selectedTestType === "all"}
+                  aria-label={`Show all tests, ${testData.inferences.length} total`}
+                  onClick={() => setSelectedTestType("all")}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedTestType("all");
+                    }
+                  }}
+                >
+                  All ({testData.inferences.length})
+                </Badge>
+
+                <Badge
+                  role="button"
+                  tabIndex={0}
+                  variant={selectedTestType === "baseline" ? "default" : "outline"}
+                  className="h-6 text-[11px] px-2 cursor-pointer transition-all duration-200
+                             hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
+                             active:scale-[0.97]
+                             focus-visible:outline-none focus-visible:ring-2
+                             focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-pressed={selectedTestType === "baseline"}
+                  aria-label={`Filter to baseline tests, ${testData.inferences.filter(i => !i.test_type || i.test_type === 'baseline').length} total`}
+                  onClick={() => setSelectedTestType("baseline")}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedTestType("baseline");
+                    }
+                  }}
+                >
+                  Baseline ({testData.inferences.filter(i => !i.test_type || i.test_type === 'baseline').length})
+                </Badge>
+
+                {/* Additional filter badges */}
+                {['multi-turn', 'multi_turn', 'prompt-injection', 'prompt_injection', 'over-refusal', 'over_refusal']
+                  .filter((type, index, self) => {
+                    const normalized = type.replace(/_/g, '-');
+                    return self.findIndex(t => t.replace(/_/g, '-') === normalized) === index;
+                  })
+                  .map(type => {
+                    const count = testData.inferences.filter(i =>
+                      i.test_type === type || i.test_type === type.replace(/-/g, '_')
+                    ).length;
+                    if (count === 0) return null;
+
+                    const normalizedType = type.replace(/_/g, '-');
+                    const label = normalizedType
+                      .split('-')
+                      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                      .join(' ');
+                    const isActive = selectedTestType === normalizedType;
+
+                    return (
+                      <Badge
+                        key={normalizedType}
+                        role="button"
+                        tabIndex={0}
+                        variant={isActive ? "default" : "outline"}
+                        className={`h-6 text-[11px] px-2 cursor-pointer transition-all duration-200 active:scale-[0.97]
+                                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                                   ${isActive
+                                     ? "hover:bg-primary/90 shadow-sm"
+                                     : "hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20"
+                                   }`}
+                        aria-pressed={isActive}
+                        aria-label={`Filter to ${label} tests, ${count} total`}
+                        onClick={() => setSelectedTestType(normalizedType)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedTestType(normalizedType);
+                          }
+                        }}
+                      >
+                        {label} ({count})
+                      </Badge>
+                    );
+                  })
+                }
+              </nav>
+            )}
+              </div>
+            </div>
+
+            {/* Screen Reader Live Region */}
+            <div
+              className="sr-only"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {!loading && testData && (selectedTestType === "all"
+                ? `Showing all ${filteredInferences.length} tests`
+                : `Filtered to ${selectedTestType} tests, showing ${filteredInferences.length} results`
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Error Display */}
         {error && (
@@ -191,82 +293,18 @@ export default function Home() {
         {/* Test Data Display */}
         {!loading && testData && testData.sessionSummary && (
           <>
-            {/* Compact Metrics Bar */}
-            <CompactMetricsBar
-              summary={testData.sessionSummary}
-              inferences={filteredInferences}
-              strictPolicyValidation={strictPolicyValidation}
-            />
+            {/* Two Cards Side-by-Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {/* Compact Metrics Bar */}
+              <CompactMetricsBar
+                summary={testData.sessionSummary}
+                inferences={filteredInferences}
+                strictPolicyValidation={strictPolicyValidation}
+              />
 
-            {/* Test Type Filter */}
-            {selectedLog === MERGED_MODE && (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Filter by Test Type</h3>
-                      <p className="text-xs text-muted-foreground">
-                        View baseline tests or specific attack scenarios
-                      </p>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge
-                        variant={selectedTestType === "all" ? "default" : "outline"}
-                        className="cursor-pointer hover:bg-primary/90"
-                        onClick={() => setSelectedTestType("all")}
-                      >
-                        All ({testData.inferences.length})
-                      </Badge>
-                      <Badge
-                        variant={selectedTestType === "baseline" ? "default" : "outline"}
-                        className="cursor-pointer hover:bg-primary/90"
-                        onClick={() => setSelectedTestType("baseline")}
-                      >
-                        Baseline ({testData.inferences.filter(i => !i.test_type || i.test_type === 'baseline').length})
-                      </Badge>
-                      {['multi-turn', 'multi_turn', 'prompt-injection', 'prompt_injection', 'over-refusal', 'over_refusal']
-                        .filter((type, index, self) => {
-                          // Normalize and dedupe (multi-turn and multi_turn are same)
-                          const normalized = type.replace(/_/g, '-');
-                          return self.findIndex(t => t.replace(/_/g, '-') === normalized) === index;
-                        })
-                        .map(type => {
-                          const count = testData.inferences.filter(i =>
-                            i.test_type === type || i.test_type === type.replace(/-/g, '_')
-                          ).length;
-                          if (count === 0) return null;
-
-                          const normalizedType = type.replace(/_/g, '-');
-                          const label = normalizedType
-                            .split('-')
-                            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                            .join(' ');
-
-                          return (
-                            <Badge
-                              key={normalizedType}
-                              variant={selectedTestType === normalizedType ? "default" : "outline"}
-                              className="cursor-pointer hover:bg-primary/90"
-                              onClick={() => setSelectedTestType(normalizedType)}
-                            >
-                              {label} ({count})
-                            </Badge>
-                          );
-                        })
-                      }
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Failure Alert */}
-            <FailureAlert inferences={filteredInferences} strictPolicyValidation={strictPolicyValidation} />
-
-            {/* Attack Scenario Summary (only in merged mode) */}
-            {selectedLog === MERGED_MODE && (
+              {/* Attack Scenario Summary */}
               <AttackScenarioSummary inferences={testData.inferences} strictPolicyValidation={strictPolicyValidation} />
-            )}
+            </div>
 
             {/* Main Dashboard Tabs */}
             <Tabs defaultValue="results" className="w-full">
@@ -313,6 +351,7 @@ export default function Home() {
               <TabsContent value="cost" className="mt-6">
                 <CostAnalysisDashboard
                   inferences={filteredInferences}
+                  strictPolicyValidation={strictPolicyValidation}
                   onTestClick={(testNumber) => {
                     // Could implement test detail dialog here
                     console.log("View test:", testNumber);
@@ -345,22 +384,12 @@ export default function Home() {
           </>
         )}
 
-        {/* No Data State */}
-        {!loading && !testData && !error && selectedLog && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              No test data found for the selected log file.
-            </AlertDescription>
-          </Alert>
-        )}
-
         {/* Empty State */}
-        {!loading && logFiles.length === 0 && (
+        {!loading && !testData && !error && (
           <Card>
             <CardContent className="py-12 text-center">
               <Database className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No Test Runs Found</h3>
+              <h3 className="text-lg font-semibold mb-2">No Test Data Available</h3>
               <p className="text-muted-foreground">
                 Run some tests to see results here.
               </p>

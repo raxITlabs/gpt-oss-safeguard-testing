@@ -1,7 +1,8 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Clock, DollarSign } from "lucide-react";
+import { Clock, DollarSign, BarChart3 } from "lucide-react";
 import type { InferenceEvent, SessionSummary } from "@/types/test-results";
 import { formatCurrency, formatLatency } from "@/lib/format-utils";
 import { analyzePerformance } from "@/lib/performance-analyzer";
@@ -40,68 +41,76 @@ export function CompactMetricsBar({ summary, inferences, strictPolicyValidation 
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-muted/30 rounded-lg border">
-      {/* Pass Rate */}
-      <div className="flex flex-col items-start space-y-1">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <div className="text-xs text-muted-foreground leading-none">Pass Rate</div>
-          <Badge variant={getPassRateVariant(passRate)} className="h-5 text-[10px] px-1.5 leading-none self-center">
-            {passRate >= 90 ? "Good" : passRate >= 70 ? "Fair" : "Poor"}
-          </Badge>
-        </div>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight leading-none">
-          {passRate.toFixed(1)}%
-        </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-0.5">
-            <CheckCircle2 className="h-3 w-3 text-[color:var(--status-success)] shrink-0" />
-            {passed}
-          </span>
-          <span className="inline-flex items-center gap-0.5">
-            <XCircle className="h-3 w-3 text-[color:var(--status-error)] shrink-0" />
-            {failed}
-          </span>
-        </div>
-      </div>
+    <Card className="py-2 gap-2">
+      <CardHeader className="pb-2 px-3">
+        <CardTitle className="text-sm flex items-center justify-between">
+          <div className="flex items-center gap-1.5 flex-wrap flex-1">
+            <BarChart3 className="h-3 w-3 text-muted-foreground shrink-0" />
+            <span className="text-[10px] sm:text-xs text-muted-foreground leading-none">
+              All Scenarios
+            </span>
+            <Badge variant={getPassRateVariant(passRate)} className="h-4 text-[9px] px-1 leading-none">
+              {passRate >= 90 ? "Good" : passRate >= 70 ? "Fair" : "Poor"}
+            </Badge>
+          </div>
+          <div className="text-right">
+            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+              {passRate.toFixed(1)}%
+            </div>
+            <div className="text-[10px] text-muted-foreground leading-none">
+              {inferences.length} test{inferences.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-3 pt-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {/* Avg Latency */}
+          <div className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors">
+            <div className="flex items-center gap-1.5 flex-wrap w-full">
+              <Clock className="h-3 w-3 text-muted-foreground shrink-0" />
+              <div className="text-[10px] sm:text-xs text-muted-foreground leading-none flex-1">
+                Avg Latency
+              </div>
+            </div>
+            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+              {formatLatency(perfMetrics.avgLatency)}
+            </div>
+            <div className="text-[10px] text-muted-foreground leading-none">
+              {formatLatency(perfMetrics.latencyRange.min)} - {formatLatency(perfMetrics.latencyRange.max)}
+            </div>
+          </div>
 
-      {/* Avg Latency */}
-      <div className="flex flex-col items-start space-y-1">
-        <div className="flex items-center gap-1.5">
-          <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <div className="text-xs text-muted-foreground leading-none">Avg Latency</div>
-        </div>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight leading-none">
-          {formatLatency(perfMetrics.avgLatency)}
-        </div>
-        <div className="text-xs text-muted-foreground leading-none">
-          {formatLatency(perfMetrics.latencyRange.min)} - {formatLatency(perfMetrics.latencyRange.max)}
-        </div>
-      </div>
+          {/* Avg Cost */}
+          <div className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors">
+            <div className="flex items-center gap-1.5 flex-wrap w-full">
+              <DollarSign className="h-3 w-3 text-muted-foreground shrink-0" />
+              <div className="text-[10px] sm:text-xs text-muted-foreground leading-none flex-1">
+                Avg Cost
+              </div>
+            </div>
+            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+              {formatCurrency(perfMetrics.avgCost)}
+            </div>
+            <div className="text-[10px] text-muted-foreground leading-none">
+              Total: {formatCurrency(perfMetrics.totalCost)}
+            </div>
+          </div>
 
-      {/* Avg Cost */}
-      <div className="flex flex-col items-start space-y-1">
-        <div className="flex items-center gap-1.5">
-          <DollarSign className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <div className="text-xs text-muted-foreground leading-none">Avg Cost</div>
+          {/* Total Tests & Tokens */}
+          <div className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors">
+            <div className="text-[10px] sm:text-xs text-muted-foreground leading-none">
+              Tests & Tokens
+            </div>
+            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+              {inferences.length}
+            </div>
+            <div className="text-[10px] text-muted-foreground leading-none">
+              {perfMetrics.totalTokens.toLocaleString()} tokens
+            </div>
+          </div>
         </div>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight leading-none">
-          {formatCurrency(perfMetrics.avgCost)}
-        </div>
-        <div className="text-xs text-muted-foreground leading-none">
-          Total: {formatCurrency(perfMetrics.totalCost)}
-        </div>
-      </div>
-
-      {/* Total Tests & Tokens */}
-      <div className="flex flex-col items-start space-y-1">
-        <div className="text-xs text-muted-foreground leading-none">Tests & Tokens</div>
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight leading-none">
-          {summary.results.total_tests}
-        </div>
-        <div className="text-xs text-muted-foreground leading-none">
-          {perfMetrics.totalTokens.toLocaleString()} tokens
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

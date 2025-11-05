@@ -1,9 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Target, RefreshCw, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { Shield, Target, RefreshCw, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import type { InferenceEvent } from "@/types/test-results";
 import { analyzeFailure } from "@/lib/failure-analyzer";
 
@@ -18,15 +17,14 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
 
   if (attackInferences.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Attack Scenario Performance
+      <Card className="py-2">
+        <CardHeader className="pb-2 px-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Shield className="h-3 w-3 text-muted-foreground shrink-0" />
+            <span className="text-[10px] sm:text-xs text-muted-foreground leading-none">
+              No attack scenario tests in current dataset
+            </span>
           </CardTitle>
-          <CardDescription>
-            No attack scenario tests in current dataset. Attack scenarios test the model's resilience against adversarial inputs.
-          </CardDescription>
         </CardHeader>
       </Card>
     );
@@ -54,12 +52,14 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
                  testType.includes('prompt') || testType.includes('injection') ? Target :
                  AlertTriangle;
 
-    // Format label
+    // Format label (shortened)
     const label = testType
       .replace(/_/g, '-')
       .split('-')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
+      .join(' ')
+      .replace(/Multi Turn/g, 'Multi-turn')
+      .replace(/Prompt Injection/g, 'Prompt Inj.');
 
     return {
       testType,
@@ -77,122 +77,79 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
   const totalPassed = attackInferences.filter(inf => analyzeFailure(inf, strictPolicyValidation) === null).length;
   const overallSuccessRate = ((totalPassed / totalAttacks) * 100).toFixed(1);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
-          Attack Scenario Performance
-        </CardTitle>
-        <CardDescription>
-          {totalAttacks} attack tests across {stats.length} scenario type{stats.length !== 1 ? 's' : ''} • {overallSuccessRate}% overall defense rate
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {/* Overall Status */}
-        <Alert className={parseFloat(overallSuccessRate) >= 90 ? "border-[color:var(--status-success)] bg-[color:var(--status-success-bg)]" :
-                         parseFloat(overallSuccessRate) >= 70 ? "border-[color:var(--status-warning)] bg-[color:var(--status-warning-bg)]" :
-                         "border-[color:var(--status-error)] bg-[color:var(--status-error-bg)]"}>
-          <AlertDescription className="flex items-center gap-2">
-            {parseFloat(overallSuccessRate) >= 90 ? (
-              <>
-                <CheckCircle className="h-4 w-4 text-[color:var(--status-success)]" />
-                <span className="text-[color:var(--status-success)] font-medium">Excellent defense against attacks</span>
-              </>
-            ) : parseFloat(overallSuccessRate) >= 70 ? (
-              <>
-                <AlertTriangle className="h-4 w-4 text-[color:var(--status-warning)]" />
-                <span className="text-[color:var(--status-warning)] font-medium">Moderate defense - review failed tests</span>
-              </>
-            ) : (
-              <>
-                <XCircle className="h-4 w-4 text-[color:var(--status-error)]" />
-                <span className="text-[color:var(--status-error)] font-medium">Vulnerable to attacks - immediate attention needed</span>
-              </>
-            )}
-          </AlertDescription>
-        </Alert>
+  const getSuccessRateVariant = (rate: number) => {
+    if (rate >= 90) return "default";
+    if (rate >= 70) return "secondary";
+    return "destructive";
+  };
 
+  const getStatusColor = (rate: number) => {
+    if (rate >= 90) return "text-[color:var(--status-success)]";
+    if (rate >= 70) return "text-[color:var(--status-warning)]";
+    return "text-[color:var(--status-error)]";
+  };
+
+  return (
+    <Card className="py-2 gap-2">
+      <CardHeader className="pb-2 px-3">
+        <CardTitle className="text-sm flex items-center justify-between">
+          <div className="flex items-center gap-1.5 flex-wrap flex-1">
+            <Shield className="h-3 w-3 text-muted-foreground shrink-0" />
+            <span className="text-[10px] sm:text-xs text-muted-foreground leading-none">
+              All Attack Scenarios
+            </span>
+            <Badge variant={getSuccessRateVariant(parseFloat(overallSuccessRate))} className="h-4 text-[9px] px-1 leading-none">
+              {parseFloat(overallSuccessRate) >= 90 ? "Good" : parseFloat(overallSuccessRate) >= 70 ? "Fair" : "Poor"}
+            </Badge>
+          </div>
+          <div className="text-right">
+            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+              {overallSuccessRate}%
+            </div>
+            <div className="text-[10px] text-muted-foreground leading-none">
+              {totalAttacks} test{totalAttacks !== 1 ? 's' : ''}
+            </div>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-3 pt-0">
         {/* Per Attack Type Breakdown */}
-        <div className="mt-6 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
               <div
                 key={stat.testType}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-[color:var(--status-error-bg)]">
-                    <Icon className="h-5 w-5 text-[color:var(--status-error)]" />
+                <div className="flex items-center gap-1.5 flex-wrap w-full">
+                  <Icon className={`h-3 w-3 ${getStatusColor(stat.successRate)} shrink-0`} />
+                  <div className="text-[10px] sm:text-xs text-muted-foreground leading-none flex-1">
+                    {stat.label}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">{stat.label}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {stat.total} test{stat.total !== 1 ? 's' : ''}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-0.5">
-                      {stat.passed} passed · {stat.failed} failed
-                    </div>
-                  </div>
+                  <Badge variant={getSuccessRateVariant(stat.successRate)} className="h-4 text-[9px] px-1 leading-none">
+                    {stat.successRate >= 90 ? "Good" : stat.successRate >= 70 ? "Fair" : "Poor"}
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-3">
-                  {/* Success Rate Indicator */}
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      {stat.successRate}%
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      defense rate
-                    </div>
-                  </div>
-                  {stat.successRate >= 90 ? (
-                    <CheckCircle className="h-6 w-6 text-[color:var(--status-success)]" />
-                  ) : stat.successRate >= 70 ? (
-                    <AlertTriangle className="h-6 w-6 text-[color:var(--status-warning)]" />
-                  ) : (
-                    <XCircle className="h-6 w-6 text-[color:var(--status-error)]" />
-                  )}
+                <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
+                  {stat.successRate}%
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-0.5">
+                    <CheckCircle2 className="h-2.5 w-2.5 text-[color:var(--status-success)] shrink-0" />
+                    {stat.passed}
+                  </span>
+                  <span className="inline-flex items-center gap-0.5">
+                    <XCircle className="h-2.5 w-2.5 text-[color:var(--status-error)] shrink-0" />
+                    {stat.failed}
+                  </span>
+                  <span className="text-muted-foreground ml-1">
+                    · {stat.total} total
+                  </span>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Attack Type Explanations */}
-        <div className="mt-6 pt-6 border-t">
-          <h4 className="text-sm font-semibold mb-3">Attack Types Explained</h4>
-          <div className="grid gap-3 text-sm">
-            <div className="flex gap-2">
-              <RefreshCw className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">Multi-turn:</span>
-                <span className="text-muted-foreground ml-1">
-                  Conversation-based attacks that gradually manipulate context over multiple exchanges
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Target className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">Prompt Injection:</span>
-                <span className="text-muted-foreground ml-1">
-                  Direct attempts to override system instructions with malicious prompts
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <AlertTriangle className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">Over-refusal:</span>
-                <span className="text-muted-foreground ml-1">
-                  Tests for false positives where legitimate content is incorrectly flagged
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

@@ -29,10 +29,10 @@ export interface MetricCardProps {
 }
 
 const statusColors = {
-  excellent: "border-[color:var(--status-success)] bg-[color:var(--status-success-bg)]",
-  good: "border-[color:var(--sla-good)] bg-[color:var(--status-info-bg)]",
-  warning: "border-[color:var(--status-warning)] bg-[color:var(--status-warning-bg)]",
-  critical: "border-[color:var(--status-error)] bg-[color:var(--status-error-bg)]",
+  excellent: "border-[color:var(--status-success)] border-l-4 bg-gradient-to-r from-[color:var(--status-success-bg)]/5 via-transparent to-transparent",
+  good: "border-[color:var(--sla-good)] border-l-4 bg-gradient-to-r from-[color:var(--status-info-bg)]/5 via-transparent to-transparent",
+  warning: "border-[color:var(--status-warning)] border-l-4 bg-gradient-to-r from-[color:var(--status-warning-bg)]/5 via-transparent to-transparent",
+  critical: "border-[color:var(--status-error)] border-l-4 bg-gradient-to-r from-[color:var(--status-error-bg)]/5 via-transparent to-transparent",
 };
 
 const statusIcons = {
@@ -70,7 +70,7 @@ export function MetricCard({
     if (!trend) return null;
 
     const iconClass = cn(
-      "h-4 w-4",
+      "h-3 w-3",
       trend.isPositive
         ? "text-[color:var(--trend-positive)]"
         : "text-[color:var(--trend-negative)]"
@@ -81,56 +81,55 @@ export function MetricCard({
     } else if (trend.direction === "down") {
       return <ArrowDown className={iconClass} />;
     } else {
-      return <Minus className="h-4 w-4 text-[color:var(--trend-stable)]" />;
+      return <Minus className="h-3 w-3 text-[color:var(--trend-stable)]" />;
     }
   };
 
   return (
     <Card
       className={cn(
-        "transition-all duration-200",
+        "transition-all duration-200 py-2 gap-2",
         status && statusColor,
-        status && "border-2",
         onClick && "cursor-pointer hover:shadow-lg",
         className
       )}
       onClick={onClick}
     >
-      <CardHeader className={cn("pb-2", size === "large" && "pb-4")}>
+      <CardHeader className={cn("pb-1 px-3 pt-3")}>
         <div className="flex items-start justify-between">
           <CardTitle className={cn(
-            "text-sm font-medium text-muted-foreground",
-            size === "large" && "text-base"
+            "text-[10px] sm:text-xs font-medium text-muted-foreground leading-none",
+            size === "large" && "text-xs sm:text-sm"
           )}>
             {title}
           </CardTitle>
           {(icon || StatusIcon) && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {icon && <div className="text-muted-foreground">{icon}</div>}
-              {StatusIcon && <StatusIcon className={cn("h-5 w-5", statusIconColor)} />}
+              {StatusIcon && <StatusIcon className={cn("h-3 w-3", statusIconColor)} />}
             </div>
           )}
         </div>
       </CardHeader>
 
-      <CardContent className={cn("pb-4", size === "large" && "pb-6")}>
-        <div className="space-y-2">
+      <CardContent className={cn("px-3 pt-0 pb-3")}>
+        <div className="space-y-1">
           {/* Main Value */}
           <div className={cn(
-            "text-2xl font-bold tracking-tight",
-            size === "large" && "text-4xl"
+            "text-xl sm:text-2xl font-bold tracking-tight leading-none",
+            size === "large" && "text-2xl sm:text-3xl"
           )}>
             {value}
           </div>
 
           {/* Subtitle or Trend */}
           {(subtitle || trend) && (
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs">
               {trend && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {getTrendIcon()}
                   <span className={cn(
-                    "font-medium",
+                    "font-medium leading-none",
                     trend.isPositive
                       ? "text-[color:var(--trend-positive)]"
                       : "text-[color:var(--trend-negative)]"
@@ -140,30 +139,30 @@ export function MetricCard({
                 </div>
               )}
               {subtitle && (
-                <span className="text-muted-foreground">{subtitle}</span>
+                <span className="text-muted-foreground leading-none">{subtitle}</span>
               )}
             </div>
           )}
 
           {/* Description */}
           {description && (
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
               {description}
             </p>
           )}
 
           {/* Threshold Indicator */}
           {threshold && (
-            <div className="flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-1.5 text-[10px] mt-0.5">
               <div className={cn(
-                "h-2 w-2 rounded-full",
+                "h-1.5 w-1.5 rounded-full shrink-0",
                 threshold.met ? "bg-[color:var(--status-success)]" : "bg-[color:var(--status-error)]"
               )} />
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground leading-none">
                 Target: {threshold.comparison === "above" ? ">" : "<"} {threshold.value}
               </span>
               <span className={cn(
-                "font-medium",
+                "font-medium leading-none",
                 threshold.met ? "text-[color:var(--status-success)]" : "text-[color:var(--status-error)]"
               )}>
                 {threshold.met ? "Met" : "Not Met"}

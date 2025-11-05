@@ -13,6 +13,7 @@ import type {
   TokenDistributionBin,
   OptimizationOpportunity,
 } from "@/types/analytics";
+import { analyzeFailure } from "@/lib/failure-analyzer";
 
 /**
  * Extract cost from inference event (handles both old and new formats)
@@ -72,8 +73,13 @@ function getExpectedActual(inf: InferenceEvent): { expected: string; actual: str
 
 /**
  * Prepare data for Cost-Accuracy scatter plot
+ * @param inferences - Array of inference events
+ * @param strictPolicyValidation - Whether to use strict policy validation (respects missing/hallucinated policy codes)
  */
-export function prepareCostAccuracyScatterData(inferences: InferenceEvent[]): CostAccuracyPoint[] {
+export function prepareCostAccuracyScatterData(
+  inferences: InferenceEvent[],
+  strictPolicyValidation: boolean = true
+): CostAccuracyPoint[] {
   return inferences.map((inf) => {
     const tokens = getTokens(inf);
     const { expected, actual } = getExpectedActual(inf);
@@ -83,12 +89,17 @@ export function prepareCostAccuracyScatterData(inferences: InferenceEvent[]): Co
     const categoryLabel = inf.category || 'unknown';
     const compositeCategory = `${categoryLabel}-${testType}`;
 
+    // Use analyzeFailure to respect strict policy validation setting
+    // If analyzeFailure returns null, the test passed; otherwise it failed
+    const failureAnalysis = analyzeFailure(inf, strictPolicyValidation);
+    const passed = failureAnalysis === null;
+
     return {
       testId: `${inf.test_number}`,
       testNumber: inf.test_number,
       testName: inf.test_name,
       cost: getCost(inf),
-      accuracy: getPassed(inf),
+      accuracy: passed,
       latency: getLatency(inf),
       category: compositeCategory,
       tokens: tokens.total,

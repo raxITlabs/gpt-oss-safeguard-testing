@@ -34,12 +34,14 @@ function getCSSVar(varName: string): string {
 export interface CostAccuracyScatterProps {
   data: CostAccuracyPoint[];
   onPointClick?: (point: CostAccuracyPoint) => void;
+  strictPolicyValidation?: boolean;
   className?: string;
 }
 
 export function CostAccuracyScatter({
   data,
   onPointClick,
+  strictPolicyValidation = true,
   className,
 }: CostAccuracyScatterProps) {
   // Transform data for scatter chart
@@ -131,6 +133,11 @@ export function CostAccuracyScatter({
             <CardTitle>Cost-Accuracy Trade-off Matrix</CardTitle>
             <CardDescription>
               Identify optimal tests: low cost + high accuracy (top-left quadrant)
+              {strictPolicyValidation && (
+                <span className="ml-2 text-xs">
+                  <Badge variant="secondary" className="text-[10px] px-1.5 h-5">Strict Mode</Badge>
+                </span>
+              )}
             </CardDescription>
           </div>
           <div className="flex flex-col items-end gap-1 text-sm">
@@ -194,24 +201,6 @@ export function CostAccuracyScatter({
 
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: "3 3" }} />
 
-            <Legend
-              verticalAlign="top"
-              height={36}
-              content={({ payload }: any) => (
-                <div className="flex flex-wrap items-center justify-center gap-3 pb-4">
-                  {categories.map((cat) => (
-                    <div key={cat.value} className="flex items-center gap-1.5">
-                      <div
-                        className="h-2 w-2 rounded-full"
-                        style={{ backgroundColor: cat.color }}
-                      />
-                      <span className="text-xs text-muted-foreground">{cat.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            />
-
             <Scatter
               name="Tests"
               data={chartData}
@@ -231,40 +220,53 @@ export function CostAccuracyScatter({
           </ScatterChart>
         </ResponsiveContainer>
 
+        {/* Category Legend */}
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-4 border-t">
+          {categories.map((cat) => (
+            <div key={cat.value} className="flex items-center gap-1.5">
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: cat.color }}
+              />
+              <span className="text-xs text-muted-foreground">{cat.value}</span>
+            </div>
+          ))}
+        </div>
+
         {/* Quadrant descriptions */}
         <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
           <div className="rounded-lg border border-[color:var(--zone-ideal)] bg-[color:var(--zone-ideal-bg)] p-3">
-            <div className="font-medium text-[color:var(--zone-ideal)]">
+            <div className="font-medium text-foreground">
               ✓ Ideal Zone (Top-Left)
             </div>
-            <div className="text-xs text-[color:var(--zone-ideal)] opacity-80">
+            <div className="text-xs text-foreground opacity-80">
               Low cost, high accuracy - deploy immediately
             </div>
           </div>
 
           <div className="rounded-lg border border-[color:var(--zone-premium)] bg-[color:var(--zone-premium-bg)] p-3">
-            <div className="font-medium text-[color:var(--zone-premium)]">
+            <div className="font-medium text-foreground">
               ⚠ Premium Zone (Top-Right)
             </div>
-            <div className="text-xs text-[color:var(--zone-premium)] opacity-80">
+            <div className="text-xs text-foreground opacity-80">
               High cost, high accuracy - worth it for critical content
             </div>
           </div>
 
           <div className="rounded-lg border border-[color:var(--zone-acceptable)] bg-[color:var(--zone-acceptable-bg)] p-3">
-            <div className="font-medium text-[color:var(--zone-acceptable)]">
+            <div className="font-medium text-foreground">
               → Acceptable Zone (Bottom-Left)
             </div>
-            <div className="text-xs text-[color:var(--zone-acceptable)] opacity-80">
+            <div className="text-xs text-foreground opacity-80">
               Low cost, low accuracy - okay for low-risk scenarios
             </div>
           </div>
 
           <div className="rounded-lg border border-[color:var(--zone-avoid)] bg-[color:var(--zone-avoid-bg)] p-3">
-            <div className="font-medium text-[color:var(--zone-avoid)]">
+            <div className="font-medium text-foreground">
               ✗ Avoid Zone (Bottom-Right)
             </div>
-            <div className="text-xs text-[color:var(--zone-avoid)] opacity-80">
+            <div className="text-xs text-foreground opacity-80">
               High cost, low accuracy - unacceptable, don't use
             </div>
           </div>
