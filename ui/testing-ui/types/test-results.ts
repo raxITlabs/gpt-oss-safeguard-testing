@@ -18,6 +18,7 @@ export interface TestResult {
   expected: string;
   actual: string;
   passed: boolean;
+  reasoning?: string;
 }
 
 export interface PolicyCitation {
@@ -77,6 +78,13 @@ export interface InferenceEvent {
   conversation_id?: string;
   turn_number?: number;
   attack_pattern?: string;
+  attack_turn?: boolean;
+  attack_succeeded?: boolean;
+  false_positive?: boolean;
+  expected?: string;
+  model_output?: string;
+  reasoning?: string;
+  expected_policy?: string;
 
   request: Request;
   response: Response;
@@ -91,8 +99,6 @@ export interface InferenceEvent {
   cost_usd?: number;
   latency_ms?: number;
   content?: string;
-  expected?: string;
-  model_output?: string;
   passed?: boolean;
 
   // Old format fields (nested structure) - for backward compatibility
@@ -101,7 +107,6 @@ export interface InferenceEvent {
   test_result?: TestResult;
 
   // Common fields
-  reasoning?: string;
   reasoning_validation?: ReasoningValidation;
 }
 
@@ -142,7 +147,7 @@ export interface SessionEnd {
 }
 
 export interface FailureDetail {
-  test_name: string;
+  test_name: string | undefined;
   expected: string;
   actual: string;
 }
