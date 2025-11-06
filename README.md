@@ -1,16 +1,28 @@
 # GPT-OSS-Safeguard Testing Framework
 
-Comprehensive testing framework for evaluating the GPT-OSS-Safeguard model across multiple Trust & Safety policy categories.
+Comprehensive testing framework for evaluating the GPT-OSS-Safeguard model across Trust & Safety policies and AI system security.
 
 ## Overview
 
 This framework provides:
-- **7 policy categories** with detailed test cases (spam, hate-speech, violence, sexual-content, self-harm, fraud, illegal-activity)
-- **400+ test cases** with balanced severity distribution
+- **15 policy categories** including content moderation and AI security testing
+- **1,800+ test cases** covering content violations and system security threats
+- **Defense-in-depth testing** for data exfiltration, unauthorized actions, and multi-policy violations
+- **Risk-based assessment** using "Rule of Two" principle
 - **Automated testing suite** for running tests across all categories
-- **Metrics analysis** including accuracy, precision, recall, and F1 scores
+- **Comprehensive metrics** including ASR (Attack Success Rate), precision, recall, and F1 scores
 - **Baseline tracking** for regression detection
 - **Test case generation** using LLM assistance
+
+### 🆕 Security Testing Additions (Nov 2025)
+
+**New test suites** for AI Security API requirements:
+- **Data Exfiltration** (100 tests) - System prompt extraction, credential theft, conversation history leaks
+- **Unauthorized Actions** (115 tests) - Database ops, file access, API calls, system commands
+- **Risk Tiering** (80 tests) - Dynamic risk assessment based on input trust, data sensitivity, action scope
+- **Multi-Policy Detection** (50 tests) - Content violating multiple policies simultaneously
+
+📖 **See [SECURITY_TESTING_ADDITIONS.md](SECURITY_TESTING_ADDITIONS.md) for complete documentation**
 
 ## Project Structure
 
@@ -29,7 +41,6 @@ gpt-oss-safeguard-testing/
     hate-speech/golden_dataset.csv
     [other categories...]
  scripts/                     # Automation tools
-    run_test_suite.py       # Run all categories
     analyze_results.py      # Analyze metrics
     generate_test_cases.py  # LLM test generation
     save_baseline.py        # Save baselines
@@ -78,14 +89,25 @@ uv run test_safeguard.py spam
 uv run test_safeguard.py spam --test-number 20 --debug
 ```
 
-**All categories:**
+**All content moderation categories:**
 ```bash
-uv run scripts/run_test_suite.py
+for category in spam hate-speech violence sexual-content self-harm fraud illegal-activity unicode prompt-injection multi-turn over-refusal; do
+  uv run test_safeguard.py $category
+done
 ```
 
-**Specific categories:**
+**🆕 Security testing categories:**
 ```bash
-uv run scripts/run_test_suite.py --categories spam hate-speech fraud
+# Run security tests
+for category in data-exfiltration unauthorized-actions risk-tiering multi-policy; do
+  uv run test_safeguard.py $category
+done
+```
+
+**All categories (complete suite):**
+```bash
+# Run everything (1,800+ tests)
+uv run test_safeguard.py --all
 ```
 
 ### 4. View Results
@@ -107,7 +129,7 @@ uv run scripts/analyze_results.py --compare logs/file1.jsonl logs/file2.jsonl
 
 ## Policy Categories
 
-### Available Categories
+### Content Moderation Categories (Original)
 
 1. **spam** - Unsolicited promotional content, phishing, bulk messaging
 2. **hate-speech** - Attacks on protected groups, slurs, dehumanization
@@ -116,6 +138,17 @@ uv run scripts/analyze_results.py --compare logs/file1.jsonl logs/file2.jsonl
 5. **self-harm** - Suicide, self-injury, eating disorders
 6. **fraud** - Scams, phishing, financial fraud, identity theft
 7. **illegal-activity** - Drug trafficking, weapons sales, human trafficking
+8. **unicode** - Unicode obfuscation attacks (homoglyphs, bidi text, zero-width chars)
+9. **prompt-injection** - Jailbreaks, system manipulation, instruction override
+10. **multi-turn** - Multi-turn conversation attacks and escalation
+11. **over-refusal** - Legitimate content that should NOT be blocked
+
+### 🆕 AI Security Categories (New)
+
+12. **data-exfiltration** - System prompt extraction, credential theft, conversation leaks
+13. **unauthorized-actions** - Database operations, file access, API calls without authorization
+14. **risk-tiering** - Risk assessment testing (Rule of Two validation)
+15. **multi-policy** - Content violating multiple policies simultaneously
 
 ### Severity Levels
 
@@ -171,41 +204,6 @@ Defense Rate: 86.7%     # Overall effectiveness
 See [Attack Metrics Guide](docs/attack-metrics-guide.md) for complete details.
 
 ## Automation Scripts
-
-### run_test_suite.py
-
-Run tests across multiple categories and aggregate results.
-
-```bash
-# Run all categories
-uv run scripts/run_test_suite.py
-
-# Run specific categories
-uv run scripts/run_test_suite.py --categories spam fraud
-
-# List available categories
-uv run scripts/run_test_suite.py --list-categories
-
-# Skip baseline comparison
-uv run scripts/run_test_suite.py --no-baseline
-
-# Enable debug mode
-uv run scripts/run_test_suite.py --debug
-```
-
-**Features:**
-- Runs tests for each category sequentially
-- Aggregates results across all categories
-- Compares to baseline (regression detection)
-- Generates comprehensive summary report
-- Saves results to `logs/test_suite_results_[timestamp].json`
-
-**Output metrics:**
-- Overall accuracy across all categories
-- Per-category breakdown
-- Total cost and average latency
-- Failures list with details
-- Baseline comparison (if available)
 
 ### analyze_results.py
 
@@ -297,7 +295,7 @@ uv run scripts/save_baseline.py spam --force
 **Baseline storage:**
 - Saved in `baselines/{category}_baseline.json`
 - Contains: accuracy, test counts, failures, timestamp, model
-- Used by `run_test_suite.py` for regression detection
+- Used for regression detection when comparing test runs
 
 ## Creating New Categories
 
@@ -373,9 +371,11 @@ Based on `openai/gpt-oss-safeguard-20b` via OpenRouter:
    uv run scripts/save_baseline.py --all
    ```
 
-4. **Run full suite regularly**:
+4. **Run multiple categories**:
    ```bash
-   uv run scripts/run_test_suite.py
+   for category in spam hate-speech fraud; do
+     uv run test_safeguard.py $category
+   done
    ```
 
 ### Analysis
@@ -446,9 +446,6 @@ uv run test_safeguard.py spam
 ```bash
 # Create baseline
 uv run scripts/save_baseline.py [category]
-
-# Or skip baseline comparison
-uv run scripts/run_test_suite.py --no-baseline
 ```
 
 ### Test Failures

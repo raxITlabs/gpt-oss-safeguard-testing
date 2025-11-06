@@ -1,0 +1,138 @@
+{
+  "timestamp": "2025-11-06T14:36:10.167103",
+  "total_duration_seconds": 946.961157,
+  "categories_tested": 10,
+  "summary": {
+    "total_tests": 0,
+    "total_passed": 0,
+    "total_failed": 0,
+    "overall_accuracy_percent": 0.0
+  },
+  "metrics": {
+    "total_cost_usd": 0.0,
+    "average_latency_ms": 0.0
+  },
+  "category_results": [
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "illegal-activity",
+      "duration_seconds": 51.407817,
+      "log_file": "logs/safeguard_test_illegal-activity_20251106_142023.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "spam",
+      "duration_seconds": 36.440172,
+      "log_file": "logs/safeguard_test_spam_20251106_142115.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "unicode",
+      "duration_seconds": 187.030657,
+      "log_file": "logs/safeguard_test_unicode_20251106_142151.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "violence",
+      "duration_seconds": 115.474066,
+      "log_file": "logs/safeguard_test_violence_20251106_142458.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "over-refusal",
+      "duration_seconds": 134.89775,
+      "log_file": "logs/safeguard_test_over-refusal_20251106_142654.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "fraud",
+      "duration_seconds": 56.404509,
+      "log_file": "logs/safeguard_test_fraud_20251106_142909.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "self-harm",
+      "duration_seconds": 56.373434,
+      "log_file": "logs/safeguard_test_self-harm_20251106_143005.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "hate-speech",
+      "duration_seconds": 86.328919,
+      "log_file": "logs/safeguard_test_hate-speech_20251106_143102.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "sexual-content",
+      "duration_seconds": 62.928231,
+      "log_file": "logs/safeguard_test_sexual-content_20251106_143228.jsonl"
+    },
+    {
+      "total_tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "accuracy_percent": 0.0,
+      "total_cost_usd": 0.0,
+      "average_latency_ms": 0.0,
+      "failures": [],
+      "category": "prompt-injection",
+      "duration_seconds": 159.594369,
+      "log_file": "logs/safeguard_test_prompt-injection_20251106_143331.jsonl"
+    }
+  ],
+  "failures": []
+}

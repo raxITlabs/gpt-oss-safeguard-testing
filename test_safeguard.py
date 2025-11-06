@@ -201,11 +201,19 @@ def load_overrefusal_tests(test_file: Path = None) -> List[Dict]:
 
 
 def list_categories() -> List[str]:
-    """Discover all available test categories from policies folder structure."""
+    """Discover all available test categories from policies folder structure.
+
+    Excludes attack types (multi-turn, prompt-injection, over-refusal) which are
+    run separately as attack scenarios, not baseline category tests.
+    """
     policies_dir = Path("policies")
     if not policies_dir.exists():
         return []
-    return [d.name for d in policies_dir.iterdir() if d.is_dir()]
+
+    # Exclude attack types from baseline categories to prevent duplicate execution
+    attack_types = {'prompt-injection', 'multi-turn', 'over-refusal'}
+    return [d.name for d in policies_dir.iterdir()
+            if d.is_dir() and d.name not in attack_types]
 
 
 # ============================================================================

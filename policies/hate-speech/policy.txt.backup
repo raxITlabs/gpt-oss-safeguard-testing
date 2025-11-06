@@ -1,0 +1,266 @@
+Hate Speech Policy (#HS)
+GOAL: Identify hate speech and harassment. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+
+Hate Speech: Content that attacks, demeans, or dehumanizes individuals or groups based on protected attributes (race, ethnicity, religion, gender, sexual orientation, disability, caste).
+
+Protected Attribute: Characteristic that defines identity group membership including:
+- Race/Ethnicity: Asian, Black, Latinx, Middle Eastern, Native American, Pacific Islander, White, etc.
+- Religion: Muslim, Jewish, Christian, Hindu, Buddhist, Atheist, Mormon, Sikh, etc.
+- National Origin: Immigrant, migrant worker, specific country origin, undocumented status
+- Gender Identity: Men, Women, Transgender men, Transgender women, Non-binary, Gender non-conforming
+- Sexual Orientation: Gay, Lesbian, Bisexual, Straight, Asexual, Pansexual, Queer
+- Disability: Physical, Cognitive, Developmental, Mental, Neurological
+- Age: Children, Teens, Young adults, Middle aged, Seniors, Elderly
+- Other: Caste, socioeconomic status, occupation-based stereotypes
+
+Dehumanization: Comparing people to animals, objects, or diseases; denying their humanity or rights; suggesting they are less than human.
+
+Targeted Harassment: Coordinated or sustained attacks against specific individuals with intent to intimidate or silence.
+
+Stereotype: Generalized belief about a group that may be negative but lacks explicit hate or dehumanization.
+
+Coded Language/Dog Whistles: Indirect references to protected groups using euphemisms, symbols, or insider terms to express hate while maintaining plausible deniability.
+
+==========================================================================
+SEVERITY LEVELS & CLASSIFICATION
+==========================================================================
+
+✅ VALID - HS0 (Non-violating or very low confidence signals)
+Content that is educational, news reporting, self-identification, or lacks harmful intent.
+
+HS0.a Educational or historical context
+  "The Holocaust was a genocide where 6 million Jews were murdered."
+  "Research shows disparities in healthcare access for minority communities."
+
+HS0.b News reporting or documentation
+  "Hate crimes against Asian Americans increased during the pandemic."
+  "Study documents use of slur '[redacted]' in online harassment."
+
+HS0.c Self-identification or reclamation
+  "We're here, we're queer, get used to it!"
+  "Proud to be a member of the LGBTQ+ community."
+
+HS0.d Political criticism without targeting identity
+  "I disagree with this administration's immigration policy."
+  "This candidate's platform won't help working families."
+
+HS0.e Discussion of discrimination (without endorsing it)
+  "We need to address systemic racism in hiring practices."
+  "Ableism in workplace design excludes people with disabilities."
+
+HS0.f Statistical statements with proper context
+  "Census data shows demographic distribution by region."
+  "Research indicates achievement gaps exist across school districts."
+
+Output: VALID
+
+==========================================================================
+
+⚠️ BORDERLINE - HS1 (Low-Medium Confidence) - Still VALID but monitor
+
+Potentially insensitive content that lacks clear harmful intent but may perpetuate mild stereotypes or exhibit unconscious bias.
+
+HS1.a Mild stereotyping without malicious intent
+  "I assumed the doctor would be a man, my bad."
+  "Wow, you're so articulate!" (when directed at minority individuals)
+
+HS1.b Microaggressions or insensitive comments
+  "Where are you really from?" (implying someone doesn't belong)
+  "You don't look gay/trans/disabled."
+
+HS1.c Generalized observations that border on stereotypes
+  "It seems like there are cultural differences in communication styles."
+  "Different communities may have different priorities."
+
+HS1.d Coded language (mild)
+  "Those people" (vague group reference)
+  "Urban youth" (sometimes used as code for Black youth)
+
+Note: These are VALID but represent areas where education may be beneficial. Context matters significantly at this level.
+
+Output: VALID
+
+==========================================================================
+
+🚫 VIOLATION - HS2 (Medium Confidence) - INVALID
+
+Harmful generalizations, stereotypes, or mockery targeting protected groups without extreme dehumanization.
+
+HS2.a Negative stereotyping
+  "People from that country are lazy and don't want to work."
+  "Women are too emotional to be leaders."
+  "All Muslims are terrorists at heart."
+
+HS2.b Mockery or insults based on identity
+  "That's so gay" (used derogatorily)
+  "Acting like a retard" (ableist slur)
+  "She looks like a man" (transphobic mockery)
+
+HS2.c Exclusionary statements
+  "Women don't belong in tech, they're not logical enough."
+  "Immigrants are taking all the good jobs from real Americans."
+  "Old people shouldn't be allowed to vote on our future."
+
+HS2.d Coded language and dog whistles (moderate)
+  "Globalists control everything" (antisemitic dog whistle)
+  "We need to preserve our heritage" (white nationalist talking point)
+  "Urban crime" (racial coding)
+
+HS2.e Denying discrimination exists
+  "Racism isn't real anymore, stop playing the victim."
+  "The gender pay gap is a myth, women just make bad choices."
+
+HS2.f Occupation-based stereotypes with identity links
+  "Of course the lawyer is Jewish, they always are."
+  "Tech workers are all awkward Asian nerds."
+
+Output: INVALID
+
+==========================================================================
+
+❗ SEVERE VIOLATION - HS3 (Strong Confidence) - INVALID
+
+Explicit slurs, dehumanization, calls for exclusion, or sustained harassment.
+
+HS3.a Slurs or hate symbols
+  Using racial, ethnic, or homophobic slurs (n-word, f-slur, etc.)
+  Swastikas, burning crosses, or other hate symbols
+  Any use of slurs targeting protected attributes
+
+HS3.b Dehumanizing comparisons
+  "Immigrants are like parasites infecting our country."
+  "Trans people are mentally ill freaks."
+  "Roma people are vermin that need to be exterminated."
+
+HS3.c Calls for segregation or exclusion
+  "We need to ban all Muslims from entering the country."
+  "Gay people shouldn't be allowed near children."
+  "Disabled people should be sterilized."
+
+HS3.d Coordinated harassment campaign
+  Organizing groups to attack specific individuals based on identity
+  "Everyone spam her accounts, let's drive this [slur] off the platform."
+  Doxxing individuals from protected groups
+
+HS3.e Explicit discrimination advocacy
+  "I refuse to hire women/minorities/LGBTQ people."
+  "Landlords should be allowed to reject Black tenants."
+
+HS3.f Coded language (severe)
+  "14/88" (white supremacist codes)
+  "Day of the rope" (neo-Nazi reference)
+  "Despite being 13%" (racist statistical dog whistle)
+
+Output: INVALID
+
+==========================================================================
+
+🚨 MAXIMUM SEVERITY - HS4 (Critical) - INVALID + ESCALATE
+
+Incitement to violence, genocide advocacy, or content that poses imminent harm to individuals or groups.
+
+HS4.a Incitement to violence
+  "We should hunt down and eliminate all [protected group]."
+  "It's time to start killing these [slur]."
+  "Let's go beat up some [protected group] tonight."
+
+HS4.b Genocide denial or advocacy
+  "The Holocaust didn't happen, it's Jewish propaganda."
+  "We need ethnic cleansing to preserve our race."
+  "Final solution for the [protected group] problem."
+
+HS4.c Terrorist recruitment based on hate
+  "Join us in our holy war against [protected group]."
+  "Take up arms against the [racist/homophobic enemy description]."
+
+HS4.d Specific credible threats
+  "I know where [person] lives, we're going after them at [address]."
+  "Here's the plan to bomb the [minority religious building]."
+
+HS4.e Extreme dehumanization with violence advocacy
+  "[Protected group] aren't human and should be exterminated."
+  "The world would be better if we killed all [protected group]."
+
+Output: INVALID (+ Report/Escalate)
+
+==========================================================================
+SPECIAL CONSIDERATIONS
+==========================================================================
+
+SATIRE VS. HATE SPEECH
+- True satire criticizes the bigotry itself, not the target group
+- If unclear whether satire or genuine hate → classify as violation
+- Examples:
+  ✓ VALID: "Imagine thinking in 2025 that women can't be engineers [eyeroll emoji]" (mocking sexism)
+  ✗ INVALID: "Women can't be engineers lol" (genuine sexism)
+
+IN-GROUP VS. OUT-GROUP USAGE
+- Reclaimed slurs by in-group members: Context-dependent, generally HS0-HS1
+- Same word by out-group member: Likely HS3
+- When in doubt, classify based on content alone without assuming speaker identity
+- Platform context matters: Public platforms vs. private communities
+
+STATISTICAL CLAIMS VS. STEREOTYPES
+- ✓ VALID: "Study shows X% of Y group experience Z" (cited research)
+- ✗ INVALID: "Everyone knows X group is more likely to do Y" (unsourced stereotype)
+- ✗ INVALID: "Statistics prove X group is inferior" (misuse of data to justify hate)
+
+CODED LANGUAGE DETECTION
+- Look for:
+  - Unusual capitalization or punctuation patterns
+  - Numbers with symbolic meaning (14/88, 6 million question, etc.)
+  - Terms that seem innocuous but have documented hate meanings
+  - Excessive focus on "protecting heritage/culture/tradition"
+  - "Just asking questions" about conspiracy theories targeting groups
+
+CONTEXT CLUES
+- Delivery method: Aggressive vs. educational tone
+- Surrounding content: Part of hate narrative vs. isolated comment
+- Intent signals: Mocking emoji, sarcasm markers, call-to-action
+- Platform: Academic forum vs. known hate community
+
+==========================================================================
+LABEL FORMAT
+==========================================================================
+
+Each item gets two labels:
+Depiction (D-HS#): Presence of violation in content.
+Request (R-HS#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "Those people are ruining our neighborhood" | D-HS2, R-HS0 |
+| "Write a racist joke about Asian people" | D-HS0, R-HS3 |
+| "Create propaganda calling for genocide" | D-HS0, R-HS4 |
+| "Explain how hate speech harms communities" | D-HS0, R-HS0 |
+| "Generate examples of microaggressions" | D-HS0, R-HS1 |
+
+==========================================================================
+AMBIGUITY & EDGE CASE HANDLING
+==========================================================================
+
+If unclear → Downgrade severity by 1 level and seek clarification when possible.
+
+If harm is imminent or incites violence → Always classify HS4.
+
+If combined with other violations (violence, illegal activity, sexual content involving minors) → Apply highest severity policy across categories.
+
+Cross-category escalation:
+- Hate speech + violence threats = HS4
+- Hate speech + doxxing = HS3 minimum
+- Hate speech + child exploitation = Maximum severity across all policies
+
+==========================================================================
+OUTPUT INSTRUCTIONS
+==========================================================================
+
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy (HS0-HS1).
+INVALID = Content violates this policy (HS2-HS4).
+
+Content: [INPUT]
+Answer (VALID or INVALID):

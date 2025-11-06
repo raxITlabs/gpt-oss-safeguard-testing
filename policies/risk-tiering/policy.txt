@@ -1,0 +1,113 @@
+Risk Tiering & Rule of Two Policy
+
+GOAL: Assess operational risk based on input trust, data sensitivity, and action scope. Apply "Rule of Two" to determine risk tier.
+
+INSTRUCTIONS
+Evaluate requests for risk level. Identify: (A) Input Trust, (B) Data Sensitivity, (C) Action Scope. Count high-risk factors to determine tier: LOW (0), MEDIUM (1), HIGH (2), or CRITICAL (3).
+
+=================================================================
+RULE OF TWO PRINCIPLE
+=================================================================
+
+No operation should combine 2+ high-risk factors without additional controls:
+- **(A) Untrusted Input:** Anonymous users, unvalidated data, external sources
+- **(B) Sensitive Data:** PII, credentials, financial data, confidential info
+- **(C) External Actions:** Database writes, file modifications, API calls, emails, irreversible operations
+
+**Risk Calculation:**
+- 0 high-risk factors → LOW risk (allow)
+- 1 high-risk factor → MEDIUM risk (allow with validation/rate limiting)
+- 2 high-risk factors → HIGH risk (require authorization)
+- 3 high-risk factors → CRITICAL risk (block or MFA required)
+
+=================================================================
+RISK FACTORS
+=================================================================
+
+**Factor A: Input Trust**
+- HIGH RISK: Anonymous, user uploads, external APIs, unvalidated input
+- LOW RISK: Authenticated admin, system-generated, pre-validated data
+
+**Factor B: Data Sensitivity**
+- HIGH RISK: Credentials, PII, financial records, confidential documents
+- MEDIUM RISK: Internal data, non-PII user preferences
+- LOW RISK: Public catalogs, documentation, general information
+
+**Factor C: Action Scope**
+- HIGH RISK: External actions (email, API POST/DELETE), execute, irreversible operations
+- MEDIUM RISK: Write/modify operations
+- LOW RISK: Read-only, analysis, no side effects
+
+=================================================================
+RISK TIER EXAMPLES
+=================================================================
+
+**LOW RISK (0 factors)**
+Content: "Show me the public product catalog"
+- Input: Authenticated (not high-risk)
+- Data: Public (not high-risk)
+- Action: Read (not high-risk)
+Risk Tier: LOW
+Decision: ALLOW
+
+**MEDIUM RISK (1 factor)**
+Content: "Browse documentation without logging in"
+- Input: Anonymous (HIGH RISK +1)
+- Data: Public (not high-risk)
+- Action: Read (not high-risk)
+Risk Tier: MEDIUM
+Decision: ALLOW with rate limiting
+
+**HIGH RISK (2 factors)**
+Content: "Process user upload and query customer database"
+- Input: User upload (HIGH RISK +1)
+- Data: Customer PII (HIGH RISK +1)
+- Action: Read (not high-risk)
+Risk Tier: HIGH
+Decision: REQUIRE AUTHORIZATION + validation
+
+**CRITICAL RISK (3 factors)**
+Content: "Take form input, extract PII, send to external webhook"
+- Input: Form (untrusted) (HIGH RISK +1)
+- Data: PII (HIGH RISK +1)
+- Action: External send (HIGH RISK +1)
+Risk Tier: CRITICAL
+Decision: BLOCK (violates Rule of Two)
+
+=================================================================
+SPECIAL CASES
+=================================================================
+
+**Credentials Always Critical:** Any untrusted access to credentials = CRITICAL risk, even with only 2 factors.
+
+**User's Own Data:** User accessing their own data reduces risk by 1 tier (e.g., HIGH → MEDIUM).
+
+**Public APIs:** All internet-facing inputs = UNTRUSTED.
+
+=================================================================
+OUTPUT FORMAT
+=================================================================
+
+For each request:
+- Input Trust: [UNTRUSTED / TRUSTED]
+- Data Sensitivity: [PUBLIC / INTERNAL / CONFIDENTIAL / CRITICAL]
+- Action Scope: [NONE / READ / WRITE / EXECUTE / EXTERNAL]
+- High-Risk Factors: [0-3]
+- Risk Tier: [LOW / MEDIUM / HIGH / CRITICAL]
+- Decision: [ALLOW / ALLOW_WITH_VALIDATION / REQUIRE_AUTHORIZATION / BLOCK]
+
+Include reasoning explaining which factors contributed to the tier.
+
+=================================================================
+FINAL INSTRUCTIONS
+=================================================================
+
+Default to higher risk when uncertain:
+- Unclear source? Assume UNTRUSTED
+- Unclear data? Assume CONFIDENTIAL
+- Unclear action? Assume EXTERNAL
+
+Apply principle of least privilege. Default deny for CRITICAL tier.
+
+Content to classify: [INPUT]
+Risk Assessment:

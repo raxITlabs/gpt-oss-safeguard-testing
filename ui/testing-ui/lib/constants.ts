@@ -22,6 +22,11 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'fraud-baseline': getColor('--chart-5'),          // Amber
   'illegal-activity-baseline': getColor('--chart-2'), // Indigo/blue
   'unicode-baseline': getColor('--chart-4'),        // Emerald/green
+  'data-exfiltration-baseline': getColor('--chart-1'),
+  'multi-policy-baseline': getColor('--chart-2'),
+  'request-vs-depiction-baseline': getColor('--chart-3'),
+  'risk-tiering-baseline': getColor('--chart-6'),
+  'unauthorized-actions-baseline': getColor('--chart-7'),
 
   // Multi-turn attacks (slightly darker variations - we'll use color-mix in future)
   'spam-multi-turn': getColor('--status-error'),
@@ -40,6 +45,16 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'illegal-activity-multi_turn': getColor('--chart-2'),
   'unicode-multi-turn': getColor('--status-success'),
   'unicode-multi_turn': getColor('--status-success'),
+  'data-exfiltration-multi-turn': getColor('--status-error'),
+  'data-exfiltration-multi_turn': getColor('--status-error'),
+  'multi-policy-multi-turn': getColor('--chart-2'),
+  'multi-policy-multi_turn': getColor('--chart-2'),
+  'request-vs-depiction-multi-turn': getColor('--chart-8'),
+  'request-vs-depiction-multi_turn': getColor('--chart-8'),
+  'risk-tiering-multi-turn': getColor('--chart-6'),
+  'risk-tiering-multi_turn': getColor('--chart-6'),
+  'unauthorized-actions-multi-turn': getColor('--chart-7'),
+  'unauthorized-actions-multi_turn': getColor('--chart-7'),
 
   // Prompt injection attacks (critical/error tones)
   'spam-prompt-injection': getColor('--priority-high'),
@@ -58,6 +73,16 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'illegal-activity-prompt_injection': getColor('--chart-2'),
   'unicode-prompt-injection': getColor('--chart-4'),
   'unicode-prompt_injection': getColor('--chart-4'),
+  'data-exfiltration-prompt-injection': getColor('--priority-high'),
+  'data-exfiltration-prompt_injection': getColor('--priority-high'),
+  'multi-policy-prompt-injection': getColor('--chart-2'),
+  'multi-policy-prompt_injection': getColor('--chart-2'),
+  'request-vs-depiction-prompt-injection': getColor('--chart-3'),
+  'request-vs-depiction-prompt_injection': getColor('--chart-3'),
+  'risk-tiering-prompt-injection': getColor('--chart-6'),
+  'risk-tiering-prompt_injection': getColor('--chart-6'),
+  'unauthorized-actions-prompt-injection': getColor('--chart-7'),
+  'unauthorized-actions-prompt_injection': getColor('--chart-7'),
 
   // Over-refusal tests (use status info for distinction)
   'spam-over-refusal': getColor('--status-info'),
@@ -76,6 +101,16 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'illegal-activity-over_refusal': getColor('--status-info'),
   'unicode-over-refusal': getColor('--status-info'),
   'unicode-over_refusal': getColor('--status-info'),
+  'data-exfiltration-over-refusal': getColor('--status-info'),
+  'data-exfiltration-over_refusal': getColor('--status-info'),
+  'multi-policy-over-refusal': getColor('--status-info'),
+  'multi-policy-over_refusal': getColor('--status-info'),
+  'request-vs-depiction-over-refusal': getColor('--status-info'),
+  'request-vs-depiction-over_refusal': getColor('--status-info'),
+  'risk-tiering-over-refusal': getColor('--status-info'),
+  'risk-tiering-over_refusal': getColor('--status-info'),
+  'unauthorized-actions-over-refusal': getColor('--status-info'),
+  'unauthorized-actions-over_refusal': getColor('--status-info'),
 
   // Legacy/backward compatibility (category only, no test type)
   'spam': getColor('--chart-1'),
@@ -86,6 +121,11 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'fraud': getColor('--chart-5'),
   'illegal-activity': getColor('--chart-2'),
   'unicode': getColor('--chart-4'),
+  'data-exfiltration': getColor('--chart-1'),
+  'multi-policy': getColor('--chart-2'),
+  'request-vs-depiction': getColor('--chart-3'),
+  'risk-tiering': getColor('--chart-6'),
+  'unauthorized-actions': getColor('--chart-7'),
 
   // Unknown/fallback
   'unknown-baseline': getColor('--muted-foreground'),
@@ -201,6 +241,11 @@ export const ALL_CATEGORIES = [
   'fraud',
   'illegal-activity',
   'unicode',
+  'data-exfiltration',
+  'multi-policy',
+  'request-vs-depiction',
+  'risk-tiering',
+  'unauthorized-actions',
 ] as const;
 
 /**

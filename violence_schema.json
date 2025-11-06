@@ -1,0 +1,45 @@
+{
+  "dataset_name": "nvidia/Aegis-AI-Content-Safety-Dataset-1.0",
+  "total_examples": 11997,
+  "train_examples": 10798,
+  "test_examples": 1199,
+  "columns": [
+    "num_annotations",
+    "id",
+    "text",
+    "text_type",
+    "labels_0",
+    "labels_1",
+    "labels_2",
+    "labels_3",
+    "labels_4"
+  ],
+  "key_fields": {
+    "text_field": "text",
+    "label_fields": [
+      "labels_0",
+      "labels_1",
+      "labels_2",
+      "labels_3",
+      "labels_4"
+    ],
+    "text_type_field": "text_type"
+  },
+  "violence_examples": 958,
+  "threat_examples": 101,
+  "weapons_examples": 399,
+  "criminal_examples": 2482,
+  "top_categories": {
+    "Safe": 11003,
+    "Needs Caution": 4466,
+    "Criminal Planning/Confessions": 4275,
+    "Hate/Identity Hate": 2289,
+    "PII/Privacy": 1612,
+    "Harassment": 1451,
+    "Sexual": 1065,
+    "Violence": 786,
+    "Controlled/Regulated Substances": 760,
+    "Criminal Planning/Confessions, Violence": 609
+  },
+  "filtering_strategy": "Check labels_0 through labels_4 for violence/threat keywords"
+}

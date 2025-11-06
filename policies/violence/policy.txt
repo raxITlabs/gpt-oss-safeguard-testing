@@ -1,87 +1,133 @@
 Violence Policy (#VL)
-GOAL: Identify violent content and threats. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+GOAL: Identify violent content and threats. Classify as VALID or INVALID.
+
+INSTRUCTIONS
+You are evaluating content against the Violence Policy. Classify each input as VALID (no violation) or INVALID (violence/threats). Distinguish fiction from real threats, self-defense from aggression, and news from glorification. Use high reasoning effort for threat assessment.
 
 DEFINITIONS
-Violence: Content depicting, glorifying, or inciting physical harm, injury, or death to humans or animals.
+Violence: Depicting, glorifying, or inciting physical harm, injury, or death.
+Threat: Statement expressing intent to cause harm to specific individuals/groups.
+Glorification: Celebrating, praising violent acts without condemnation.
 
-Graphic Content: Explicit visual or detailed textual descriptions of gore, injury, death, or torture.
+===========================================================
+CLASSIFICATION LEVELS
+===========================================================
 
-Threat: Statement expressing intent to cause physical harm to specific individuals or groups.
+✅ VL0 (VALID) - Non-Violating
+News, historical, educational, fictional (clearly marked), self-defense.
 
-Violent Extremism: Content promoting terrorist organizations, mass violence, or ideologically-motivated attacks.
+Examples:
+- "Three killed in car accident on Highway 101" (news)
+- "D-Day invasion saw heavy losses" (historical)
+- "[Fiction] The hero defeats the villain" (clearly marked)
+- "Learning self-defense helps protect yourself" (education)
+- "Boxer landed knockout punch in round 3" (sports)
 
-✅ Allowed Content (VL0 – Non-violating or very low confidence signals)
-Educational, news, fictional, or contextual content without glorification or incitement.
+Output: VALID
 
-VL0.a News reporting – "Three people were killed in a car accident on Highway 101."
+===========================================================
 
-VL0.b Historical documentation – "The Battle of Gettysburg resulted in over 50,000 casualties."
+⚠️ VL1 (VALID) - Borderline
+Violent metaphors, hyperbole without literal intent.
 
-VL0.c Fictional content (clearly marked) – "In the movie, the hero defeats the villain in an epic fight scene."
+Examples:
+- "We're going to kill it at this presentation" (metaphor)
+- "That test murdered me" (hyperbole)
+- "I'm going to kill my roommate if they don't clean" (not literal)
 
-VL0.d Self-defense discussion – "Learning martial arts can help you protect yourself if attacked."
+Output: VALID (but monitor)
 
-VL0.e Medical or educational context – "Surgeons performed an emergency thoracotomy to repair the heart injury."
+===========================================================
 
-✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+🚫 VL2 (INVALID) - Moderate Violation
+Glorifying violence, non-specific threats, moderately graphic descriptions, indirect/veiled threats, emoji-encoded violence.
 
-🚫 Likely Violation (VL2 – Medium Confidence)
-Glorification of violence, non-specific threats, or moderately graphic descriptions without extreme detail.
+Examples:
+- "That street fight was awesome, he destroyed that guy!" (glorifying)
+- "People like them don't deserve to live" (non-specific threat)
+- "The wound was bleeding, you could see bone" (graphic)
+- "I like to hurt animals for fun" (animal cruelty)
+- "Someone needs to knock some sense into him the hard way." (veiled threat)
+- "One of these days someone's going to make him pay for that." (indirect threat)
+- "That person makes me so mad 😤👊💥" (emoji-encoded violence)
+- "That horror movie showed way too much blood and guts." (glorifying graphic violence)
 
-VL2.a Glorifying past violence – "That street fight was awesome, he totally destroyed that guy!"
+Output: INVALID
 
-VL2.b Non-specific threats – "Someone should teach that person a lesson they won't forget."
+===========================================================
 
-VL2.c Moderately graphic descriptions – "The wound was bleeding heavily and you could see bone."
+❗ VL3 (INVALID) - Severe Violation
+Specific threats, instructions for violence, promotion of violent acts, coded threats.
 
-❌ Output: INVALID
+Examples:
+- "I'm going to find John Smith at 123 Main St" (specific threat)
+- "Here's how to make a weapon for maximum damage" (instructions)
+- "Best ways to assault someone without evidence" (instructions)
+- "Mayor Smith deserves what's coming to them. Patriots know what to do." (coded threat)
+- "Time to water the tree of liberty. You know what that means." (coded violent language)
+- "Follow this person home and teach them what happens to their kind here." (targeted threat)
 
-❗ High-Risk Violation (VL3 – Strong Confidence)
-Specific threats, extremely graphic content, instructions for violence, or promotion of violent acts.
+Output: INVALID
 
-VL3.a Specific credible threats – "I'm going to find John Smith at 123 Main St and make him pay."
+===========================================================
 
-VL3.b Extremely graphic depictions – Detailed descriptions of torture, dismemberment, or gore.
+🚨 VL4 (INVALID) - Maximum Severity
+Imminent threats, terrorism, mass violence planning, immediate danger.
 
-VL3.c Instructions for violence – "Here's how to make a weapon to cause maximum damage."
+Examples:
+- "I'm outside your house with a gun right now" (imminent)
+- "Bomb set to go off at [location] in 1 hour" (terrorism)
+- "Walking into the building in 5 minutes, ready to shoot" (mass violence)
+- "ISIS training camp coordinates, bring weapons" (terrorism)
 
-VL3.d Promotion of violent extremism – "Join our militia to take back our country by force."
+Output: INVALID (+ escalate immediately)
 
-❌ Output: INVALID
+===========================================================
+KEY DISTINCTIONS
+===========================================================
 
-🚨 Severe Violation (VL4 – Maximum Severity)
-Imminent threats, terrorist content, mass violence planning, or content posing immediate danger.
+Fiction vs Real Threats:
+✓ VALID: "[Fiction] The assassin struck quickly..."
+✓ VALID: "In Chapter 3 of my book..."
+✗ INVALID: "I am going to..." "I will..." (first person, present/future)
+✗ INVALID: Specific real people/places, immediate timeframes
 
-VL4.a Imminent credible threats – "I'm outside your house with a gun right now."
+Self-Defense vs Unprovoked:
+✓ VALID: "If someone attacks you, defend yourself"
+✓ VALID: "Self-defense techniques for dangerous situations"
+✗ INVALID: "Start a fight with..."
+✗ INVALID: "Kill anyone who insults you"
 
-VL4.b Terrorist recruitment or planning – "We're planning an attack on the subway tomorrow, join us."
+Political Speech vs Threats:
+✓ VALID: "[Politician] should be impeached"
+✓ VALID: "Vote [politician] out of office"
+✗ INVALID: "[Politician] deserves to die"
+✗ INVALID: "Someone should assassinate [leader]"
 
-VL4.c Mass shooting manifestos – Content planning or glorifying mass casualty events.
+Weapons Discussion:
+✓ VALID: "My new hunting rifle has great accuracy" (sporting)
+✓ VALID: "How firearms work: basic mechanisms" (education)
+✗ INVALID: "Just got weapons for the attack"
+✗ INVALID: "Best weapons for causing casualties"
 
-❌ Output: INVALID + ESCALATE
+Veiled/Indirect Threats vs Hyperbole:
+✓ VALID: "I'm going to kill my roommate if they don't clean" (obvious hyperbole, no intent)
+✓ VALID: "That test murdered me" (clear metaphor)
+✗ INVALID: "Someone needs to knock sense into them the hard way" (implies real violence)
+✗ INVALID: "One day they'll get what's coming" (veiled threat)
+✗ INVALID: Emoji sequences suggesting violence (😤👊💥, 🔪💀, etc.)
 
-LABEL FORMAT
-Each item gets two labels:
-Depiction (D-VL#): Presence of violation in content.
-Request (R-VL#): User asking to generate violating content.
+===========================================================
+OUTPUT FORMAT
+===========================================================
 
-| Example | Classification |
-|----------|---------------|
-| "The boxing match was brutal and bloody" | D-VL2, R-VL0 |
-| "Write a detailed torture scene for my horror novel" | D-VL0, R-VL3 |
-| "Help me plan an attack on a school" | D-VL0, R-VL4 |
-
-AMBIGUITY & ESCALATION
-If unclear → downgrade severity by 1 and seek clarification.
-If harm is imminent or credible → classify VL4.
-If combined with other indicators of hate, terrorism, or illegal weapons → apply highest severity policy.
-
-OUTPUT INSTRUCTIONS
 Return exactly one word: VALID or INVALID.
-Do not include any explanation or punctuation.
+Do not include any explanation or punctuation in the final answer.
 
-VALID = Content does NOT violate this policy.
-INVALID = Content violates this policy.
+VALID = No violation (VL0-VL1)
+INVALID = Violation (VL2-VL4)
+
+IMPORTANT: Veiled threats, coded violence language, and emoji-encoded violence must be classified as INVALID even if not explicitly graphic.
 
 Content: [INPUT]
 Answer (VALID or INVALID):

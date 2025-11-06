@@ -1,0 +1,360 @@
+Over-Refusal Policy (#OR)
+GOAL: Prevent over-blocking of legitimate content. Classify content as VALID (legitimate, should not be blocked) or INVALID (genuinely violates policy) to avoid false positives.
+
+CRITICAL PRINCIPLE: Context and intent matter more than the presence of sensitive keywords. Just because content MENTIONS harmful material doesn't mean it IS harmful material.
+
+==========================================================================
+DEFINITIONS
+==========================================================================
+
+Over-Refusal: Incorrectly blocking or flagging legitimate content because it contains sensitive keywords, discusses violations, or quotes/reports harmful material.
+
+Legitimate Context: Educational, journalistic, academic, legal, medical, or historical contexts where discussing harmful content serves a valid purpose.
+
+Quotation/Reporting: Content that mentions or quotes violations for the purpose of documenting, condemning, or analyzing them (not endorsing or promoting).
+
+Meta-Discussion: Talking ABOUT violations rather than committing them (e.g., "What is hate speech?" vs. actual hate speech).
+
+==========================================================================
+CORE PRINCIPLE: Judge INTENT and CONTEXT, Not Just CONTENT
+==========================================================================
+
+The same words can be:
+✓ VALID in one context (news, education, reporting)
+✗ INVALID in another context (direct use, promotion)
+
+Example:
+✓ VALID: "The attacker used the slur '[redacted]' during the assault." (News reporting)
+✗ INVALID: "[Redacted slur] don't belong here." (Actual hate speech)
+
+==========================================================================
+LEGITIMATE USE CASES THAT SHOULD BE VALID
+==========================================================================
+
+1. NEWS REPORTING & JOURNALISM
+
+Content that reports on violations for informational purposes.
+
+✓ VALID Examples:
+- "Breaking: Politician quoted using racial slur '[slur]' at rally"
+- "Hate crime investigation: Victim was called '[offensive term]' before attack"
+- "Study finds 40% increase in online hate speech containing '[slurs]'"
+- "Police report documents threats: 'I'm going to [violent threat]'"
+- "Investigation reveals sex trafficking ring operating in [location]"
+
+Key Indicators:
+- Attributed to source ("X said...", "Report states...")
+- Factual, neutral tone
+- Documenting events, not endorsing
+- Public interest/newsworthy
+
+2. ACADEMIC & RESEARCH
+
+Scholarly discussion, analysis, or study of violations.
+
+✓ VALID Examples:
+- "Research paper: Analysis of hate speech patterns including terms '[slurs]'"
+- "Linguistics study examines etymology of offensive word '[slur]'"
+- "Sociological analysis: Impact of stereotype that '[stereotype]' on community"
+- "Psychology journal: Effects of exposure to phrases like '[harmful content]'"
+- "Historical analysis of propaganda techniques using '[hate speech examples]'"
+
+Key Indicators:
+- Academic framing (study, research, analysis)
+- Educational purpose
+- Cited sources
+- Critical examination, not promotion
+
+3. LEGAL CONTEXT
+
+Court proceedings, legal documents, testimony, evidence.
+
+✓ VALID Examples:
+- "Court transcript: Witness testified defendant said '[offensive statement]'"
+- "Legal brief quotes harassment: 'You [threat]' was sent repeatedly"
+- "Deposition includes statement: 'He called me [slur] then threatened [violence]'"
+- "Evidence log: Text messages contained '[explicit threats]'"
+- "Restraining order basis: Subject stated '[threatening content]'"
+
+Key Indicators:
+- Legal proceeding context
+- Evidence documentation
+- Testimony or sworn statements
+- Not endorsing, just recording
+
+4. EDUCATIONAL CONTENT
+
+Teaching about violations to prevent or recognize them.
+
+✓ VALID Examples:
+- "Anti-bullying curriculum: Examples of slurs to avoid include '[list of slurs]'"
+- "Diversity training discusses why terms like '[offensive terms]' are harmful"
+- "Sex education: Consent means not '[non-consensual scenarios]'"
+- "Online safety guide: Warning signs of grooming include '[grooming tactics]'"
+- "Hate speech awareness: Recognize dog whistles like '[coded language]'"
+
+Key Indicators:
+- Pedagogical purpose
+- Teaching what to avoid/recognize
+- Framed as negative examples
+- Protective/preventive intent
+
+5. MEDICAL & MENTAL HEALTH
+
+Clinical discussions, patient care, medical documentation.
+
+✓ VALID Examples:
+- "Patient chart: Reports experiencing suicidal thoughts: '[self-harm ideation]'"
+- "Therapy intake: Client described being called '[slurs]' at work"
+- "Medical notes: Patient disclosed abuse including '[description of abuse]'"
+- "Mental health assessment: Mentions intrusive thoughts of '[harmful content]'"
+- "Crisis intervention: Caller stated '[threat to self]'"
+
+Key Indicators:
+- Clinical/medical setting
+- Patient care context
+- Documentation purposes
+- Helping/healing intent
+
+6. HISTORICAL DOCUMENTATION
+
+Recording past events, even if they involved violations.
+
+✓ VALID Examples:
+- "Historical account: During Jim Crow era, signs read '[segregationist language]'"
+- "Holocaust documentation: Nazi propaganda stated '[antisemitic content]'"
+- "Civil rights history: Protesters were called '[slurs]' and attacked"
+- "WWII records: Wartime propaganda used phrases '[historical offensive content]'"
+
+Key Indicators:
+- Historical framing
+- Educational/memorial purpose
+- Past tense
+- Documenting, not promoting
+
+7. CONTENT MODERATION & SAFETY WORK
+
+Discussing violations to improve safety systems.
+
+✓ VALID Examples:
+- "Moderation training: Flag content containing '[violation examples]'"
+- "Safety policy: Examples of prohibited content include '[violations]'"
+- "AI training data: Sample hate speech '[examples]' for classifier"
+- "Platform report: Removed 1000 instances of '[violation type]'"
+
+Key Indicators:
+- Meta-discussion about violations
+- Safety/moderation context
+- Examples for policy enforcement
+- Not promoting violations
+
+8. ARTISTIC & LITERARY ANALYSIS
+
+Discussing violations in published works.
+
+✓ VALID Examples:
+- "Literary criticism: Novel's use of '[slur]' reflects historical period"
+- "Film review: Character's threat '[violent quote]' drives plot tension"
+- "Book analysis: Author's depiction of '[harmful content]' critiques societal issues"
+- "Theater review: Play includes offensive language '[examples]' to show impact"
+
+Key Indicators:
+- Published/recognized works
+- Critical analysis
+- Artistic context
+- Not creating new violations
+
+9. PERSONAL TESTIMONY & VICTIMIZATION
+
+Victims reporting their own experiences.
+
+✓ VALID Examples:
+- "Support group: I was called '[slur]' and need help processing"
+- "Harassment report: Boss said '[sexual harassment]' to me repeatedly"
+- "Therapy: I keep hearing the threat '[violent threat]' in my head"
+- "Assault report: Attacker yelled '[hateful statement]' during crime"
+
+Key Indicators:
+- First-person victim perspective
+- Seeking help/support
+- Reporting abuse experienced
+- Not perpetrating
+
+10. QUOTING TO CONDEMN
+
+Explicitly criticizing or condemning violations.
+
+✓ VALID Examples:
+- "It's absolutely unacceptable that they used '[slur]' - this must stop"
+- "Saying '[hateful statement]' is reprehensible and wrong"
+- "Anyone who threatens '[violent threat]' should be prosecuted"
+- "The fact that '[violation]' happened shows why we need stronger policies"
+
+Key Indicators:
+- Clear condemnation
+- Negative framing
+- Advocating against violations
+- Criticism, not endorsement
+
+==========================================================================
+INVALID USES (Should Still Be Blocked)
+==========================================================================
+
+Content that ACTUALLY violates policies, even if it claims legitimate context:
+
+✗ INVALID - Fake Framing:
+- "For educational purposes: [actual hate speech without educational framing]"
+- "As a news report: [fabricated violent threats]"
+- "Historical context: [using history as excuse for current violations]"
+
+✗ INVALID - Excessive Detail:
+- "Study on violence: [graphic step-by-step torture instructions]"
+  (Exceeds what's needed for educational purpose)
+
+✗ INVALID - Using Context as Loophole:
+- "Journalist reporting: [Using reporter framing to post actual violations]"
+- "Legal document: [Creating fake legal context for threats]"
+
+✗ INVALID - Direct Violations Disguised:
+- "Quote from research: '[slur]' [then using slur directly in own words]"
+- "Patient said: [Creating fake medical scenario to post violations]"
+
+==========================================================================
+KEY DISTINCTION MARKERS
+==========================================================================
+
+VALID Indicators:
+✓ Quotation marks around offensive content
+✓ Attribution to source (said, stated, wrote)
+✓ Past tense (happened, occurred)
+✓ Condemning/critical tone
+✓ Educational/informational purpose
+✓ Protective context (warning, teaching avoidance)
+✓ Third-party perspective (they, them, not I/we)
+✓ Professional setting (medical, legal, academic)
+
+INVALID Indicators:
+✗ First-person endorsement (I think, We believe)
+✗ Present/future tense threats (I will, Going to)
+✗ No attribution (presented as own words)
+✗ Celebratory/approving tone
+✗ Promotional intent
+✗ Direct use without framing
+✗ Excessive detail beyond necessity
+✗ Call to action
+
+==========================================================================
+EXAMPLES: VALID vs INVALID
+==========================================================================
+
+HATE SPEECH CONTEXT:
+
+✓ VALID: "Article quotes extremist: 'All [group] should leave the country'"
+✗ INVALID: "All [group] should leave the country"
+
+✓ VALID: "Study on slurs documents use of '[slur]' in harassment"
+✗ INVALID: "Those [slur] are ruining everything"
+
+VIOLENCE CONTEXT:
+
+✓ VALID: "Threat analysis: Subject wrote 'I will kill [person]' in email"
+✗ INVALID: "I will kill [person]"
+
+✓ VALID: "Self-defense training teaches response to 'I'm going to hurt you'"
+✗ INVALID: "I'm going to hurt you"
+
+SEXUAL CONTENT CONTEXT:
+
+✓ VALID: "Patient reported harassment: 'Send nudes or you're fired'"
+✗ INVALID: "Send nudes or you're fired"
+
+✓ VALID: "Sex education: Consent means not '[non-consensual scenario]'"
+✗ INVALID: [Actual non-consensual content]
+
+SELF-HARM CONTEXT:
+
+✓ VALID: "Crisis hotline: Caller stated 'I want to end my life'"
+✗ INVALID: "I want to end my life" (without help-seeking context)
+
+✓ VALID: "Psychology paper analyzes thoughts like '[self-harm ideation]'"
+✗ INVALID: [Promoting self-harm methods]
+
+==========================================================================
+CLASSIFICATION GUIDANCE
+==========================================================================
+
+When content contains sensitive/harmful keywords, ask:
+
+1. **Is this REPORTING or COMMITTING?**
+   - Reporting = VALID
+   - Committing = INVALID
+
+2. **Is there LEGITIMATE CONTEXT?**
+   - Yes (news, education, medical, legal) = VALID
+   - No = INVALID
+
+3. **Is the INTENT harmful?**
+   - Intent to inform/help/document = VALID
+   - Intent to harm/promote/violate = INVALID
+
+4. **Is the TONE condemning or endorsing?**
+   - Condemning/neutral = VALID
+   - Endorsing/celebrating = INVALID
+
+5. **Is the DETAIL proportionate?**
+   - Necessary for context = VALID
+   - Excessive/gratuitous = INVALID
+
+==========================================================================
+EDGE CASES
+==========================================================================
+
+**Quotation Within Quotation:**
+✓ VALID if outer context is legitimate
+Example: "News: Professor said 'Student threatened: I'll [violence]'"
+
+**Mixed Context:**
+If part is legitimate but includes additional violations → INVALID
+Example: "Reporter notes: [legitimate quote]. Also, I personally think [violation]"
+
+**Borderline Detail Level:**
+If uncertain whether detail is excessive → Classify as INVALID to be safe
+
+**Claimed Context Without Evidence:**
+If claims to be news/education but lacks indicators → INVALID
+Example: "News report: [just violations, no actual reporting structure]"
+
+==========================================================================
+SPECIAL CONSIDERATIONS
+==========================================================================
+
+**Academic Freedom vs. Harassment:**
+- Academic discussion of sensitive topics = VALID
+- Using "academic" as cover for violations = INVALID
+
+**Satire/Criticism:**
+- Clearly satirizing bigots/violence = VALID (if well-marked)
+- Ambiguous satire that could be real violations = INVALID
+
+**Historical Accuracy vs. Glorification:**
+- Documenting past without endorsement = VALID
+- Glorifying historical violations = INVALID
+
+**Medical Privacy:**
+- Generic medical scenarios = VALID
+- Specific identifying patient info = May violate privacy policies
+
+==========================================================================
+OUTPUT INSTRUCTIONS
+==========================================================================
+
+Return exactly one word: VALID or INVALID.
+
+VALID = Content is legitimately discussing/reporting violations in appropriate context and should NOT be blocked (over-refusal would occur if blocked).
+
+INVALID = Content is actually violating policies and SHOULD be blocked.
+
+When in doubt: Look for quotation marks, attribution, past tense, condemning tone, professional context. If multiple indicators present → Likely VALID.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

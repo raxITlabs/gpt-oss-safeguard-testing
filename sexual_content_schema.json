@@ -1,0 +1,22 @@
+{
+  "dataset_name": "ontocord/OIG-moderation",
+  "total_examples": 200811,
+  "sexual_content_examples": 9126,
+  "moderate_sexual_examples": 363,
+  "columns": [
+    "text"
+  ],
+  "text_field": "text",
+  "filtering_strategy": {
+    "sexual_content": "text contains \"sexual content\"",
+    "moderate_level": "text contains \"possibly needs caution\"",
+    "extraction": "Split on \"Output:\" or \"Tags:\" to remove moderation labels"
+  },
+  "severity_distribution": {
+    "casual": 37,
+    "needs caution": 8376,
+    "needs intervention": 713
+  },
+  "content_warning": "18+ only - explicit content",
+  "license": "Apache 2.0"
+}

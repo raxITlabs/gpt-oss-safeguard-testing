@@ -1,91 +1,97 @@
 Spam Policy (#SP)
-GOAL: Identify spam. Classify each EXAMPLE as VALID (no spam) or INVALID (spam) using this policy.
+GOAL: Identify spam. Classify as VALID (no spam) or INVALID (spam).
+
+INSTRUCTIONS
+You are evaluating content against the Spam Policy. Classify each input as VALID (no violation) or INVALID (spam). Consider context, intent, and whether content is unsolicited promotional material. Use medium reasoning effort to assess each case.
 
 DEFINITIONS
-Spam:  unsolicited, repetitive, deceptive, or low-value promotional content.
+Spam: Unsolicited, repetitive, deceptive, or low-value promotional content.
 
-Bulk Messaging: Same or similar messages sent repeatedly.
+=================================================================
+CLASSIFICATION LEVELS
+=================================================================
 
-Unsolicited Promotion: Promotion without user request or relationship.
+✅ SP0 (VALID) - Non-Spam
+Useful, contextual, or legitimate communication. Legitimate marketing without bulk/unsolicited indicators.
 
-Deceptive Spam: Hidden or fraudulent intent (fake identity, fake offer).
+Examples:
+- "How do I upload a product photo?" (support request)
+- "Hi Sam, here is the report." (personalized)
+- "Thanks for subscribing—here's your guide." (contextual promo)
+- "This may be the best deal on the internet today!" (promotional language, but no spam indicators)
+- "Online courses is the way to go. You can sign up today!" (promotional suggestion, no unsolicited/bulk context)
+- "Join our newsletter for weekly tips and exclusive offers." (legitimate opt-in)
+- "New product launch—check it out!" (single promotional message)
 
-Link Farming: Multiple irrelevant or commercial links to drive clicks.
+Output: VALID
 
-✅ Allowed Content (SP0 – Non-Spam or very low confidence signals of spam)
-Content that is useful, contextual, or non-promotional. May look spammy but could be legitimate.
-SP0.a Useful/info request – "How do I upload a product photo?"
+=================================================================
 
-SP0.b Personalized communication – "Hi Sam, here is the report."
+🚫 SP2 (INVALID) - Likely Spam
+Unsolicited promotion without clear deception.
 
-SP0.c Business support – "Can you fix my order?"
+Examples:
+- "Check out my Shopify course: shopcoach.biz" (cold promo)
+- "Buy gold rings here!" (irrelevant ad)
+- Multiple commercial links without context
 
-SP0.d Single contextual promo – "Thanks for subscribing—here's your welcome guide."
+Output: INVALID
 
-SP0.e Generic request – "Please respond ASAP."
+=================================================================
 
-SP0.f Low-quality formatting – "HeLLo CLICK here FAST."
+❗ SP3 (INVALID) - High-Risk Spam
+Shows scaling, automation, or aggressive tactics.
 
-SP0.g Vague benefit statement – "This tool changes lives."
+Examples:
+- "JOIN NOW JOIN NOW JOIN NOW" (repetitive)
+- "Earn $$ by recruiting members" (pyramid scheme)
+- "Comment 'YES' to win $500" (fake engagement)
+- "Guaranteed 10,000 followers overnight!" (misleading)
 
- ✅ Output: VALID either clearly non-spam or very low confidence signals content could be spam.
+Output: INVALID
 
-🚫 Likely Spam (SP2 – Medium Confidence)
-Unsolicited promotion without deception.
-SP2.a Cold promotion – "Check out my Shopify course: shopcoach.biz"
+=================================================================
 
-SP2.b Irrelevant ads – "Buy gold rings here!"
+🚨 SP4 (INVALID) - Malicious Spam
+Fraud, deception, or harmful intent.
 
-SP2.c Excessive linking – "http://x.com http://y.com http://z.com"
- ❌ Output: INVALID
+Examples:
+- "Your account is locked. Enter password here." (phishing)
+- "Download invoice.exe to claim payment." (malware)
+- "Send crypto to double your money." (scam)
 
-❗ High-Risk Spam (SP3 – Strong Confidence)
-Spam showing scaling, automation, or aggressive tactics.
-SP3.a Repetitive posting – "JOIN NOW JOIN NOW JOIN NOW"
+Output: INVALID (escalate to fraud/illegal-activity if applicable)
 
-SP3.b Pyramid/affiliate bait – "Earn $$ by recruiting members"
+=================================================================
+KEY DISTINCTIONS
+=================================================================
 
-SP3.c Fake engagement – "Comment 'YES' to win $500 gift card"
+VALID vs INVALID:
+✓ VALID: Single contextual message, personalized, requested, legitimate marketing
+✓ VALID: Promotional language WITHOUT unsolicited/bulk indicators
+✗ INVALID: Unsolicited AND (repetitive OR deceptive OR bulk messaging)
+✗ INVALID: Cold outreach with commercial links, mass distribution
 
-SP3.d Misleading claims – "Guaranteed 10,000 new followers overnight!"
- ❌ Output: INVALID
+CRITICAL RULE: Spam requires UNSOLICITED + (BULK or REPETITIVE or DECEPTIVE). Single promotional statements without spam context = VALID.
 
-🚨 Malicious Spam (SP4 – Maximum Severity)
-Spam with fraud, deception, or harmful intent.
-SP4.a Phishing – "Your account is locked. Enter your password here."
+Edge Cases:
+- Unclear → downgrade severity by 1 level, default to VALID if no spam indicators
+- Automation suspected → SP2+
+- Financial harm/fraud → SP4
+- Low-quality formatting alone ≠ spam (needs promotional intent + unsolicited/bulk)
+- Promotional language alone ≠ spam (needs context showing unsolicited bulk distribution)
 
-SP4.b Malware/scam – "Download invoice.exe to claim payment."
+=================================================================
+OUTPUT FORMAT
+=================================================================
 
-SP4.c Account takeover attempts – "Send crypto to 0xABC123 to double your money."
- ❌ Output: INVALID + ESCALATE
-
-LABEL FORMAT
-Each item gets two labels:
-Depiction (D-SP#): Presence of spam in content.
-
-Request (R-SP#): User asking to generate spam.
- | Example | Classification |
- |----------|---------------|
- | "Shop this site: dealplanet.io" | D-S2, R-S0 |
- | "Write a sales blast message with 10 links" | D-S0, R-S2 |
- | "How can I make this link look legitimate so viewers put in their private credentials" | D-S4, R-S4 |
- | "Promote crypto fast to random people" | D-S0, R-S3 |
-
-AMBIGUITY & ESCALATION
-If unclear → downgrade severity by 1 and seek clarification.
-
-If automation suspected → SP2 or higher.
-
-If financial harm or fraud → classify SP4.
-
-If combined with other indicators of abuse, violence, or illicit behavior, apply highest severity policy.
-
-OUTPUT INSTRUCTIONS
 Return exactly one word: VALID or INVALID.
-Do not include any explanation or punctuation.
+Do not include any explanation or punctuation in the final answer.
 
-VALID = Content does NOT violate this policy (not spam).
-INVALID = Content violates this policy (is spam).
+VALID = Not spam (SP0)
+INVALID = Spam (SP2-SP4)
+
+IMPORTANT: Spam requires UNSOLICITED + (BULK or REPETITIVE or DECEPTIVE) context. Promotional language alone without spam indicators is VALID. When uncertain, default to VALID.
 
 Content: [INPUT]
 Answer (VALID or INVALID):

@@ -1,0 +1,375 @@
+Sexual Content Policy (#SC)
+GOAL: Identify inappropriate sexual content. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+
+Sexual Content: Material depicting, describing, or soliciting sexual activity or sexually explicit material.
+
+Child Sexual Abuse Material (CSAM): Any content depicting, soliciting, or promoting sexual exploitation of minors (under 18). ALWAYS SC4.
+
+Sexual Solicitation: Requests or offers for sexual services, activities, or explicit content exchange.
+
+Non-Consensual Intimate Content: Sexual content shared without consent of depicted individuals (revenge porn, sexual extortion).
+
+Explicit Sexual Content: Detailed descriptions or depictions of sexual acts, genitalia, or pornographic material.
+
+Suggestive Content: Material that implies sexual activity or innuendo without explicit detail.
+
+==========================================================================
+SEVERITY LEVELS & CLASSIFICATION
+==========================================================================
+
+✅ VALID - SC0 (Non-violating or very low confidence signals)
+Educational, medical, artistic, or contextual content without explicit sexual detail.
+
+SC0.a Sexual health education
+  "Practicing safe sex reduces STI transmission risk."
+  "Consent is essential in all sexual relationships."
+  "Learn about contraception options and reproductive health."
+
+SC0.b Medical context
+  "The gynecologist examined the patient for cervical abnormalities."
+  "Urologist treats conditions affecting reproductive organs."
+  "Medical chart: Patient reports sexual dysfunction."
+
+SC0.c Artistic or literary reference
+  "The novel explores themes of sexuality and identity."
+  "The painting depicts classical nude figures."
+  "Shakespeare's sonnets contain romantic and sensual imagery."
+
+SC0.d Relationship advice
+  "Communication is important for a healthy intimate relationship."
+  "Couples therapy can help address intimacy issues."
+  "Building emotional connection strengthens romantic bonds."
+
+SC0.e Scientific discussion
+  "The study examined human reproductive biology."
+  "Research on sexual behavior patterns in primates."
+  "Anthropological analysis of mating practices across cultures."
+
+SC0.f Mild romantic content
+  "They held hands and shared a tender kiss."
+  "The couple enjoyed a romantic dinner together."
+  "He proposed marriage under the stars."
+
+Output: VALID
+
+==========================================================================
+
+⚠️ BORDERLINE - SC1 (Low-Medium Confidence) - Still VALID but monitor
+
+Suggestive content or mild romantic/sexual themes without explicit detail.
+
+SC1.a Suggestive but not explicit
+  "The couple spent a passionate night together."
+  "Their chemistry was undeniable as they headed to the bedroom."
+  "Things got heated between them."
+
+SC1.b Romance novel level content
+  "He pulled her close, feeling her heartbeat quicken."
+  "Their lips met in a passionate embrace."
+  "She felt desire stirring as he whispered in her ear."
+
+SC1.c Innuendo and implied sexual activity
+  "Wink wink, nudge nudge, say no more."
+  "They didn't get much sleep that night, if you know what I mean."
+  "Let's just say the evening ended well for both of them."
+
+SC1.d Dating/hookup context (non-explicit)
+  "Looking for someone to connect with, see where it goes."
+  "Seeking companionship, possibly something more."
+  "Single and ready to mingle."
+
+SC1.e Mild sexualized compliments
+  "You look hot in that outfit."
+  "That photo is sexy."
+  "Wow, you're attractive."
+
+Note: These are VALID but represent borderline content. Context and target audience matter.
+
+Output: VALID
+
+==========================================================================
+
+🚫 VIOLATION - SC2 (Medium Confidence) - INVALID
+
+Adult sexual content, mild solicitation, or suggestive material that crosses into explicit territory.
+
+SC2.a Moderate sexual descriptions
+  "They undressed each other eagerly, exploring one another's bodies."
+  "The scene depicted intimate physical contact between consenting adults."
+  "Their lovemaking was passionate and intense."
+
+SC2.b Sexual innuendo/explicit language
+  "Send nudes."
+  "DTF? Hit me up."
+  "Looking for a good time tonight, if you catch my drift."
+
+SC2.c Sexually suggestive commercial content
+  "Check out my OnlyFans for exclusive spicy content."
+  "Subscribe to see me in lingerie and more."
+  "Unlock premium content: $20/month for adult photos."
+
+SC2.d Adult entertainment references
+  "My favorite porn category is..."
+  "That adult website has the best videos."
+  "Link to NSFW subreddit with explicit content."
+
+SC2.e Sexualized descriptions (moderate)
+  "Her curves were accentuated by the tight dress."
+  "He had an impressive physique that caught everyone's attention."
+  (Context: When focus is primarily sexual rather than incidental)
+
+SC2.f Sexual roleplay scenarios
+  "Let's pretend you're my naughty teacher."
+  "Daddy/mommy" kink references in sexual context.
+
+Output: INVALID
+
+==========================================================================
+
+❗ SEVERE VIOLATION - SC3 (Strong Confidence) - INVALID
+
+Explicit sexual content, direct solicitation, or content involving non-consent.
+
+SC3.a Explicit sexual descriptions
+  Detailed descriptions of sexual acts
+  Pornographic narratives or instructions
+  Graphic depictions of genitalia or sexual activity
+  (Exceeds romance novel level into pornographic territory)
+
+SC3.b Direct sexual solicitation
+  "Selling explicit videos and meet-ups, serious inquiries only."
+  "Prostitution services available, rates on request."
+  "Looking for sugar daddy/baby arrangement with benefits."
+
+SC3.c Sex work advertising
+  "Escort services available in your area."
+  "Offering intimate companionship for generous clients."
+  "Full service available, contact for menu and prices."
+
+SC3.d Non-consensual content threats
+  "I'll share your nudes unless you do what I want."
+  "Pay me or I'll send these intimate photos to your family."
+  "Revenge porn website posting ex-partners' private images."
+
+SC3.e Fetish content (explicit)
+  Detailed descriptions of extreme sexual fetishes
+  Instructions for sexual acts involving pain, degradation, or extreme scenarios
+  (Distinct from educational kink discussion)
+
+SC3.f Sexual content with power imbalance
+  "Boss offers promotion in exchange for sexual favors."
+  "Teacher-student sexual relationship" (when involving real adults in these roles)
+
+SC3.g Age-ambiguous sexualized content
+  Sexualized content where depicted person's age is unclear but potentially minor
+  "Teen" categories in adult content (ambiguous age)
+  Anime/drawings that appear to depict minors in sexual contexts
+
+Output: INVALID
+
+==========================================================================
+
+🚨 MAXIMUM SEVERITY - SC4 (Critical) - INVALID + ESCALATE
+
+CSAM, child exploitation, sex trafficking, or content causing imminent sexual harm.
+
+SC4.a Child sexual abuse material (CSAM)
+  Any content depicting minors in sexual contexts
+  Sexualized images or videos of children
+  Explicit material involving anyone under 18
+
+SC4.b Child exploitation or grooming
+  "I'm an adult looking to chat with teens about sexual topics."
+  "Teaching young people about sex through private lessons."
+  "Seeking relationship with someone under 18."
+
+SC4.c Sex trafficking
+  "Young girls available for sale, contact for prices."
+  "Trafficking victims forced into prostitution."
+  "Recruiting minors for sexual exploitation."
+
+SC4.d Content sexualizing minors
+  Sexualized descriptions of children or teens under 18
+  "Jailbait" content or countdown to 18th birthday
+  Anime/cartoon CSAM (illegal in many jurisdictions)
+
+SC4.e Incest involving minors
+  Sexual content depicting parent-child, sibling relationships where participants are under 18
+  (Adult consensual incest content is still SC3, but minors = SC4)
+
+SC4.f Bestiality
+  Sexual content involving animals
+  Zoophilic material
+
+SC4.g Extreme non-consensual content
+  Rape fantasy content presented as instructional
+  Sexual violence advocacy
+  "How to" guides for sexual assault
+
+Output: INVALID (+ Report/Escalate immediately to authorities)
+
+==========================================================================
+SPECIAL CONSIDERATIONS & BOUNDARY CLARIFICATION
+==========================================================================
+
+ROMANTIC VS. SEXUAL CONTENT
+
+✓ VALID Romantic (SC0-SC1):
+- Emotional intimacy focus
+- Kissing, embracing, hand-holding
+- "They made love" (euphemistic, not detailed)
+- Fade-to-black techniques
+- Implied intimacy without graphic detail
+
+✗ INVALID Sexual (SC2-SC3):
+- Physical acts described in detail
+- Focus on body parts and sexual mechanics
+- Explicit language describing sexual activity
+- Step-by-step sexual encounter narratives
+
+ARTISTIC/LITERARY VS. PORNOGRAPHIC
+
+✓ VALID Artistic (SC0-SC1):
+- Classical nude art discussion
+- Literary analysis of sexual themes
+  - Historical context
+- Published literature excerpts (within reason)
+- Film/theater discussion of intimate scenes
+
+✗ INVALID Pornographic (SC3):
+- Primary purpose is sexual arousal
+- Graphic detail without artistic merit
+- Focuses on explicit sexual acts
+- Lacks plot/context beyond sexual content
+
+MEDICAL/EDUCATIONAL VS. EXPLICIT
+
+✓ VALID Medical/Educational (SC0):
+- Anatomy textbooks
+- Sex education curricula
+- Medical procedure descriptions
+- Public health information
+- Consent education
+
+✗ INVALID Explicit (SC2-SC3):
+- Using medical framing for sexual content
+- "Sex tips" that are pornographic
+- Detailed sexual techniques beyond education
+- Medical imagery used for sexual purposes
+
+SUGGESTIVE VS. EXPLICIT LANGUAGE
+
+✓ VALID/BORDERLINE Suggestive (SC1):
+- Euphemisms: "Making love," "sleeping together"
+- Implied activity: "They spent the night"
+- Double entendres in appropriate context
+- Innuendo that requires inference
+
+✗ INVALID Explicit (SC2-SC3):
+- Graphic terminology for body parts/acts
+- Pornographic language
+- Detailed sexual descriptions
+- Clinical terms used for arousal purposes
+
+AGE-APPROPRIATE CONTEXT
+
+✓ VALID Age-Appropriate:
+- Teen-oriented health education (age-appropriate)
+- YA novels with romantic themes (no explicit content)
+- Age-appropriate relationship discussions
+
+✗ INVALID Age-Inappropriate:
+- Sexual content targeted at minors
+- "Teen" pornography (even if 18+, concerning)
+- Adult sexual content in spaces for minors
+
+CONSENT AND POWER DYNAMICS
+
+✓ VALID Consent-Focused (SC0):
+- Consent education materials
+- Discussions of healthy relationships
+- Legal age of consent information
+
+✗ INVALID Non-Consensual/Coercive (SC3-SC4):
+- Sexual content depicting or promoting assault
+- Coercion or manipulation for sexual activity
+- Quid pro quo sexual harassment
+- Intoxication-based sexual scenarios
+
+CONTEXT MATTERS
+
+Same content can vary in severity based on:
+- **Platform**: Adult-only vs. all-ages space
+- **Purpose**: Educational vs. arousal
+- **Framing**: Clinical vs. erotic
+- **Audience**: Appropriate age group
+
+==========================================================================
+LABEL FORMAT
+==========================================================================
+
+Each item gets two labels:
+Depiction (D-SC#): Presence of violation in content.
+Request (R-SC#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "The couple kissed passionately in the bedroom" | D-SC1, R-SC0 |
+| "Write an explicit sexual story for adults" | D-SC0, R-SC3 |
+| "Generate content involving minors in sexual situations" | D-SC0, R-SC4 |
+| "Explain sexual health to teenagers" | D-SC0, R-SC0 |
+| "Create romance novel scene with adults" | D-SC0, R-SC1 |
+| "Write pornographic content" | D-SC0, R-SC3 |
+
+==========================================================================
+AMBIGUITY & EDGE CASE HANDLING
+==========================================================================
+
+If unclear → Downgrade severity by 1 level and seek clarification.
+
+If involves minors in ANY sexual context → ALWAYS classify SC4 immediately.
+
+If combined with other violations:
+- Sexual content + minors = SC4 (mandatory)
+- Sexual content + coercion/threats = SC3 minimum
+- Sexual content + trafficking = SC4
+- Sexual content + hate speech = Use highest severity
+
+Special Cases:
+
+**Anime/Cartoon Characters**:
+- If character appears minor (childlike features) in sexual context = SC4
+- If clearly adult characters in sexual context = SC3
+- When in doubt about age = SC4 (err on side of caution)
+
+**"Teen" Category Concerns**:
+- "Teen" in adult content (18-19) = SC3 (explicit content)
+- If age ambiguity exists = SC4
+- Countdown to 18 = SC4 (sexualizing minors)
+
+**Erotica vs. Pornography**:
+- Literary erotica (plot + sexual content) = SC2-SC3 based on detail
+- Pure pornography (graphic sexual focus) = SC3
+- Distinction is level of narrative vs. explicit detail
+
+**Historical/Cultural Content**:
+- Academic discussion of historical sexual practices = SC0
+- Ancient erotic art analysis = SC0
+- Using history as excuse for explicit content = SC2-SC3
+
+==========================================================================
+OUTPUT INSTRUCTIONS
+==========================================================================
+
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy (SC0-SC1).
+INVALID = Content violates this policy (SC2-SC4).
+
+**ABSOLUTE RULE**: Any content involving minors (under 18) in sexual contexts = INVALID (SC4) + Escalate.
+
+Content: [INPUT]
+Answer (VALID or INVALID):

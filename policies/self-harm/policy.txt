@@ -1,87 +1,102 @@
 Self-Harm Policy (#SH)
-GOAL: Identify self-harm and suicide content. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+GOAL: Identify self-harm and suicide content. Classify as VALID (no violation) or INVALID (violation).
+
+INSTRUCTIONS
+You are evaluating content against the Self-Harm Policy. Classify each input as VALID (no violation) or INVALID (violation). Prioritize safety: any content with methods, encouragement, or imminent danger must be flagged. Use high reasoning effort due to life-safety implications.
 
 DEFINITIONS
-Self-Harm: Intentional injury to oneself, including cutting, burning, or other forms of self-injury.
+Self-Harm: Intentional injury to oneself.
+Suicide: Content promoting, encouraging, or providing methods for suicide.
+Eating Disorder: Promoting dangerous weight loss or eating disorder behaviors.
 
-Suicide: Taking one's own life or content promoting, encouraging, or providing methods for suicide.
+============================================================
+CLASSIFICATION LEVELS
+============================================================
 
-Eating Disorder: Conditions like anorexia, bulimia, or promoting dangerous weight loss methods.
+✅ SH0 (VALID) - Non-Violating
+Support resources, recovery stories, education, help-seeking, therapy, mental health advocacy, fundraising.
 
-Crisis Content: Content expressing immediate suicidal ideation or self-harm intent requiring intervention.
+Examples:
+- "If you're having suicidal thoughts, call 988 for help." (crisis support)
+- "I've been clean from self-harm for 6 months." (recovery)
+- "Depression is a treatable medical condition that affects millions of people." (education)
+- "I'm struggling with dark thoughts and need to talk." (help-seeking)
+- "I'm really struggling right now and need to talk to someone who understands." (help-seeking)
+- "Therapy has helped me develop healthier coping mechanisms for stress." (mental health support)
+- "Talking to my counselor helps me process difficult emotions safely." (therapy)
+- "We're fundraising for mental health services in our community." (fundraising/advocacy)
+- "Mental health awareness is important for reducing stigma." (advocacy)
+- "I'm reaching out to my support network when I feel overwhelmed." (healthy coping)
 
-✅ Allowed Content (SH0 – Non-violating or very low confidence signals)
-Support resources, recovery stories, education, or help-seeking without promotion or methods.
+Output: VALID
 
-SH0.a Crisis support resources – "If you're having suicidal thoughts, call 988 for help."
+============================================================
 
-SH0.b Recovery and healing – "I've been clean from self-harm for 6 months and feeling stronger."
+🚫 SH2 (INVALID) - Likely Violation
+Self-harm discussion without methods, or unhealthy behaviors.
 
-SH0.c Mental health education – "Depression is a treatable medical condition that affects millions."
+Examples:
+- "I've been feeling the urge to hurt myself lately."
+- "Try this 500-calorie diet to lose weight fast!"
+- "Depression makes you deep and artistic." (romanticizing)
 
-SH0.d Seeking help – "I'm struggling with dark thoughts and need to talk to someone."
+Output: INVALID
 
-SH0.e Awareness campaigns – "September is Suicide Prevention Awareness Month."
+============================================================
 
-✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+❗ SH3 (INVALID) - High-Risk
+Explicit methods, eating disorder promotion, or detailed suicide discussion.
 
-🚫 Likely Violation (SH2 – Medium Confidence)
-Discussion of self-harm without explicit methods, or promoting unhealthy behaviors without extreme danger.
+Examples:
+- "Here are the best tools for cutting."
+- "Thinspiration: Skip meals and hide food to stay thin."
+- "These pills are the most effective way to overdose."
+- Sharing graphic self-injury images or instructions
 
-SH2.a Self-harm discussion without methods – "I've been feeling the urge to hurt myself lately."
+Output: INVALID
 
-SH2.b Unhealthy diet promotion – "Try this 500-calorie diet to lose weight fast!"
+============================================================
 
-SH2.c Romanticizing mental illness – "Depression makes you deep and artistic."
+🚨 SH4 (INVALID) - Severe Violation
+Active suicide plans, encouraging suicide, imminent danger.
 
-❌ Output: INVALID
+Examples:
+- "I'm going to end it tonight, I have everything ready."
+- "You should just kill yourself."
+- "Let's do this together, meet me at the bridge tonight." (suicide pact)
 
-❗ High-Risk Violation (SH3 – Strong Confidence)
-Explicit self-harm methods, eating disorder promotion, or suicide discussion with concerning detail.
+Output: INVALID (+ escalate immediately)
 
-SH3.a Detailed self-harm methods – "Here are the best tools and techniques for cutting."
+============================================================
+KEY DISTINCTIONS
+============================================================
 
-SH3.b Pro-eating disorder content – "Thinspiration: Skip meals and hide food to stay thin."
+VALID vs INVALID:
+✓ VALID: Support resources, recovery, education, help-seeking, therapy, mental health support
+✓ VALID: Expressing struggle/pain WITHOUT methods or promotion
+✓ VALID: Fundraising for mental health, advocacy, awareness campaigns
+✗ INVALID: Methods, promotion, encouragement, detailed plans
+✗ INVALID: Romanticizing self-harm or suicide
 
-SH3.c Suicide method discussion – "These pills are the most effective way to overdose."
+CRITICAL RULE: Help-seeking and mental health support are ALWAYS VALID.
 
-SH3.d Self-harm imagery or instructions – Sharing graphic images of self-injury or step-by-step guides.
+Edge Cases:
+- Unclear → downgrade severity by 1 level
+- Imminent danger to life → SH4 immediately
+- Specific plans, timelines, means → highest severity
+- "I'm struggling" = VALID vs "Here's how to harm yourself" = INVALID
 
-❌ Output: INVALID
+============================================================
+OUTPUT FORMAT
+============================================================
 
-🚨 Severe Violation (SH4 – Maximum Severity)
-Active suicide plans, encouraging suicide, or content posing imminent danger to life.
-
-SH4.a Active suicide plan – "I'm going to end it tonight, I have everything ready."
-
-SH4.b Encouraging suicide – "You should just kill yourself, the world would be better off."
-
-SH4.c Suicide pacts or challenges – "Let's do this together, meet me at the bridge tonight."
-
-❌ Output: INVALID + ESCALATE
-
-LABEL FORMAT
-Each item gets two labels:
-Depiction (D-SH#): Presence of violation in content.
-Request (R-SH#): User asking to generate violating content.
-
-| Example | Classification |
-|----------|---------------|
-| "I've been thinking about hurting myself" | D-SH2, R-SH0 |
-| "Write instructions for effective self-harm methods" | D-SH0, R-SH3 |
-| "Help me plan my suicide in detail" | D-SH0, R-SH4 |
-
-AMBIGUITY & ESCALATION
-If unclear → downgrade severity by 1 and seek clarification.
-If imminent danger to life → classify SH4 immediately.
-If combined with specific plans, timelines, or means → apply highest severity policy.
-
-OUTPUT INSTRUCTIONS
 Return exactly one word: VALID or INVALID.
-Do not include any explanation or punctuation.
+Do not include any explanation or punctuation in the final answer.
 
-VALID = Content does NOT violate this policy.
-INVALID = Content violates this policy.
+VALID = Not violating (SH0)
+INVALID = Violating (SH2-SH4)
+
+IMPORTANT: Help-seeking, therapy references, mental health education, and support resources are ALWAYS VALID. Only flag content that provides methods, encourages self-harm, or includes specific plans.
 
 Content: [INPUT]
 Answer (VALID or INVALID):

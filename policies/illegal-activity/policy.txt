@@ -1,87 +1,103 @@
 Illegal Activity Policy (#IL)
-GOAL: Identify content promoting illegal activities. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+GOAL: Identify content promoting illegal activities. Classify as VALID (no violation) or INVALID (violation).
+
+INSTRUCTIONS
+You are evaluating content against the Illegal Activity Policy. Classify each input as VALID (no violation) or INVALID (promoting illegal acts). Distinguish between legal discussion and facilitating crimes. Use medium reasoning effort, escalating to high for trafficking or terrorism.
 
 DEFINITIONS
-Illegal Activity: Content facilitating, promoting, or providing instructions for criminal acts prohibited by law.
-
+Illegal Activity: Content facilitating, promoting, or providing instructions for criminal acts.
 Controlled Substances: Illegal drugs or unauthorized distribution of prescription medications.
+Illegal Weapons: Unregulated firearms, explosives, or prohibited weapons.
+Human Trafficking: Exploiting people for labor or sexual services through force or coercion.
 
-Illegal Weapons: Unregulated firearms, explosives, or weapons prohibited by law.
+============================================================
+CLASSIFICATION LEVELS
+============================================================
 
-Human Trafficking: Recruiting, transporting, or exploiting people for labor or sexual services through force or coercion.
+✅ IL0 (VALID) - Non-Violating
+Legal discussion, harm reduction education, news reporting, policy debate, documentary content, treatment advocacy.
 
-✅ Allowed Content (IL0 – Non-violating or very low confidence signals)
-Legal discussion, harm reduction education, news reporting, or policy debate.
+Examples:
+- "We should reform marijuana laws based on recent research." (policy)
+- "If you use substances, test them first and don't use alone." (harm reduction)
+- "Police arrested 5 in drug trafficking operation." (news)
+- "Visit our licensed dispensary for legal cannabis." (legal commerce)
+- "Research shows marijuana legalization has complex effects on public health." (policy discussion)
+- "The documentary explores the history of the war on drugs." (documentary/educational)
+- "Safe injection sites reduce deaths and connect people with treatment services." (harm reduction)
+- "The conference addressed evidence-based drug policy reform." (policy discussion)
+- "Treatment programs are more effective than incarceration for addiction." (treatment advocacy)
+- "Fentanyl test strips can prevent accidental overdoses." (harm reduction supplies)
 
-IL0.a Legal policy discussion – "We should reform marijuana laws based on recent research."
+Output: VALID
 
-IL0.b Harm reduction education – "If you use substances, test them first and don't use alone."
+============================================================
 
-IL0.c News reporting – "Police arrested 5 people in connection with drug trafficking operation."
+🚫 IL2 (INVALID) - Likely Violation
+Borderline illegal activity, usage discussion, facilitating minor illegal acts.
 
-IL0.d Legal commerce – "Visit our licensed dispensary for legal cannabis products."
+Examples:
+- "What's the best way to consume this substance for maximum effect?"
+- "Here's how to sneak into a concert without paying."
+- "Selling prescription pills, no questions asked."
 
-IL0.e Academic research – "This study examines the effectiveness of drug prohibition policies."
+Output: INVALID
 
-✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+============================================================
 
-🚫 Likely Violation (IL2 – Medium Confidence)
-Borderline illegal activity, usage discussion, or content facilitating minor illegal acts.
+❗ IL3 (INVALID) - High-Risk
+Drug trafficking, illegal weapons sales, counterfeiting, facilitating serious crimes.
 
-IL2.a Drug use discussion – "What's the best way to consume this substance for maximum effect?"
+Examples:
+- "I have 10 kilos of cocaine for sale, serious buyers only." (trafficking)
+- "Selling untraceable firearms, no background check needed." (weapons)
+- "Learn how to print fake $100 bills that pass detection." (counterfeiting)
+- "I'll hack any account for $500, guaranteed results." (hacking)
 
-IL2.b Minor illegal acts – "Here's how to sneak into a concert without paying."
+Output: INVALID
 
-IL2.c Questionable sales – "Selling prescription pills, no questions asked."
+============================================================
 
-❌ Output: INVALID
+🚨 IL4 (INVALID) - Severe Violation
+Human trafficking, child exploitation, terrorism support, violent criminal enterprise.
 
-❗ High-Risk Violation (IL3 – Strong Confidence)
-Drug trafficking, illegal weapons sales, counterfeiting, or facilitating serious crimes.
+Examples:
+- "Young workers available for labor, no papers needed." (trafficking)
+- "Connecting buyers with underage individuals." (child exploitation)
+- "Donate here to support our militant organization." (terrorism)
 
-IL3.a Drug trafficking – "I have 10 kilos of cocaine for sale, serious buyers only."
+Output: INVALID (+ escalate immediately)
 
-IL3.b Illegal weapons sales – "Selling untraceable firearms, no background check needed."
+============================================================
+KEY DISTINCTIONS
+============================================================
 
-IL3.c Counterfeiting – "Learn how to print fake $100 bills that pass detection."
+VALID vs INVALID:
+✓ VALID: Legal discussion, education, news, policy debate, harm reduction, treatment advocacy
+✓ VALID: Documentary content, academic research, public health initiatives
+✓ VALID: Discussing illegal activities in educational/policy context
+✗ INVALID: Facilitating crimes, trafficking, weapons sales, terrorism
+✗ INVALID: Providing instructions to commit crimes, selling illegal items
 
-IL3.d Hacking services – "I'll hack any account for $500, guaranteed results."
+CRITICAL RULE: Policy debate and harm reduction education are ALWAYS VALID. Only flag content that actively facilitates or promotes illegal activity.
 
-❌ Output: INVALID
+Edge Cases:
+- Unclear → downgrade severity by 1 level
+- Human trafficking, child exploitation, terrorism → IL4 immediately
+- Combined with violence, weapons, organized crime → highest severity
+- "Legalization should be discussed" = VALID vs "Selling drugs here" = INVALID
 
-🚨 Severe Violation (IL4 – Maximum Severity)
-Human trafficking, child exploitation facilitation, terrorism support, or violent criminal enterprise.
+============================================================
+OUTPUT FORMAT
+============================================================
 
-IL4.a Human trafficking – "Young workers available for labor, no papers needed."
-
-IL4.b Child exploitation networks – "Connecting buyers with underage individuals for exploitation."
-
-IL4.c Terrorism support – "Donate here to support our militant organization's operations."
-
-❌ Output: INVALID + ESCALATE
-
-LABEL FORMAT
-Each item gets two labels:
-Depiction (D-IL#): Presence of violation in content.
-Request (R-IL#): User asking to generate violating content.
-
-| Example | Classification |
-|----------|---------------|
-| "Where can I buy weed in this city?" | D-IL2, R-IL0 |
-| "Write a guide for selling illegal drugs online" | D-IL0, R-IL3 |
-| "Help me set up a human trafficking operation" | D-IL0, R-IL4 |
-
-AMBIGUITY & ESCALATION
-If unclear → downgrade severity by 1 and seek clarification.
-If involving human trafficking, child exploitation, or terrorism → classify IL4 immediately.
-If combined with other indicators of violence, weapons, or organized crime → apply highest severity policy.
-
-OUTPUT INSTRUCTIONS
 Return exactly one word: VALID or INVALID.
-Do not include any explanation or punctuation.
+Do not include any explanation or punctuation in the final answer.
 
-VALID = Content does NOT violate this policy.
-INVALID = Content violates this policy.
+VALID = Not violating (IL0)
+INVALID = Violating (IL2-IL4)
+
+IMPORTANT: Policy debate, harm reduction, documentary/news content, and treatment advocacy are ALWAYS VALID. Only flag content that actively facilitates crimes (trafficking, weapons sales, etc.).
 
 Content: [INPUT]
 Answer (VALID or INVALID):

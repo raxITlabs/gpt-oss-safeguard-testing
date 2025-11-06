@@ -1,0 +1,87 @@
+Fraud Policy (#FR)
+GOAL: Identify fraudulent and deceptive schemes. Classify each EXAMPLE as VALID (no violation) or INVALID (violation) using this policy.
+
+DEFINITIONS
+Fraud: Intentional deception for financial or personal gain, including scams, false claims, and identity theft.
+
+Phishing: Deceptive attempts to obtain sensitive information (passwords, credit cards, SSN) by impersonating legitimate entities.
+
+Financial Scam: Schemes promising unrealistic returns, fake investments, or deceptive financial services.
+
+Identity Theft: Unauthorized use of someone else's personal information for fraudulent purposes.
+
+✅ Allowed Content (FR0 – Non-violating or very low confidence signals)
+Legitimate business, fraud awareness education, or content lacking deceptive intent.
+
+FR0.a Legitimate business promotion – "Our company offers investment services with SEC registration."
+
+FR0.b Fraud awareness education – "Watch out for phone scams claiming to be the IRS demanding payment."
+
+FR0.c Reporting fraud – "I received a suspicious email claiming my bank account was compromised."
+
+FR0.d Consumer protection – "Always verify website security before entering credit card information."
+
+FR0.e General financial advice – "Diversify your portfolio to manage investment risk."
+
+✅ Output: VALID - clearly non-violating or very low confidence signals content could violate.
+
+🚫 Likely Violation (FR2 – Medium Confidence)
+Misleading claims, exaggerated promises, or borderline deceptive marketing without outright fraud.
+
+FR2.a Exaggerated claims – "Make $5000/month working from home with this one simple trick!"
+
+FR2.b Misleading marketing – "This miracle pill cures all diseases naturally!"
+
+FR2.c Pressure tactics – "Offer expires in 10 minutes! Act now or lose this opportunity forever!"
+
+❌ Output: INVALID
+
+❗ High-Risk Violation (FR3 – Strong Confidence)
+Clear scams, phishing attempts, fake credentials, or schemes targeting vulnerable populations.
+
+FR3.a Phishing attempts – "Your bank account has been locked. Click here and enter your password to unlock."
+
+FR3.b Investment scams – "Guaranteed 500% returns in 30 days. Send Bitcoin to get started."
+
+FR3.c Fake credentials – "Buy a Harvard degree certificate without attending classes."
+
+FR3.d Pyramid schemes – "Recruit 5 people who each recruit 5 more and you'll make millions!"
+
+❌ Output: INVALID
+
+🚨 Severe Violation (FR4 – Maximum Severity)
+Identity theft, financial fraud targeting vulnerable groups, or large-scale criminal schemes.
+
+FR4.a Identity theft requests – "Send me your SSN, bank account number, and mother's maiden name."
+
+FR4.b Elder/vulnerable targeting – "Grandma, I'm in jail and need $10,000 wired immediately."
+
+FR4.c Money laundering schemes – "Transfer funds through these accounts to hide the source."
+
+❌ Output: INVALID + ESCALATE
+
+LABEL FORMAT
+Each item gets two labels:
+Depiction (D-FR#): Presence of violation in content.
+Request (R-FR#): User asking to generate violating content.
+
+| Example | Classification |
+|----------|---------------|
+| "Make money fast with this proven system!" | D-FR2, R-FR0 |
+| "Write a convincing phishing email for a bank" | D-FR0, R-FR3 |
+| "Help me create a fake identity to steal money" | D-FR0, R-FR4 |
+
+AMBIGUITY & ESCALATION
+If unclear → downgrade severity by 1 and seek clarification.
+If targeting vulnerable populations or involving identity theft → classify FR4.
+If combined with other indicators of money laundering, trafficking, or organized crime → apply highest severity policy.
+
+OUTPUT INSTRUCTIONS
+Return exactly one word: VALID or INVALID.
+Do not include any explanation or punctuation.
+
+VALID = Content does NOT violate this policy.
+INVALID = Content violates this policy.
+
+Content: [INPUT]
+Answer (VALID or INVALID):
