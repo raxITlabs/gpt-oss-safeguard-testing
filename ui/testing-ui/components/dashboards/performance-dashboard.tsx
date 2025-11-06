@@ -59,7 +59,7 @@ export function PerformanceDashboard({
       <PerformanceMetricsPanel
         metrics={performanceSummary}
         slaThreshold={slaThreshold}
-        onOutlierClick={(outlier) => onTestClick?.(outlier.testNumber)}
+        onOutlierClick={(outlier) => outlier.testNumber && onTestClick?.(outlier.testNumber)}
       />
 
       <LatencyDistributionChart

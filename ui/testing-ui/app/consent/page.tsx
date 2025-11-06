@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ConsentForm } from "@/components/consent/consent-form";
 import { SafetyWarning } from "@/components/consent/safety-warning";
@@ -7,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { ConsentFormData } from "@/lib/consent-validation";
 import { ShieldAlert } from "lucide-react";
 
-export default function ConsentPage() {
+function ConsentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo") || "/";
@@ -89,5 +90,19 @@ export default function ConsentPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ConsentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ConsentPageContent />
+    </Suspense>
   );
 }

@@ -99,8 +99,6 @@ export interface InferenceEvent {
   cost_usd?: number;
   latency_ms?: number;
   content?: string;
-  expected?: string;
-  model_output?: string;
   passed?: boolean;
 
   // Old format fields (nested structure) - for backward compatibility
@@ -109,7 +107,6 @@ export interface InferenceEvent {
   test_result?: TestResult;
 
   // Common fields
-  reasoning?: string;
   reasoning_validation?: ReasoningValidation;
 }
 
@@ -150,7 +147,7 @@ export interface SessionEnd {
 }
 
 export interface FailureDetail {
-  test_name: string;
+  test_name: string | undefined;
   expected: string;
   actual: string;
 }

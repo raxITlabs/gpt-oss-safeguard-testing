@@ -105,8 +105,8 @@ export interface LatencyPercentiles {
 
 export interface TestOutlier {
   test: InferenceEvent;
-  testNumber: number;
-  testName: string;
+  testNumber: number | undefined;
+  testName: string | undefined;
   latency: number;
   deviationFromMean: number;
   category: string;
@@ -147,8 +147,8 @@ export interface LatencyTokenCorrelation {
 }
 
 export interface LatencyTokenPoint {
-  testNumber: number;
-  testName: string;
+  testNumber: number | undefined;
+  testName: string | undefined;
   tokens: number;
   latency: number;
   category: string;
