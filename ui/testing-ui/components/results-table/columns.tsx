@@ -11,6 +11,7 @@ import { MetricsCell } from "./cells/metrics-cell";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { analyzeFailure } from "@/lib/failure-analyzer";
+import { extractPolicy, parsePolicy, getPolicyCategory } from "@/lib/policy-utils";
 
 export function createColumns(strictPolicyValidation: boolean): ColumnDef<InferenceEvent>[] {
   return [
@@ -55,7 +56,26 @@ export function createColumns(strictPolicyValidation: boolean): ColumnDef<Infere
           </Button>
         );
       },
-      cell: ({ row }) => <TestInfoCell inference={row.original} />,
+      cell: ({ row, table }) => {
+        // Get previous row's category for comparison
+        const rows = table.getRowModel().rows;
+        const currentIndex = rows.findIndex(r => r.id === row.id);
+        const previousRow = currentIndex > 0 ? rows[currentIndex - 1] : null;
+        
+        let previousCategory: string | null = null;
+        if (previousRow) {
+          const prevPolicyText = extractPolicy(previousRow.original);
+          const prevPolicy = prevPolicyText ? parsePolicy(prevPolicyText) : null;
+          previousCategory = prevPolicy ? getPolicyCategory(prevPolicy.code) : null;
+        }
+        
+        return (
+          <TestInfoCell 
+            inference={row.original} 
+            previousCategory={previousCategory}
+          />
+        );
+      },
       enableSorting: true,
       size: 300,
       minSize: 250,

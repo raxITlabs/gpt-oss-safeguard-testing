@@ -5,24 +5,27 @@
  * Shows cost distribution by category with pie charts and bar charts
  */
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { MetricCard } from "@/components/ui/metric-card";
 import {
-  PieChart,
-  Pie,
+  ChartContainer,
+  ChartConfig,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
   Cell,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
-import { DollarSign, TrendingUp, TrendingDown } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, Award } from "lucide-react";
 import type { CategoryCostBreakdown, TokenEconomics } from "@/types/analytics";
-import { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 export interface CostBreakdownProps {
   categoryBreakdown: CategoryCostBreakdown[];
@@ -49,15 +52,30 @@ function getChartColors(): string[] {
 const COLORS = getChartColors();
 
 export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: CostBreakdownProps) {
-  // Prepare pie chart data
-  const pieData = useMemo(() => {
-    return categoryBreakdown.map((cat, index) => ({
-      name: cat.category,
-      value: cat.totalCost,
-      percentage: (cat.totalCost / categoryBreakdown.reduce((sum, c) => sum + c.totalCost, 0)) * 100,
-      color: COLORS[index % COLORS.length],
-    }));
-  }, [categoryBreakdown]);
+  const totalCost = categoryBreakdown.reduce((sum, cat) => sum + cat.totalCost, 0);
+
+  // Dotted background pattern component
+  const DottedBackgroundPattern = () => {
+    return (
+      <pattern
+        id="highlighted-pattern-dots"
+        x="0"
+        y="0"
+        width="10"
+        height="10"
+        patternUnits="userSpaceOnUse"
+      >
+        <circle
+          className="dark:text-muted/40 text-muted"
+          cx="2"
+          cy="2"
+          r="1"
+          fill="currentColor"
+        />
+      </pattern>
+    );
+  };
+
 
   // Prepare bar chart data
   const barData = useMemo(() => {
@@ -71,12 +89,56 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
     }));
   }, [categoryBreakdown]);
 
+  // Interactive state for bar chart
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const activeData = useMemo(() => {
+    if (activeIndex === null) return null;
+    return barData[activeIndex];
+  }, [activeIndex, barData]);
+
+  // Create chart config for bar chart
+  const barChartConfig = useMemo(() => {
+    const config: ChartConfig = {
+      avgCost: {
+        label: "Average Cost",
+      },
+    };
+    
+    categoryBreakdown.forEach((cat, index) => {
+      const categoryKey = cat.category.toLowerCase().replace(/[^a-z0-9]/g, "-");
+      config[categoryKey] = {
+        label: cat.category,
+        color: `var(--chart-${(index % 8) + 1})`,
+      };
+    });
+    
+    return config;
+  }, [categoryBreakdown]);
+
   // Sort by total cost for the table
   const sortedByTotalCost = useMemo(() => {
     return [...categoryBreakdown].sort((a, b) => b.totalCost - a.totalCost);
   }, [categoryBreakdown]);
 
-  const totalCost = categoryBreakdown.reduce((sum, cat) => sum + cat.totalCost, 0);
+
+  // Get bar chart insights (highest and lowest average cost)
+  const barChartInsights = useMemo(() => {
+    if (barData.length === 0) return null;
+    const sortedByAvgCost = [...barData].sort((a, b) => b.avgCost - a.avgCost);
+    const highest = sortedByAvgCost[0];
+    const lowest = sortedByAvgCost[sortedByAvgCost.length - 1];
+    return {
+      highest: {
+        category: highest.category,
+        cost: highest.avgCost / 1000000,
+      },
+      lowest: {
+        category: lowest.category,
+        cost: lowest.avgCost / 1000000,
+      },
+    };
+  }, [barData]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -108,100 +170,69 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
     <div className={`space-y-6 ${className}`}>
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Cost
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${totalCost.toFixed(6)}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Across {categoryBreakdown.length} categories
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Total Cost"
+          value={`$${totalCost.toFixed(6)}`}
+          subtitle={`Across ${categoryBreakdown.length} categories`}
+          icon={<DollarSign className="h-4 w-4" />}
+        />
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Most Expensive Category
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{sortedByTotalCost[0]?.category}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              ${sortedByTotalCost[0]?.totalCost.toFixed(6)} total
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Most Expensive Category"
+          value={sortedByTotalCost[0]?.category || "N/A"}
+          subtitle={`$${sortedByTotalCost[0]?.totalCost.toFixed(6)} total`}
+          icon={<TrendingUp className="h-4 w-4" />}
+        />
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Best Value Category
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {[...categoryBreakdown]
-                .filter(c => c.passRate > 80)
-                .sort((a, b) => a.costPerCorrectTest - b.costPerCorrectTest)[0]?.category || "N/A"}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Low cost + high accuracy
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Best Value Category"
+          value={
+            [...categoryBreakdown]
+              .filter(c => c.passRate > 80)
+              .sort((a, b) => a.costPerCorrectTest - b.costPerCorrectTest)[0]?.category || "N/A"
+          }
+          subtitle="Low cost + high accuracy"
+          icon={<Award className="h-4 w-4" />}
+        />
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cost Distribution by Category</CardTitle>
-            <CardDescription>Percentage of total cost by category</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
-                  outerRadius={100}
-                  fill={COLORS[0]}
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 gap-6">
         {/* Bar Chart - Average Cost */}
-        <Card>
-          <CardHeader>
+        <Card className="flex flex-col">
+          <CardHeader className="items-center pb-0">
             <CardTitle>Average Cost per Test</CardTitle>
-            <CardDescription>Cost comparison across categories</CardDescription>
+            <CardDescription>
+              {activeData
+                ? `${activeData.category}: $${(activeData.avgCost / 1000000).toFixed(6)}`
+                : "Cost comparison across categories"}
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+          <CardContent className="flex-1 pb-0">
+            <ChartContainer config={barChartConfig}>
+              <BarChart
+                accessibilityLayer
+                data={barData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="85%"
+                  fill="url(#highlighted-pattern-dots)"
+                />
+                <defs>
+                  <DottedBackgroundPattern />
+                </defs>
                 <XAxis
                   dataKey="category"
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
                   tick={{ fontSize: 12 }}
+                  tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <YAxis
                   label={{
@@ -212,15 +243,62 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
                   }}
                   tick={{ fontSize: 12 }}
                 />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="avgCost" fill={COLORS[0]} radius={[8, 8, 0, 0]}>
-                  {barData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      hideLabel
+                      nameKey="category"
+                      formatter={(value, name, item) => {
+                        const categoryName = item?.payload?.category || name || "Unknown";
+                        return (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{categoryName}:</span>
+                            <span className="text-foreground font-mono font-medium tabular-nums">
+                              ${(Number(value) / 1000000).toFixed(6)}
+                            </span>
+                          </div>
+                        );
+                      }}
+                    />
+                  }
+                />
+                <Bar dataKey="avgCost" radius={4}>
+                  {barData.map((entry, index) => {
+                    const categoryKey = entry.category.toLowerCase().replace(/[^a-z0-9]/g, "-");
+                    return (
+                      <Cell
+                        className="duration-200"
+                        key={`cell-${index}`}
+                        fill={`var(--color-${categoryKey})`}
+                        fillOpacity={
+                          activeIndex === null ? 1 : activeIndex === index ? 1 : 0.3
+                        }
+                        stroke={
+                          activeIndex === index
+                            ? `var(--color-${categoryKey})`
+                            : ""
+                        }
+                        onMouseEnter={() => setActiveIndex(index)}
+                      />
+                    );
+                  })}
                 </Bar>
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
+          {barChartInsights && (
+            <CardFooter className="flex-col gap-2 text-sm">
+              <div className="flex items-center gap-2 leading-none font-medium">
+                <TrendingUp className="h-4 w-4" />
+                Highest: <span className="font-semibold">{barChartInsights.highest.category}</span> (${barChartInsights.highest.cost.toFixed(6)}) | 
+                Lowest: <span className="font-semibold">{barChartInsights.lowest.category}</span> (${barChartInsights.lowest.cost.toFixed(6)})
+              </div>
+              <div className="text-muted-foreground leading-none">
+                Showing average cost per test across all categories
+              </div>
+            </CardFooter>
+          )}
         </Card>
       </div>
 

@@ -67,10 +67,17 @@ export interface Response {
 export interface InferenceEvent {
   event_type: "inference";
   timestamp: string;
-  test_number: number;
-  test_name: string;
+  test_number?: number;  // Made optional for backward compatibility
+  test_name?: string;    // Made optional for backward compatibility
+  test_id?: string;      // Added for fallback display
   test_type?: string;
   category?: string;
+
+  // Multi-turn specific fields for fallback display
+  conversation_id?: string;
+  turn_number?: number;
+  attack_pattern?: string;
+
   request: Request;
   response: Response;
 

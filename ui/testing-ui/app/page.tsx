@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, Database, DollarSign, Activity, AlertTriangle, FileText, Settings } from "lucide-react";
@@ -28,6 +27,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<TestCategory | "all">("all");
   const [selectedTestType, setSelectedTestType] = useState<string | "all">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "passed" | "failed">("all");
+  const [selectedTab, setSelectedTab] = useState<"results" | "cost" | "performance" | "failures">("results");
 
   // Fetch test data (always use merged mode)
   useEffect(() => {
@@ -306,33 +306,116 @@ export default function Home() {
               <AttackScenarioSummary inferences={testData.inferences} strictPolicyValidation={strictPolicyValidation} />
             </div>
 
-            {/* Main Dashboard Tabs */}
-            <Tabs defaultValue="results" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
-                <TabsTrigger value="results" className="gap-2">
-                  <FileText className="h-4 w-4" />
-                  <span className="hidden sm:inline">Test Results</span>
-                  <span className="sm:hidden">Results</span>
-                </TabsTrigger>
-                <TabsTrigger value="cost" className="gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="hidden sm:inline">Cost Analysis</span>
-                  <span className="sm:hidden">Cost</span>
-                </TabsTrigger>
-                <TabsTrigger value="performance" className="gap-2">
-                  <Activity className="h-4 w-4" />
-                  <span className="hidden sm:inline">Performance</span>
-                  <span className="sm:hidden">Perf</span>
-                </TabsTrigger>
-                <TabsTrigger value="failures" className="gap-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span className="hidden sm:inline">Failure Analysis</span>
-                  <span className="sm:hidden">Failures</span>
-                </TabsTrigger>
-              </TabsList>
+            {/* Main Dashboard Tabs - Pill Style */}
+            <nav
+              className="flex items-center gap-2 flex-wrap justify-center"
+              role="navigation"
+              aria-label="Main dashboard navigation"
+            >
+              <Badge
+                role="button"
+                tabIndex={0}
+                variant={selectedTab === "results" ? "default" : "outline"}
+                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                           hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
+                           active:scale-[0.97]
+                           focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-ring focus-visible:ring-offset-2
+                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                aria-pressed={selectedTab === "results"}
+                aria-label="View test results"
+                onClick={() => setSelectedTab("results")}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedTab("results");
+                  }
+                }}
+              >
+                <FileText className="h-4 w-4" />
+                <span className="hidden sm:inline">Test Results</span>
+                <span className="sm:hidden">Results</span>
+              </Badge>
 
-              {/* Test Results Tab */}
-              <TabsContent value="results" className="mt-6">
+              <Badge
+                role="button"
+                tabIndex={0}
+                variant={selectedTab === "cost" ? "default" : "outline"}
+                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                           hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
+                           active:scale-[0.97]
+                           focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-ring focus-visible:ring-offset-2
+                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                aria-pressed={selectedTab === "cost"}
+                aria-label="View cost analysis"
+                onClick={() => setSelectedTab("cost")}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedTab("cost");
+                  }
+                }}
+              >
+                <DollarSign className="h-4 w-4" />
+                <span className="hidden sm:inline">Cost Analysis</span>
+                <span className="sm:hidden">Cost</span>
+              </Badge>
+
+              <Badge
+                role="button"
+                tabIndex={0}
+                variant={selectedTab === "performance" ? "default" : "outline"}
+                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                           hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
+                           active:scale-[0.97]
+                           focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-ring focus-visible:ring-offset-2
+                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                aria-pressed={selectedTab === "performance"}
+                aria-label="View performance analysis"
+                onClick={() => setSelectedTab("performance")}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedTab("performance");
+                  }
+                }}
+              >
+                <Activity className="h-4 w-4" />
+                <span className="hidden sm:inline">Performance</span>
+                <span className="sm:hidden">Perf</span>
+              </Badge>
+
+              <Badge
+                role="button"
+                tabIndex={0}
+                variant={selectedTab === "failures" ? "default" : "outline"}
+                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                           hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
+                           active:scale-[0.97]
+                           focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-ring focus-visible:ring-offset-2
+                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                aria-pressed={selectedTab === "failures"}
+                aria-label="View failure analysis"
+                onClick={() => setSelectedTab("failures")}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedTab("failures");
+                  }
+                }}
+              >
+                <AlertTriangle className="h-4 w-4" />
+                <span className="hidden sm:inline">Failure Analysis</span>
+                <span className="sm:hidden">Failures</span>
+              </Badge>
+            </nav>
+
+            {/* Content based on selected tab */}
+            <div className="mt-6">
+              {selectedTab === "results" && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Test Results</CardTitle>
@@ -345,10 +428,9 @@ export default function Home() {
                     <ResultsTable inferences={filteredInferences} externalStatusFilter={statusFilter} strictPolicyValidation={strictPolicyValidation} />
                   </CardContent>
                 </Card>
-              </TabsContent>
+              )}
 
-              {/* Cost Analysis Tab */}
-              <TabsContent value="cost" className="mt-6">
+              {selectedTab === "cost" && (
                 <CostAnalysisDashboard
                   inferences={filteredInferences}
                   strictPolicyValidation={strictPolicyValidation}
@@ -357,10 +439,9 @@ export default function Home() {
                     console.log("View test:", testNumber);
                   }}
                 />
-              </TabsContent>
+              )}
 
-              {/* Performance Tab */}
-              <TabsContent value="performance" className="mt-6">
+              {selectedTab === "performance" && (
                 <PerformanceDashboard
                   inferences={filteredInferences}
                   defaultSLAThreshold={1000}
@@ -368,10 +449,9 @@ export default function Home() {
                     console.log("View test:", testNumber);
                   }}
                 />
-              </TabsContent>
+              )}
 
-              {/* Failure Analysis Tab */}
-              <TabsContent value="failures" className="mt-6">
+              {selectedTab === "failures" && (
                 <FailureAnalysisDashboard
                   inferences={filteredInferences}
                   strictPolicyValidation={strictPolicyValidation}
@@ -379,8 +459,8 @@ export default function Home() {
                     console.log("View test:", testNumber);
                   }}
                 />
-              </TabsContent>
-            </Tabs>
+              )}
+            </div>
           </>
         )}
 

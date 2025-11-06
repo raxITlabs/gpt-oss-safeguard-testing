@@ -166,6 +166,12 @@ export async function getLogFiles(): Promise<LogFileInfo[]> {
         }
       }
 
+      // Normalize category name to handle legacy filename formats
+      // Strip 'safeguard_test_' prefix and convert underscores to hyphens
+      if (category) {
+        category = category.replace(/^safeguard_test_/, '').replace(/_/g, '-');
+      }
+
       // Extract timestamp from filename
       // Format: safeguard_test_spam_20251102_002342.jsonl
       const timestampMatch = filename.match(/(\d{8}_\d{6})/);

@@ -111,8 +111,13 @@ export function prepareCostAccuracyScatterData(
 
 /**
  * Calculate cost efficiency metrics
+ * @param inferences - Array of inference events
+ * @param strictPolicyValidation - Whether to use strict policy validation (respects missing/hallucinated policy codes)
  */
-export function calculateCostEfficiency(inferences: InferenceEvent[]): CostEfficiencyMetrics {
+export function calculateCostEfficiency(
+  inferences: InferenceEvent[],
+  strictPolicyValidation: boolean = true
+): CostEfficiencyMetrics {
   if (inferences.length === 0) {
     return {
       costPerTest: 0,
@@ -129,21 +134,24 @@ export function calculateCostEfficiency(inferences: InferenceEvent[]): CostEffic
   const totalCost = inferences.reduce((sum, inf) => sum + getCost(inf), 0);
   const totalTokens = inferences.reduce((sum, inf) => sum + getTokens(inf).total, 0);
 
-  const passedTests = inferences.filter(inf => getPassed(inf));
-  const failedTests = inferences.filter(inf => !getPassed(inf));
+  // Use analyzeFailure to determine true correctness (respects test type and strict mode)
+  // For baseline tests: analyzeFailure() === null means test passed (correct)
+  // For attack tests: analyzeFailure() === null means attack was blocked (correct)
+  const correctTests = inferences.filter(inf => analyzeFailure(inf, strictPolicyValidation) === null);
+  const incorrectTests = inferences.filter(inf => analyzeFailure(inf, strictPolicyValidation) !== null);
 
-  const costOfPassedTests = passedTests.reduce((sum, inf) => sum + getCost(inf), 0);
-  const costOfFailedTests = failedTests.reduce((sum, inf) => sum + getCost(inf), 0);
+  const costOfCorrectTests = correctTests.reduce((sum, inf) => sum + getCost(inf), 0);
+  const costOfIncorrectTests = incorrectTests.reduce((sum, inf) => sum + getCost(inf), 0);
 
   return {
     costPerTest: totalCost / inferences.length,
-    costPerCorrectTest: passedTests.length > 0 ? costOfPassedTests / passedTests.length : 0,
-    costPerFailedTest: failedTests.length > 0 ? costOfFailedTests / failedTests.length : 0,
+    costPerCorrectTest: correctTests.length > 0 ? costOfCorrectTests / correctTests.length : 0,
+    costPerFailedTest: incorrectTests.length > 0 ? costOfIncorrectTests / incorrectTests.length : 0,
     costPer1000Tokens: totalTokens > 0 ? (totalCost / totalTokens) * 1000 : 0,
     totalCost,
     totalTests: inferences.length,
-    passedTests: passedTests.length,
-    failedTests: failedTests.length,
+    passedTests: correctTests.length,
+    failedTests: incorrectTests.length,
   };
 }
 
@@ -233,7 +241,7 @@ export function calculateBudgetProjections(
   // Determine user impact
   let estimatedUserImpact = "Excellent UX";
   if (weightedAvgLatency > 1000) {
-    estimatedUserImpact = "⚠️ Noticeable delay - consider optimization";
+    estimatedUserImpact = "Noticeable delay - consider optimization";
   } else if (weightedAvgLatency > 700) {
     estimatedUserImpact = "Acceptable but could be faster";
   } else if (weightedAvgLatency > 500) {
@@ -354,11 +362,16 @@ export function analyzeTokenEconomics(inferences: InferenceEvent[]): TokenEconom
 
 /**
  * Identify cost optimization opportunities
+ * @param inferences - Array of inference events
+ * @param strictPolicyValidation - Whether to use strict policy validation (respects missing/hallucinated policy codes)
  */
-export function identifyOptimizationOpportunities(inferences: InferenceEvent[]): OptimizationOpportunity[] {
+export function identifyOptimizationOpportunities(
+  inferences: InferenceEvent[],
+  strictPolicyValidation: boolean = true
+): OptimizationOpportunity[] {
   const opportunities: OptimizationOpportunity[] = [];
   const tokenEconomics = analyzeTokenEconomics(inferences);
-  const costEfficiency = calculateCostEfficiency(inferences);
+  const costEfficiency = calculateCostEfficiency(inferences, strictPolicyValidation);
 
   // Opportunity 1: Prompt length reduction
   const highPromptTokenTests = inferences.filter(inf => getTokens(inf).prompt > 1200);

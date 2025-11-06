@@ -6,7 +6,6 @@
  */
 
 import { useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CostAccuracyScatter } from "./cost-accuracy-scatter";
 import { BudgetCalculator } from "./budget-calculator";
 import { CostBreakdown } from "./cost-breakdown";
@@ -40,12 +39,15 @@ export function CostAnalysisDashboard({
     () => prepareCostAccuracyScatterData(inferences, strictPolicyValidation),
     [inferences, strictPolicyValidation]
   );
-  const costEfficiency = useMemo(() => calculateCostEfficiency(inferences), [inferences]);
+  const costEfficiency = useMemo(
+    () => calculateCostEfficiency(inferences, strictPolicyValidation),
+    [inferences, strictPolicyValidation]
+  );
   const categoryBreakdown = useMemo(() => analyzeCostByCategory(inferences), [inferences]);
   const tokenEconomics = useMemo(() => analyzeTokenEconomics(inferences), [inferences]);
   const optimizationOpportunities = useMemo(
-    () => identifyOptimizationOpportunities(inferences),
-    [inferences]
+    () => identifyOptimizationOpportunities(inferences, strictPolicyValidation),
+    [inferences, strictPolicyValidation]
   );
 
   return (
@@ -89,38 +91,23 @@ export function CostAnalysisDashboard({
         />
       </div>
 
-      {/* Tabbed Content */}
-      <Tabs defaultValue="trade-off" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="trade-off">Cost-Accuracy</TabsTrigger>
-          <TabsTrigger value="breakdown">Cost Breakdown</TabsTrigger>
-          <TabsTrigger value="calculator">Budget Calculator</TabsTrigger>
-          <TabsTrigger value="optimization">Optimization</TabsTrigger>
-        </TabsList>
+      {/* All content sections stacked vertically */}
+      <div className="space-y-6">
+        <CostAccuracyScatter
+          data={scatterData}
+          onPointClick={(point) => onTestClick?.(point.testNumber)}
+          strictPolicyValidation={strictPolicyValidation}
+        />
 
-        <TabsContent value="trade-off" className="mt-6">
-          <CostAccuracyScatter
-            data={scatterData}
-            onPointClick={(point) => onTestClick?.(point.testNumber)}
-            strictPolicyValidation={strictPolicyValidation}
-          />
-        </TabsContent>
+        <CostBreakdown
+          categoryBreakdown={categoryBreakdown}
+          tokenEconomics={tokenEconomics}
+        />
 
-        <TabsContent value="breakdown" className="mt-6">
-          <CostBreakdown
-            categoryBreakdown={categoryBreakdown}
-            tokenEconomics={tokenEconomics}
-          />
-        </TabsContent>
+        <BudgetCalculator inferences={inferences} />
 
-        <TabsContent value="calculator" className="mt-6">
-          <BudgetCalculator inferences={inferences} />
-        </TabsContent>
-
-        <TabsContent value="optimization" className="mt-6">
-          <OptimizationPanel opportunities={optimizationOpportunities} />
-        </TabsContent>
-      </Tabs>
+        <OptimizationPanel opportunities={optimizationOpportunities} />
+      </div>
     </div>
   );
 }
@@ -217,10 +204,10 @@ function OptimizationPanel({ opportunities }: { opportunities: ReturnType<typeof
 
             {opp.risk !== "low" && (
               <div className="rounded-lg border border-[color:var(--status-warning)] bg-[color:var(--status-warning-bg)] p-3">
-                <div className="text-sm font-medium text-[color:var(--status-warning)]">
-                  ⚠️ Risk Assessment
+                <div className="text-sm font-medium text-foreground">
+                  Risk Assessment
                 </div>
-                <div className="text-xs text-[color:var(--status-warning)] opacity-80 mt-1">
+                <div className="text-xs text-foreground opacity-80 mt-1">
                   {opp.riskDescription}
                 </div>
               </div>

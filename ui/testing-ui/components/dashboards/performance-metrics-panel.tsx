@@ -84,159 +84,211 @@ export function PerformanceMetricsPanel({
         />
       </div>
 
-      {/* Additional Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard
-          title="Average Latency"
-          value={`${Math.round(latency.mean)}ms`}
-          icon={<TrendingUp className="h-4 w-4" />}
-        />
-
-        <MetricCard
-          title="Minimum Latency"
-          value={`${Math.round(latency.min)}ms`}
-          subtitle="Best case"
-          status="excellent"
-        />
-
-        <MetricCard
-          title="Maximum Latency"
-          value={`${Math.round(latency.max)}ms`}
-          subtitle="Worst case"
-          status={latency.max > slaThreshold * 2 ? "critical" : "warning"}
-        />
-
-        <MetricCard
-          title="Latency Range"
-          value={`${Math.round(latency.max - latency.min)}ms`}
-          subtitle="Spread"
-          description="Difference between fastest and slowest"
-        />
-      </div>
-
-      {/* SLA Compliance Card */}
-      {sla && (
-        <Card className={
-          sla.compliancePercentage >= 95
-            ? "border-[color:var(--status-success)]"
-            : sla.compliancePercentage >= 90
-            ? "border-[color:var(--status-info)]"
-            : "border-[color:var(--status-error)]"
-        }>
+      {/* Latency Statistics & SLA Compliance */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Latency Statistics */}
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>SLA Compliance</span>
-              <Badge
-                variant={
-                  sla.compliancePercentage >= 95
-                    ? "default"
-                    : sla.compliancePercentage >= 90
-                    ? "secondary"
-                    : "destructive"
-                }
-                className="text-lg px-3 py-1"
-              >
-                {sla.compliancePercentage.toFixed(1)}%
-              </Badge>
-            </CardTitle>
-            <CardDescription>
-              Target: {sla.threshold}ms response time
-            </CardDescription>
+            <CardTitle>Latency Statistics</CardTitle>
+            <CardDescription>Additional performance metrics</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <div className="text-muted-foreground mb-1">Within SLA</div>
-                <div className="text-2xl font-bold text-[color:var(--status-success)]">
-                  {sla.testsWithinSLA}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <TrendingUp className="h-4 w-4" />
+                  <span>Average Latency</span>
                 </div>
-                <div className="text-xs text-muted-foreground">tests</div>
+                <div className="text-2xl font-bold text-foreground">{Math.round(latency.mean)}ms</div>
               </div>
 
-              <div>
-                <div className="text-muted-foreground mb-1">Violations</div>
-                <div className="text-2xl font-bold text-[color:var(--status-error)]">
-                  {sla.testsViolatingSLA}
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>Minimum Latency</span>
+                  <Badge variant="outline" className="text-xs">Best case</Badge>
                 </div>
-                <div className="text-xs text-muted-foreground">tests</div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-[color:var(--status-success)] shrink-0" />
+                  <div className="text-2xl font-bold text-foreground">{Math.round(latency.min)}ms</div>
+                </div>
               </div>
 
-              <div>
-                <div className="text-muted-foreground mb-1">Avg Violation</div>
-                <div className="text-2xl font-bold text-[color:var(--status-warning)]">
-                  +{Math.round(sla.avgViolationAmount)}ms
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>Maximum Latency</span>
+                  <Badge 
+                    variant={latency.max > slaThreshold * 2 ? "destructive" : "secondary"} 
+                    className="text-xs"
+                  >
+                    Worst case
+                  </Badge>
                 </div>
-                <div className="text-xs text-muted-foreground">over threshold</div>
+                <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full shrink-0 ${
+                    latency.max > slaThreshold * 2 
+                      ? "bg-[color:var(--status-error)]" 
+                      : "bg-[color:var(--status-warning)]"
+                  }`} />
+                  <div className="text-2xl font-bold text-foreground">{Math.round(latency.max)}ms</div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-sm text-muted-foreground">Latency Range</div>
+                <div className="text-2xl font-bold text-foreground">{Math.round(latency.max - latency.min)}ms</div>
+                <div className="text-xs text-muted-foreground">Spread</div>
               </div>
             </div>
           </CardContent>
         </Card>
-      )}
+
+        {/* SLA Compliance Card */}
+        {sla && (
+          <Card className={
+            sla.compliancePercentage >= 95
+              ? "border-[color:var(--status-success)]"
+              : sla.compliancePercentage >= 90
+              ? "border-[color:var(--status-info)]"
+              : "border-[color:var(--status-error)]"
+          }>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>SLA Compliance</CardTitle>
+                  <CardDescription className="mt-1">Target: {sla.threshold}ms response time</CardDescription>
+                </div>
+                <Badge
+                  variant={
+                    sla.compliancePercentage >= 95
+                      ? "default"
+                      : sla.compliancePercentage >= 90
+                      ? "secondary"
+                      : "destructive"
+                  }
+                  className="text-lg px-3 py-1"
+                >
+                  {sla.compliancePercentage.toFixed(1)}%
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <div className="text-muted-foreground mb-1 text-xs">Within SLA</div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-[color:var(--status-success)] shrink-0" />
+                    <div className="text-xl font-bold text-foreground">
+                      {sla.testsWithinSLA}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">tests</div>
+                </div>
+
+                <div>
+                  <div className="text-muted-foreground mb-1 text-xs">Violations</div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-[color:var(--status-error)] shrink-0" />
+                    <div className="text-xl font-bold text-foreground">
+                      {sla.testsViolatingSLA}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">tests</div>
+                </div>
+
+                <div>
+                  <div className="text-muted-foreground mb-1 text-xs">Avg Violation</div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-[color:var(--status-warning)] shrink-0" />
+                    <div className="text-xl font-bold text-foreground">
+                      +{Math.round(sla.avgViolationAmount)}ms
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">over threshold</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Extreme Values */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-[color:var(--status-success)] border-l-4">
-          <CardHeader>
-            <CardTitle className="text-base">Fastest Test</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{fastestTest.testName}</span>
-                <Badge variant="outline">#{fastestTest.testNumber}</Badge>
+      <Card>
+        <CardHeader>
+          <CardTitle>Extreme Values</CardTitle>
+          <CardDescription>Fastest and slowest test performance</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Fastest Test */}
+            <div className="space-y-3 border-r-0 md:border-r md:pr-6">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-[color:var(--status-success)]" />
+                <CardTitle className="text-base text-foreground">Fastest Test</CardTitle>
               </div>
-              <div className="text-3xl font-bold text-[color:var(--status-success)]">
-                {Math.round(fastestTest.latency)}ms
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground pt-2 border-t">
-                <div>
-                  <div>Category</div>
-                  <div className="font-medium text-foreground">{fastestTest.category}</div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">{fastestTest.testName}</span>
+                  <Badge variant="outline">#{fastestTest.testNumber}</Badge>
                 </div>
-                <div>
-                  <div>Tokens</div>
-                  <div className="font-medium text-foreground">{fastestTest.tokens}</div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[color:var(--status-success)] shrink-0" />
+                  <div className="text-3xl font-bold text-foreground">
+                    {Math.round(fastestTest.latency)}ms
+                  </div>
                 </div>
-                <div>
-                  <div>Cost</div>
-                  <div className="font-medium text-foreground">${fastestTest.cost.toFixed(6)}</div>
+                <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground pt-2 border-t">
+                  <div>
+                    <div>Category</div>
+                    <div className="font-medium text-foreground">{fastestTest.category}</div>
+                  </div>
+                  <div>
+                    <div>Tokens</div>
+                    <div className="font-medium text-foreground">{fastestTest.tokens}</div>
+                  </div>
+                  <div>
+                    <div>Cost</div>
+                    <div className="font-medium text-foreground">${fastestTest.cost.toFixed(6)}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="border-[color:var(--status-error)] border-l-4">
-          <CardHeader>
-            <CardTitle className="text-base">Slowest Test</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{slowestTest.testName}</span>
-                <Badge variant="outline">#{slowestTest.testNumber}</Badge>
+            {/* Slowest Test */}
+            <div className="space-y-3 md:pl-6">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-[color:var(--status-error)]" />
+                <CardTitle className="text-base text-foreground">Slowest Test</CardTitle>
               </div>
-              <div className="text-3xl font-bold text-[color:var(--status-error)]">
-                {Math.round(slowestTest.latency)}ms
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground pt-2 border-t">
-                <div>
-                  <div>Category</div>
-                  <div className="font-medium text-foreground">{slowestTest.category}</div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">{slowestTest.testName}</span>
+                  <Badge variant="outline">#{slowestTest.testNumber}</Badge>
                 </div>
-                <div>
-                  <div>Tokens</div>
-                  <div className="font-medium text-foreground">{slowestTest.tokens}</div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[color:var(--status-error)] shrink-0" />
+                  <div className="text-3xl font-bold text-foreground">
+                    {Math.round(slowestTest.latency)}ms
+                  </div>
                 </div>
-                <div>
-                  <div>Cost</div>
-                  <div className="font-medium text-foreground">${slowestTest.cost.toFixed(6)}</div>
+                <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground pt-2 border-t">
+                  <div>
+                    <div>Category</div>
+                    <div className="font-medium text-foreground">{slowestTest.category}</div>
+                  </div>
+                  <div>
+                    <div>Tokens</div>
+                    <div className="font-medium text-foreground">{slowestTest.tokens}</div>
+                  </div>
+                  <div>
+                    <div>Cost</div>
+                    <div className="font-medium text-foreground">${slowestTest.cost.toFixed(6)}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Category Performance Breakdown */}
       <Card>
@@ -301,7 +353,7 @@ export function PerformanceMetricsPanel({
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{outlier.testName}</span>
+                      <span className="font-medium text-foreground">{outlier.testName}</span>
                       <Badge variant="outline">#{outlier.testNumber}</Badge>
                       <Badge variant={outlier.passed ? "default" : "destructive"} className="text-xs">
                         {outlier.passed ? "PASSED" : "FAILED"}
@@ -312,8 +364,11 @@ export function PerformanceMetricsPanel({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xl font-bold text-[color:var(--status-error)]">
-                      {Math.round(outlier.latency)}ms
+                    <div className="flex items-center justify-end gap-2">
+                      <div className="h-2 w-2 rounded-full bg-[color:var(--status-error)] shrink-0" />
+                      <div className="text-xl font-bold text-foreground">
+                        {Math.round(outlier.latency)}ms
+                      </div>
                     </div>
                     <div className="text-xs text-muted-foreground">
                       +{Math.round(outlier.deviationFromMean)}ms from avg

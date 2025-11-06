@@ -5,13 +5,19 @@
  * Complete failure analysis with groups, distributions, and recommendations
  */
 
-import { useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { MetricCard } from "@/components/ui/metric-card";
 import { FailureGroups } from "./failure-groups";
+import {
+  ChartContainer,
+  ChartConfig,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from "@/components/ui/chart";
 import {
   PieChart,
   Pie,
@@ -20,14 +26,9 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
 } from "recharts";
 import { AlertCircle, TrendingDown, Lightbulb, CheckCircle2 } from "lucide-react";
 import type { InferenceEvent } from "@/types/test-results";
-import { CATEGORY_COLORS } from "@/lib/constants";
 import {
   createFailurePatternGroups,
   createFailureDistribution,
@@ -114,32 +115,22 @@ export function FailureAnalysisDashboard({
         />
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue="groups" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="groups">Failure Groups</TabsTrigger>
-          <TabsTrigger value="distribution">Distribution</TabsTrigger>
-          <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-        </TabsList>
+      {/* All content sections stacked vertically */}
+      <div className="space-y-6">
+        <FailureGroups groups={failureGroups} onTestClick={onTestClick} />
 
-        <TabsContent value="groups" className="mt-6">
-          <FailureGroups groups={failureGroups} onTestClick={onTestClick} />
-        </TabsContent>
+        <FailureDistributionCharts distribution={failureDistribution} />
 
-        <TabsContent value="distribution" className="mt-6">
-          <FailureDistributionCharts distribution={failureDistribution} />
-        </TabsContent>
-
-        <TabsContent value="recommendations" className="mt-6">
-          <RecommendationsPanel groups={failureGroups} />
-        </TabsContent>
-      </Tabs>
+        <RecommendationsPanel groups={failureGroups} />
+      </div>
     </div>
   );
 }
 
 // Failure Distribution Charts Component
 function FailureDistributionCharts({ distribution }: { distribution: ReturnType<typeof createFailureDistribution> }) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   if (distribution.totalFailures === 0) {
     return (
       <Card>
@@ -156,29 +147,90 @@ function FailureDistributionCharts({ distribution }: { distribution: ReturnType<
     );
   }
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0];
-      return (
-        <Card className="p-3 shadow-lg">
-          <div className="space-y-1 text-xs">
-            <div className="font-semibold">{data.name || data.payload.name}</div>
-            <div className="flex justify-between gap-4">
-              <span className="text-muted-foreground">Count:</span>
-              <span className="font-medium">{data.value || data.payload.count}</span>
-            </div>
-            {data.payload.percentage !== undefined && (
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Percentage:</span>
-                <span className="font-medium">{data.payload.percentage.toFixed(1)}%</span>
-              </div>
-            )}
-          </div>
-        </Card>
-      );
-    }
-    return null;
+  // Dotted background pattern component
+  const DottedBackgroundPattern = () => {
+    return (
+      <pattern
+        id="highlighted-pattern-dots"
+        x="0"
+        y="0"
+        width="10"
+        height="10"
+        patternUnits="userSpaceOnUse"
+      >
+        <circle
+          className="dark:text-muted/40 text-muted"
+          cx="2"
+          cy="2"
+          r="1"
+          fill="currentColor"
+        />
+      </pattern>
+    );
   };
+
+  // Create chart config for pie chart (by reason)
+  const pieChartConfig = useMemo(() => {
+    const config: ChartConfig = {
+      count: {
+        label: "Count",
+      },
+    };
+    
+    distribution.byReason.forEach((entry, index) => {
+      const key = entry.reasonType || `reason-${index}`;
+      config[key] = {
+        label: entry.displayName,
+        color: `var(--chart-${(index % 8) + 1})`,
+      };
+    });
+    
+    return config;
+  }, [distribution.byReason]);
+
+  // Prepare pie chart data with fill colors
+  const pieChartData = useMemo(() => {
+    return distribution.byReason.map((entry, index) => ({
+      ...entry,
+      fill: `var(--chart-${(index % 8) + 1})`,
+      name: entry.reasonType || `reason-${index}`, // For legend
+    }));
+  }, [distribution.byReason]);
+
+  // Create chart config for bar chart (by category)
+  const barChartConfig = useMemo(() => {
+    const config: ChartConfig = {
+      failed: {
+        label: "Failed",
+      },
+      passed: {
+        label: "Passed",
+      },
+    };
+    
+    distribution.byCategory.forEach((entry, index) => {
+      const categoryKey = entry.category.toLowerCase().replace(/[^a-z0-9]/g, "-");
+      config[categoryKey] = {
+        label: entry.category,
+        color: `var(--chart-${(index % 8) + 1})`,
+      };
+    });
+    
+    return config;
+  }, [distribution.byCategory]);
+
+  // Prepare bar chart data
+  const barChartData = useMemo(() => {
+    return distribution.byCategory.map((entry, index) => ({
+      ...entry,
+      categoryKey: entry.category.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+    }));
+  }, [distribution.byCategory]);
+
+  const activeData = useMemo(() => {
+    if (activeIndex === null) return null;
+    return barChartData[activeIndex];
+  }, [activeIndex, barChartData]);
 
   return (
     <div className="space-y-6">
@@ -191,57 +243,132 @@ function FailureDistributionCharts({ distribution }: { distribution: ReturnType<
             <CardDescription>Distribution of failure types</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[300px]">
               <PieChart>
                 <Pie
-                  data={distribution.byReason}
+                  data={pieChartData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ displayName, percentage }) => `${displayName}: ${percentage.toFixed(1)}%`}
+                  label={false}
                   outerRadius={100}
                   dataKey="count"
                 >
-                  {distribution.byReason.map((entry, index) => {
-                    // Use brand color based on predominant category
-                    const categoryKey = entry.category ? `${entry.category}-baseline` : 'unknown';
-                    const brandColor = CATEGORY_COLORS[categoryKey] || CATEGORY_COLORS[entry.category || 'unknown'] || CATEGORY_COLORS['unknown'];
-                    return <Cell key={`cell-${index}`} fill={brandColor} />;
-                  })}
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent nameKey="name" />} />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
         {/* Bar Chart - By Category */}
-        <Card>
-          <CardHeader>
+        <Card className="flex flex-col">
+          <CardHeader className="items-center pb-0">
             <CardTitle>Failures by Category</CardTitle>
-            <CardDescription>Failure rates across test categories</CardDescription>
+            <CardDescription>
+              {activeData
+                ? `${activeData.category}: ${activeData.failed} failed, ${activeData.passed} passed`
+                : "Failure rates across test categories"}
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={distribution.byCategory} margin={{ bottom: 60 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="category" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="failed" radius={[4, 4, 0, 0]}>
-                  {distribution.byCategory.map((entry, index) => {
-                    const categoryColor = CATEGORY_COLORS[entry.category] || CATEGORY_COLORS['unknown'];
-                    return <Cell key={`failed-${index}`} fill={categoryColor} opacity={0.9} />;
-                  })}
+          <CardContent className="flex-1 pb-0">
+            <ChartContainer config={barChartConfig}>
+              <BarChart
+                accessibilityLayer
+                data={barChartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="85%"
+                  fill="url(#highlighted-pattern-dots)"
+                />
+                <defs>
+                  <DottedBackgroundPattern />
+                </defs>
+                <XAxis
+                  dataKey="category"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <YAxis
+                  label={{
+                    value: "Count",
+                    angle: -90,
+                    position: "insideLeft",
+                    style: { fontSize: 12 },
+                  }}
+                  tick={{ fontSize: 12 }}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      hideLabel
+                      nameKey="category"
+                      formatter={(value, name, item) => {
+                        const categoryName = item?.payload?.category || name || "Unknown";
+                        const dataKey = item?.dataKey || name;
+                        return (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{categoryName} ({dataKey}):</span>
+                            <span className="text-foreground font-mono font-medium tabular-nums">
+                              {Number(value).toLocaleString()}
+                            </span>
+                          </div>
+                        );
+                      }}
+                    />
+                  }
+                />
+                <Bar dataKey="failed" radius={4}>
+                  {barChartData.map((entry, index) => (
+                    <Cell
+                      className="duration-200"
+                      key={`failed-${index}`}
+                      fill={`var(--color-${entry.categoryKey})`}
+                      fillOpacity={
+                        activeIndex === null ? 1 : activeIndex === index ? 1 : 0.3
+                      }
+                      stroke={
+                        activeIndex === index
+                          ? `var(--color-${entry.categoryKey})`
+                          : ""
+                      }
+                      onMouseEnter={() => setActiveIndex(index)}
+                    />
+                  ))}
                 </Bar>
-                <Bar dataKey="passed" radius={[4, 4, 0, 0]}>
-                  {distribution.byCategory.map((entry, index) => {
-                    const categoryColor = CATEGORY_COLORS[entry.category] || CATEGORY_COLORS['unknown'];
-                    return <Cell key={`passed-${index}`} fill={categoryColor} opacity={0.4} />;
-                  })}
+                <Bar dataKey="passed" radius={4}>
+                  {barChartData.map((entry, index) => (
+                    <Cell
+                      className="duration-200"
+                      key={`passed-${index}`}
+                      fill={`var(--color-${entry.categoryKey})`}
+                      fillOpacity={
+                        activeIndex === null ? 0.4 : activeIndex === index ? 0.4 : 0.1
+                      }
+                      stroke={
+                        activeIndex === index
+                          ? `var(--color-${entry.categoryKey})`
+                          : ""
+                      }
+                      onMouseEnter={() => setActiveIndex(index)}
+                    />
+                  ))}
                 </Bar>
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
@@ -266,15 +393,15 @@ function FailureDistributionCharts({ distribution }: { distribution: ReturnType<
                 </tr>
               </thead>
               <tbody>
-                {distribution.byCategory.map((cat) => {
-                  const categoryColor = CATEGORY_COLORS[`${cat.category}-baseline`] || CATEGORY_COLORS[cat.category] || CATEGORY_COLORS['unknown'];
+                {distribution.byCategory.map((cat, index) => {
+                  const chartColorIndex = (index % 8) + 1;
                   return (
                   <tr key={cat.category} className="border-b hover:bg-muted/50">
                     <td className="p-2">
                       <div className="flex items-center gap-2">
                         <div
                           className="h-2 w-2 rounded-full shrink-0"
-                          style={{ backgroundColor: categoryColor }}
+                          style={{ backgroundColor: `var(--chart-${chartColorIndex})` }}
                         />
                         <span className="font-medium">{cat.category}</span>
                       </div>

@@ -6,7 +6,6 @@
  */
 
 import { useState, useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LatencyDistributionChart } from "./latency-distribution";
 import { PerformanceMetricsPanel } from "./performance-metrics-panel";
 import { LatencyTokensScatter } from "./latency-tokens-scatter";
@@ -56,37 +55,23 @@ export function PerformanceDashboard({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Main Tabs */}
-      <Tabs defaultValue="metrics" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="metrics">Performance Metrics</TabsTrigger>
-          <TabsTrigger value="distribution">Latency Distribution</TabsTrigger>
-          <TabsTrigger value="correlation">Token Correlation</TabsTrigger>
-        </TabsList>
+      {/* All content sections stacked vertically */}
+      <PerformanceMetricsPanel
+        metrics={performanceSummary}
+        slaThreshold={slaThreshold}
+        onOutlierClick={(outlier) => onTestClick?.(outlier.testNumber)}
+      />
 
-        <TabsContent value="metrics" className="mt-6">
-          <PerformanceMetricsPanel
-            metrics={performanceSummary}
-            slaThreshold={slaThreshold}
-            onOutlierClick={(outlier) => onTestClick?.(outlier.testNumber)}
-          />
-        </TabsContent>
+      <LatencyDistributionChart
+        distribution={distribution}
+        slaCompliance={slaCompliance}
+        onSLAThresholdChange={setSLAThreshold}
+      />
 
-        <TabsContent value="distribution" className="mt-6">
-          <LatencyDistributionChart
-            distribution={distribution}
-            slaCompliance={slaCompliance}
-            onSLAThresholdChange={setSLAThreshold}
-          />
-        </TabsContent>
-
-        <TabsContent value="correlation" className="mt-6">
-          <LatencyTokensScatter
-            correlation={latencyTokenCorrelation}
-            onPointClick={onTestClick}
-          />
-        </TabsContent>
-      </Tabs>
+      <LatencyTokensScatter
+        correlation={latencyTokenCorrelation}
+        onPointClick={onTestClick}
+      />
     </div>
   );
 }

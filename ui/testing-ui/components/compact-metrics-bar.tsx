@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, DollarSign, BarChart3 } from "lucide-react";
+import { Clock, DollarSign, BarChart3, Database } from "lucide-react";
 import type { InferenceEvent, SessionSummary } from "@/types/test-results";
 import { formatCurrency, formatLatency } from "@/lib/format-utils";
 import { analyzePerformance } from "@/lib/performance-analyzer";
@@ -99,8 +99,11 @@ export function CompactMetricsBar({ summary, inferences, strictPolicyValidation 
 
           {/* Total Tests & Tokens */}
           <div className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors">
-            <div className="text-[10px] sm:text-xs text-muted-foreground leading-none">
-              Tests & Tokens
+            <div className="flex items-center gap-1.5 flex-wrap w-full">
+              <Database className="h-3 w-3 text-muted-foreground shrink-0" />
+              <div className="text-[10px] sm:text-xs text-muted-foreground leading-none flex-1">
+                Tests & Tokens
+              </div>
             </div>
             <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
               {inferences.length}

@@ -808,6 +808,9 @@ def test_multi_turn(
         'latency': 0.0
     }
 
+    # Global test counter for tracking test numbers across conversations
+    global_test_number = 0
+
     for conv_id, turns in conversations.items():
         print(f"\n{'='*80}")
         print(f"Conversation: {conv_id}")
@@ -824,6 +827,7 @@ def test_multi_turn(
 
         for turn in turns:
             results['total_turns'] += 1
+            global_test_number += 1
 
             # Display content
             content_display = turn['content']
@@ -923,6 +927,8 @@ def test_multi_turn(
                     'event_type': 'inference',
                     'timestamp': datetime.now().isoformat(),
                     'test_type': 'multi-turn',
+                    'test_name': f"{turn['attack_pattern']} - Turn {turn['turn_number']}",  # Descriptive name
+                    'test_number': global_test_number,  # Global sequential number
                     'conversation_id': conv_id,
                     'turn_number': turn['turn_number'],
                     'attack_pattern': turn['attack_pattern'],
@@ -1138,6 +1144,7 @@ def test_prompt_injection(
                 'test_type': 'prompt-injection',
                 'test_id': test['test_id'],
                 'test_name': test['test_name'],
+                'test_number': idx,  # Use enumeration index
                 'injection_type': test['injection_type'],
                 'category': category,
                 # ADD BACK: Full request object for debugging
@@ -1341,6 +1348,8 @@ def test_over_refusal(
                 'timestamp': datetime.now().isoformat(),
                 'test_type': 'over-refusal',
                 'test_id': test['test_id'],
+                'test_name': test.get('test_name') or test['test_id'],  # Use test_id as fallback
+                'test_number': idx,  # Use enumeration index
                 'context_type': test['context_type'],
                 'category': category,
                 # ADD BACK: Full request object for debugging

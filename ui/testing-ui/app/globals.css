@@ -120,14 +120,14 @@
   --border: oklch(0.9197 0.0040 286.3202);
   --input: oklch(0.9197 0.0040 286.3202);
   --ring: oklch(0.5100 0.1976 267.0518);
-  --chart-1: oklch(0.5100 0.1976 267.0518);
-  --chart-2: oklch(0.6851 0.0696 240.2419);
-  --chart-3: oklch(0.4969 0.1966 259.4124);
-  --chart-4: oklch(0.6959 0.1491 162.4796);
-  --chart-5: oklch(0.7686 0.1647 70.0804);
-  --chart-6: oklch(0.6500 0.1200 350.0000);
-  --chart-7: oklch(0.7200 0.1400 180.0000);
-  --chart-8: oklch(0.6800 0.1600 290.0000);
+  --chart-1: oklch(0.510 0.198 267); /* Byzantine blue #3457d5 */
+  --chart-2: oklch(0.685 0.070 240); /* Air superiority blue #72a0c1 */
+  --chart-3: oklch(0.868 0.042 233); /* Columbia blue #b9d9eb */
+  --chart-4: oklch(0.250 0.081 254); /* Oxford Blue #002147 */
+  --chart-5: oklch(0.423 0.205 266); /* Persian blue #1c39bb */
+  --chart-6: oklch(0.775 0.049 248); /* Powder blue #9eb9d4 */
+  --chart-7: oklch(0.497 0.197 259); /* Tang Blue #0059cf */
+  --chart-8: oklch(0.600 0.135 253); /* Medium blue variant (between Air superiority and Powder) */
   --status-success: oklch(0.6959 0.1491 162.4796);
   --status-success-bg: oklch(0.9600 0.0500 162.4796);
   --status-warning: oklch(0.7686 0.1647 70.0804);
@@ -207,14 +207,14 @@
   --border: oklch(0.3703 0.0119 285.8054);
   --input: oklch(0.3703 0.0119 285.8054);
   --ring: oklch(0.6016 0.1578 269.6315);
-  --chart-1: oklch(0.6016 0.1578 269.6315);
-  --chart-2: oklch(0.6851 0.0696 240.2419);
-  --chart-3: oklch(0.8677 0.0422 232.5795);
-  --chart-4: oklch(0.6959 0.1491 162.4796);
-  --chart-5: oklch(0.7686 0.1647 70.0804);
-  --chart-6: oklch(0.7000 0.1400 350.0000);
-  --chart-7: oklch(0.7500 0.1500 180.0000);
-  --chart-8: oklch(0.7200 0.1700 290.0000);
+  --chart-1: oklch(0.610 0.198 267); /* Byzantine blue #3457d5 - lighter for dark mode */
+  --chart-2: oklch(0.785 0.070 240); /* Air superiority blue #72a0c1 - lighter for dark mode */
+  --chart-3: oklch(0.968 0.042 233); /* Columbia blue #b9d9eb - lighter for dark mode */
+  --chart-4: oklch(0.350 0.081 254); /* Oxford Blue #002147 - lighter for dark mode */
+  --chart-5: oklch(0.523 0.205 266); /* Persian blue #1c39bb - lighter for dark mode */
+  --chart-6: oklch(0.875 0.049 248); /* Powder blue #9eb9d4 - lighter for dark mode */
+  --chart-7: oklch(0.597 0.197 259); /* Tang Blue #0059cf - lighter for dark mode */
+  --chart-8: oklch(0.700 0.135 253); /* Medium blue variant - lighter for dark mode */
   --status-success: oklch(0.6959 0.1491 162.4796);
   --status-success-bg: oklch(0.2500 0.0600 162.4796);
   --status-warning: oklch(0.7686 0.1647 70.0804);
