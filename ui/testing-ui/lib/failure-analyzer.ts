@@ -112,8 +112,8 @@ function checkReasoningQuality(inference: InferenceEvent): FailureAnalysis | nul
       reasonType: 'no_reasoning',
       allReasons: ['No reasoning provided'],
       priority: 'high',
-      expectedClassification: inference.expected,
-      actualClassification: inference.model_output,
+      expectedClassification: inference.expected || 'unknown',
+      actualClassification: inference.model_output || 'unknown',
     };
   }
 
@@ -160,8 +160,8 @@ function checkReasoningQuality(inference: InferenceEvent): FailureAnalysis | nul
       reasonType,
       allReasons,
       priority,
-      expectedClassification: inference.expected,
-      actualClassification: inference.model_output,
+      expectedClassification: inference.expected || 'unknown',
+      actualClassification: inference.model_output || 'unknown',
       missingPolicyCodes: missingCodes.length > 0 ? missingCodes : undefined,
     };
   }

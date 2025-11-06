@@ -171,7 +171,7 @@ export function FailureGroups({ groups, onTestClick, className }: FailureGroupsP
                     <div
                       key={test.response.id || `${test.category}-${test.test_number}`}
                       className="flex items-center justify-between p-3 rounded-lg border bg-background hover:bg-muted/50 cursor-pointer"
-                      onClick={() => onTestClick?.(test.test_number)}
+                      onClick={() => onTestClick?.(test.test_number!)}
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">

@@ -18,6 +18,7 @@ export interface TestResult {
   expected: string;
   actual: string;
   passed: boolean;
+  reasoning?: string;
 }
 
 export interface PolicyCitation {
@@ -77,6 +78,13 @@ export interface InferenceEvent {
   conversation_id?: string;
   turn_number?: number;
   attack_pattern?: string;
+  attack_turn?: boolean;
+  attack_succeeded?: boolean;
+  false_positive?: boolean;
+  expected?: string;
+  model_output?: string;
+  reasoning?: string;
+  expected_policy?: string;
 
   request: Request;
   response: Response;
