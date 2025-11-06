@@ -95,9 +95,9 @@ export function prepareCostAccuracyScatterData(
     const passed = failureAnalysis === null;
 
     return {
-      testId: `${inf.test_number}`,
-      testNumber: inf.test_number,
-      testName: inf.test_name,
+      testId: `${inf.test_number ?? 0}`,
+      testNumber: inf.test_number ?? 0,
+      testName: inf.test_name ?? 'Unknown Test',
       cost: getCost(inf),
       accuracy: passed,
       latency: getLatency(inf),
