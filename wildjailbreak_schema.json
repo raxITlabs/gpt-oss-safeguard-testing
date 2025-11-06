@@ -1,0 +1,19 @@
+{
+  "dataset_name": "allenai/wildjailbreak",
+  "splits": [
+    "train"
+  ],
+  "total_examples": 2210,
+  "columns": [
+    "adversarial",
+    "label",
+    "data_type"
+  ],
+  "text_field_candidates": [
+    "adversarial"
+  ],
+  "category_field_candidates": [
+    "label",
+    "data_type"
+  ]
+}
