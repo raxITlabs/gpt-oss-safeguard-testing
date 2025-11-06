@@ -18,16 +18,30 @@ import { FailureAnalysisDashboard } from "@/components/dashboards/failure-analys
 import { AttackScenarioSummary } from "@/components/attack-scenario-summary";
 import { useSettings } from "@/contexts/settings-context";
 import { BrandLogo } from "@/components/ui/brand-logo";
+import { useFilterState } from "@/hooks/use-filter-state";
+import { FilterButtonGroup } from "@/components/filter-button-group";
+import { FilterPresets } from "@/components/filter-presets";
+import { TestTypeFilter } from "@/components/test-type-filter";
 
 export default function Home() {
   const { strictPolicyValidation, setStrictPolicyValidation } = useSettings();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [testData, setTestData] = useState<TestRunData | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<TestCategory | "all">("all");
-  const [selectedTestType, setSelectedTestType] = useState<string | "all">("all");
-  const [statusFilter, setStatusFilter] = useState<"all" | "passed" | "failed">("all");
   const [selectedTab, setSelectedTab] = useState<"results" | "cost" | "performance" | "failures">("results");
+
+  // Use the new URL-synced filter state
+  const {
+    categories: selectedCategories,
+    testTypes: selectedTestTypes,
+    status: statusFilter,
+    setCategories,
+    setTestTypes,
+    setStatus,
+    applyPreset,
+    clearFilters,
+    activePreset,
+  } = useFilterState();
 
   // Fetch test data (always use merged mode)
   useEffect(() => {
@@ -52,17 +66,25 @@ export default function Home() {
     fetchTestData();
   }, []);
 
-  // Filter inferences by category and test type
+  // Filter inferences by categories and test types (multi-select)
   const filteredInferences = testData?.inferences.filter((inference) => {
-    // Category filter
-    if (selectedCategory !== "all") {
-      if (inference.category !== selectedCategory) return false;
+    // Category filter - if categories are selected, inference must match one of them
+    if (selectedCategories.length > 0) {
+      if (!inference.category || !selectedCategories.includes(inference.category as TestCategory)) {
+        return false;
+      }
     }
 
-    // Test type filter
-    if (selectedTestType !== "all") {
+    // Test type filter - if test types are selected, inference must match one of them
+    if (selectedTestTypes.length > 0) {
       const inferenceTestType = inference.test_type || 'baseline';
-      if (inferenceTestType !== selectedTestType) return false;
+      // Normalize test types (handle both dash and underscore variants)
+      const normalizedSelectedTypes = selectedTestTypes.map(t => t.replace(/_/g, '-'));
+      const normalizedInferenceType = inferenceTestType.replace(/_/g, '-');
+
+      if (!normalizedSelectedTypes.includes(normalizedInferenceType)) {
+        return false;
+      }
     }
 
     return true;
@@ -137,127 +159,60 @@ export default function Home() {
               </Badge>
             </div>
 
-            {/* Visual Divider - Desktop only */}
-            <div
-              className="hidden md:block h-8 w-px bg-border/60"
-              aria-hidden="true"
-            />
-
-            {/* Filter Badges Group - Only shown when data is loaded */}
-            {!loading && testData && (
-              <nav
-                className="flex items-center gap-1.5 flex-wrap"
-                role="navigation"
-                aria-label="Test type filters"
-              >
-                <Badge
-                  role="button"
-                  tabIndex={0}
-                  variant={selectedTestType === "all" ? "default" : "outline"}
-                  className="h-6 text-[11px] px-2 cursor-pointer transition-all duration-200
-                             hover:bg-primary/90 active:scale-[0.97]
-                             focus-visible:outline-none focus-visible:ring-2
-                             focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-pressed={selectedTestType === "all"}
-                  aria-label={`Show all tests, ${testData.inferences.length} total`}
-                  onClick={() => setSelectedTestType("all")}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedTestType("all");
-                    }
-                  }}
-                >
-                  All ({testData.inferences.length})
-                </Badge>
-
-                <Badge
-                  role="button"
-                  tabIndex={0}
-                  variant={selectedTestType === "baseline" ? "default" : "outline"}
-                  className="h-6 text-[11px] px-2 cursor-pointer transition-all duration-200
-                             hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
-                             active:scale-[0.97]
-                             focus-visible:outline-none focus-visible:ring-2
-                             focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-pressed={selectedTestType === "baseline"}
-                  aria-label={`Filter to baseline tests, ${testData.inferences.filter(i => !i.test_type || i.test_type === 'baseline').length} total`}
-                  onClick={() => setSelectedTestType("baseline")}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedTestType("baseline");
-                    }
-                  }}
-                >
-                  Baseline ({testData.inferences.filter(i => !i.test_type || i.test_type === 'baseline').length})
-                </Badge>
-
-                {/* Additional filter badges */}
-                {['multi-turn', 'multi_turn', 'prompt-injection', 'prompt_injection', 'over-refusal', 'over_refusal']
-                  .filter((type, index, self) => {
-                    const normalized = type.replace(/_/g, '-');
-                    return self.findIndex(t => t.replace(/_/g, '-') === normalized) === index;
-                  })
-                  .map(type => {
-                    const count = testData.inferences.filter(i =>
-                      i.test_type === type || i.test_type === type.replace(/-/g, '_')
-                    ).length;
-                    if (count === 0) return null;
-
-                    const normalizedType = type.replace(/_/g, '-');
-                    const label = normalizedType
-                      .split('-')
-                      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                      .join(' ');
-                    const isActive = selectedTestType === normalizedType;
-
-                    return (
-                      <Badge
-                        key={normalizedType}
-                        role="button"
-                        tabIndex={0}
-                        variant={isActive ? "default" : "outline"}
-                        className={`h-6 text-[11px] px-2 cursor-pointer transition-all duration-200 active:scale-[0.97]
-                                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                                   ${isActive
-                                     ? "hover:bg-primary/90 shadow-sm"
-                                     : "hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20"
-                                   }`}
-                        aria-pressed={isActive}
-                        aria-label={`Filter to ${label} tests, ${count} total`}
-                        onClick={() => setSelectedTestType(normalizedType)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            setSelectedTestType(normalizedType);
-                          }
-                        }}
-                      >
-                        {label} ({count})
-                      </Badge>
-                    );
-                  })
-                }
-              </nav>
-            )}
               </div>
-            </div>
-
-            {/* Screen Reader Live Region */}
-            <div
-              className="sr-only"
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              {!loading && testData && (selectedTestType === "all"
-                ? `Showing all ${filteredInferences.length} tests`
-                : `Filtered to ${selectedTestType} tests, showing ${filteredInferences.length} results`
-              )}
             </div>
           </CardContent>
         </Card>
+
+        {/* New Filter System - Presets and Advanced Filters */}
+        {!loading && testData && (
+          <Card className="py-2">
+            <CardContent className="px-3 py-2">
+              <div className="space-y-3">
+                {/* Filter Presets Row */}
+                <FilterPresets
+                  activePresetId={activePreset?.id}
+                  onPresetSelect={applyPreset}
+                />
+
+                {/* Advanced Filters Row */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Filters:
+                  </span>
+                  <FilterButtonGroup
+                    selectedCategories={selectedCategories}
+                    onCategoriesChange={setCategories}
+                  />
+                  <TestTypeFilter
+                    selectedTestTypes={selectedTestTypes}
+                    onTestTypesChange={setTestTypes}
+                  />
+                  {(selectedCategories.length > 0 || selectedTestTypes.length > 0) && (
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer hover:bg-destructive/10 hover:border-destructive"
+                      onClick={clearFilters}
+                    >
+                      Clear All
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Filter status indicator */}
+        {!loading && testData && (
+          <div className="flex items-center justify-between text-sm text-muted-foreground px-2">
+            <span>
+              Showing {filteredInferences.length} of {testData.inferences.length} tests
+              {selectedCategories.length > 0 && ` • ${selectedCategories.length} categories`}
+              {selectedTestTypes.length > 0 && ` • ${selectedTestTypes.length} test types`}
+            </span>
+          </div>
+        )}
 
         {/* Error Display */}
         {error && (
@@ -421,7 +376,8 @@ export default function Home() {
                     <CardTitle>Test Results</CardTitle>
                     <CardDescription>
                       Detailed results for each test case
-                      {selectedCategory !== "all" && ` - ${selectedCategory}`}
+                      {selectedCategories.length > 0 && ` - ${selectedCategories.length} categories filtered`}
+                      {selectedTestTypes.length > 0 && ` - ${selectedTestTypes.length} test types filtered`}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
