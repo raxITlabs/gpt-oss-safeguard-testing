@@ -139,7 +139,7 @@ function OptimizationPanel({ opportunities }: { opportunities: ReturnType<typeof
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
-            We've identified {opportunities.length} potential ways to reduce costs while maintaining quality.
+            We&apos;ve identified {opportunities.length} potential ways to reduce costs while maintaining quality.
           </p>
         </CardContent>
       </Card>

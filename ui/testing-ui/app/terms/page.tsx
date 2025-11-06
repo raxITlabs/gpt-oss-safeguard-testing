@@ -33,8 +33,8 @@ export default function TermsPage() {
               <div>
                 <h2 className="text-xl font-semibold mb-3">1. Acceptance of Terms</h2>
                 <p className="text-muted-foreground">
-                  By accessing and using this AI Safety Testing Dashboard ("the Service"), you agree
-                  to be bound by these Terms of Service ("Terms") and all applicable laws and
+                  By accessing and using this AI Safety Testing Dashboard (&quot;the Service&quot;), you agree
+                  to be bound by these Terms of Service (&quot;Terms&quot;) and all applicable laws and
                   regulations. If you do not agree with any of these terms, you are prohibited from
                   using or accessing this Service.
                 </p>
@@ -116,7 +116,7 @@ export default function TermsPage() {
               <div>
                 <h2 className="text-xl font-semibold mb-3">6. No Warranties</h2>
                 <p className="text-muted-foreground">
-                  The Service is provided on an "AS IS" and "AS AVAILABLE" basis without warranties
+                  The Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties
                   of any kind, either express or implied, including but not limited to:
                 </p>
                 <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
@@ -169,7 +169,7 @@ export default function TermsPage() {
                 <h2 className="text-xl font-semibold mb-3">9. Changes to Terms</h2>
                 <p className="text-muted-foreground">
                   We reserve the right to modify or replace these Terms at any time at our sole
-                  discretion. We will provide notice of material changes by updating the "Last updated"
+                  discretion. We will provide notice of material changes by updating the &quot;Last updated&quot;
                   date at the top of this page.
                 </p>
                 <p className="text-muted-foreground mt-2">

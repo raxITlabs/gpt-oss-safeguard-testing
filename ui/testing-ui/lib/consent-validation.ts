@@ -15,6 +15,23 @@ const personalEmailDomains = [
 ];
 
 export const consentSchema = z.object({
+  // Professional Information
+  organization: z
+    .string()
+    .min(2, 'Organization name must be at least 2 characters')
+    .max(100, 'Organization name is too long')
+    .trim(),
+
+  position: z
+    .string()
+    .min(1, 'Please select your position'),
+
+  customPosition: z
+    .string()
+    .max(100, 'Position title is too long')
+    .optional(),
+
+  // Personal Information
   firstName: z
     .string()
     .min(2, 'First name must be at least 2 characters')
@@ -46,6 +63,7 @@ export const consentSchema = z.object({
       }
     ),
 
+  // Required Acknowledgments
   acceptPrivacy: z.boolean().refine((val) => val === true, {
     message: 'You must accept the Privacy Policy to continue',
   }),
@@ -57,6 +75,9 @@ export const consentSchema = z.object({
   acceptSafety: z.boolean().refine((val) => val === true, {
     message: 'You must acknowledge the safety warning to continue',
   }),
+
+  // Marketing Opt-in (optional)
+  marketingOptIn: z.boolean(),
 });
 
 export type ConsentFormData = z.infer<typeof consentSchema>;

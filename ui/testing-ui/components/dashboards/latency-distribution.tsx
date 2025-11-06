@@ -39,6 +39,31 @@ export interface LatencyDistributionChartProps {
   className?: string;
 }
 
+// Custom tooltip component (moved outside to avoid re-creation on render)
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { label: string; count: number; percentage: number } }> }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <Card className="p-3 shadow-lg">
+        <div className="space-y-1">
+          <div className="font-semibold text-sm">{data.label}</div>
+          <div className="text-xs space-y-0.5">
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Tests:</span>
+              <span className="font-medium">{data.count}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Percentage:</span>
+              <span className="font-medium">{data.percentage.toFixed(1)}%</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+  return null;
+};
+
 export function LatencyDistributionChart({
   distribution,
   slaCompliance,
@@ -67,30 +92,6 @@ export function LatencyDistributionChart({
     if (rangeEnd <= slaThreshold) return getSLAColor('--sla-good');
     if (rangeEnd <= slaThreshold * 1.2) return getSLAColor('--sla-warning');
     return getSLAColor('--sla-critical');
-  };
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <Card className="p-3 shadow-lg">
-          <div className="space-y-1">
-            <div className="font-semibold text-sm">{data.label}</div>
-            <div className="text-xs space-y-0.5">
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Tests:</span>
-                <span className="font-medium">{data.count}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Percentage:</span>
-                <span className="font-medium">{data.percentage.toFixed(1)}%</span>
-              </div>
-            </div>
-          </div>
-        </Card>
-      );
-    }
-    return null;
   };
 
   return (

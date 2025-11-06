@@ -131,7 +131,7 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold mb-3">8. Children's Privacy</h2>
+                <h2 className="text-xl font-semibold mb-3">8. Children&apos;s Privacy</h2>
                 <p className="text-muted-foreground">
                   Our services are not intended for individuals under the age of 18. We do not knowingly
                   collect personal information from children. If we become aware that we have collected
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
                 <h2 className="text-xl font-semibold mb-3">9. Changes to This Policy</h2>
                 <p className="text-muted-foreground">
                   We may update this Privacy Policy from time to time. We will notify users of any
-                  material changes by updating the "Last updated" date at the top of this policy.
+                  material changes by updating the &quot;Last updated&quot; date at the top of this policy.
                   Continued use of the dashboard after changes constitutes acceptance of the updated policy.
                 </p>
               </div>

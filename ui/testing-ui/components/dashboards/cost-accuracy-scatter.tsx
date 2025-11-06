@@ -38,6 +38,63 @@ export interface CostAccuracyScatterProps {
   className?: string;
 }
 
+// Define chart data type for tooltip
+type ChartDataPoint = CostAccuracyPoint & {
+  accuracyValue: number;
+  costScaled: number;
+  color: string;
+};
+
+// Custom tooltip component (moved outside to avoid re-creation on render)
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartDataPoint }> }) => {
+  if (active && payload && payload.length) {
+    const point = payload[0].payload;
+    return (
+      <Card className="p-3 shadow-lg">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-semibold text-sm">{point.testName}</span>
+            <Badge variant={point.accuracy ? "default" : "destructive"}>
+              {point.accuracy ? "PASSED" : "FAILED"}
+            </Badge>
+          </div>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Cost:</span>
+              <span className="font-medium">${point.cost.toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Latency:</span>
+              <span className="font-medium">{Math.round(point.latency)}ms</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Tokens:</span>
+              <span className="font-medium">{point.tokens}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Category:</span>
+              <Badge variant="outline" className="text-xs">
+                {point.category}
+              </Badge>
+            </div>
+            {!point.accuracy && (
+              <div className="mt-2 pt-2 border-t">
+                <div className="text-xs text-muted-foreground">
+                  Expected: <span className="font-medium text-foreground">{point.expected}</span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Actual: <span className="font-medium text-foreground">{point.actual}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+    );
+  }
+  return null;
+};
+
 export function CostAccuracyScatter({
   data,
   onPointClick,
@@ -70,56 +127,6 @@ export function CostAccuracyScatter({
       color: CATEGORY_COLORS[cat] || CATEGORY_COLORS["Unknown"],
     }));
   }, [data]);
-
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const point = payload[0].payload as (typeof chartData)[0];
-      return (
-        <Card className="p-3 shadow-lg">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-semibold text-sm">{point.testName}</span>
-              <Badge variant={point.accuracy ? "default" : "destructive"}>
-                {point.accuracy ? "PASSED" : "FAILED"}
-              </Badge>
-            </div>
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Cost:</span>
-                <span className="font-medium">${point.cost.toFixed(6)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Latency:</span>
-                <span className="font-medium">{Math.round(point.latency)}ms</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Tokens:</span>
-                <span className="font-medium">{point.tokens}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Category:</span>
-                <Badge variant="outline" className="text-xs">
-                  {point.category}
-                </Badge>
-              </div>
-              {!point.accuracy && (
-                <div className="mt-2 pt-2 border-t">
-                  <div className="text-xs text-muted-foreground">
-                    Expected: <span className="font-medium text-foreground">{point.expected}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Actual: <span className="font-medium text-foreground">{point.actual}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </Card>
-      );
-    }
-    return null;
-  };
 
   // Quadrant labels
   const passedTests = data.filter(p => p.accuracy).length;
@@ -267,7 +274,7 @@ export function CostAccuracyScatter({
               ✗ Avoid Zone (Bottom-Right)
             </div>
             <div className="text-xs text-foreground opacity-80">
-              High cost, low accuracy - unacceptable, don't use
+              High cost, low accuracy - unacceptable, don&apos;t use
             </div>
           </div>
         </div>

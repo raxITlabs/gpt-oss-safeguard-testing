@@ -36,6 +36,46 @@ export interface LatencyTokensScatterProps {
   className?: string;
 }
 
+// Custom tooltip component (moved outside to avoid re-creation on render)
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { testName: string; passed: boolean; tokens: number; latency: number; cost: number; category: string } }> }) => {
+  if (active && payload && payload.length) {
+    const point = payload[0].payload;
+    return (
+      <Card className="p-3 shadow-lg">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-semibold text-sm">{point.testName}</span>
+            <Badge variant={point.passed ? "default" : "destructive"}>
+              {point.passed ? "PASSED" : "FAILED"}
+            </Badge>
+          </div>
+          <div className="space-y-1 text-xs">
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Tokens:</span>
+              <span className="font-medium">{point.tokens}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Latency:</span>
+              <span className="font-medium">{Math.round(point.latency)}ms</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Cost:</span>
+              <span className="font-medium">${point.cost.toFixed(6)}</span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-muted-foreground">Category:</span>
+              <Badge variant="outline" className="text-xs">
+                {point.category}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+  return null;
+};
+
 export function LatencyTokensScatter({
   correlation,
   onPointClick,
@@ -55,45 +95,6 @@ export function LatencyTokensScatter({
 
   // Get unique categories for legend
   const categories = Array.from(new Set(dataPoints.map(p => p.category)));
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const point = payload[0].payload;
-      return (
-        <Card className="p-3 shadow-lg">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-semibold text-sm">{point.testName}</span>
-              <Badge variant={point.passed ? "default" : "destructive"}>
-                {point.passed ? "PASSED" : "FAILED"}
-              </Badge>
-            </div>
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Tokens:</span>
-                <span className="font-medium">{point.tokens}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Latency:</span>
-                <span className="font-medium">{Math.round(point.latency)}ms</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Cost:</span>
-                <span className="font-medium">${point.cost.toFixed(6)}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Category:</span>
-                <Badge variant="outline" className="text-xs">
-                  {point.category}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </Card>
-      );
-    }
-    return null;
-  };
 
   const getTrendIcon = () => {
     if (trend === "positive") return <TrendingUp className="h-4 w-4 text-[color:var(--status-warning)]" />;

@@ -51,30 +51,30 @@ function getChartColors(): string[] {
 
 const COLORS = getChartColors();
 
+// Dotted background pattern component (moved outside to avoid re-creation on render)
+const DottedBackgroundPattern = () => {
+  return (
+    <pattern
+      id="cost-breakdown-pattern-dots"
+      x="0"
+      y="0"
+      width="10"
+      height="10"
+      patternUnits="userSpaceOnUse"
+    >
+      <circle
+        className="dark:text-muted/40 text-muted"
+        cx="2"
+        cy="2"
+        r="1"
+        fill="currentColor"
+      />
+    </pattern>
+  );
+};
+
 export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: CostBreakdownProps) {
   const totalCost = categoryBreakdown.reduce((sum, cat) => sum + cat.totalCost, 0);
-
-  // Dotted background pattern component
-  const DottedBackgroundPattern = () => {
-    return (
-      <pattern
-        id="highlighted-pattern-dots"
-        x="0"
-        y="0"
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-      >
-        <circle
-          className="dark:text-muted/40 text-muted"
-          cx="2"
-          cy="2"
-          r="1"
-          fill="currentColor"
-        />
-      </pattern>
-    );
-  };
 
 
   // Prepare bar chart data
@@ -140,7 +140,7 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
     };
   }, [barData]);
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name?: string; category?: string; value?: number; totalCost?: number; percentage?: number } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -150,7 +150,7 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
             <div className="text-xs space-y-0.5">
               <div className="flex justify-between gap-4">
                 <span className="text-muted-foreground">Total Cost:</span>
-                <span className="font-medium">${(data.value || data.totalCost).toFixed(6)}</span>
+                <span className="font-medium">${((data.value || data.totalCost) ?? 0).toFixed(6)}</span>
               </div>
               {data.percentage !== undefined && (
                 <div className="flex justify-between gap-4">
@@ -221,7 +221,7 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
                   y="0"
                   width="100%"
                   height="85%"
-                  fill="url(#highlighted-pattern-dots)"
+                  fill="url(#cost-breakdown-pattern-dots)"
                 />
                 <defs>
                   <DottedBackgroundPattern />

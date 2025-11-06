@@ -127,47 +127,31 @@ export function FailureAnalysisDashboard({
   );
 }
 
+// Dotted background pattern component (moved outside to avoid re-creation on render)
+const DottedBackgroundPattern = () => {
+  return (
+    <pattern
+      id="failure-analysis-pattern-dots"
+      x="0"
+      y="0"
+      width="10"
+      height="10"
+      patternUnits="userSpaceOnUse"
+    >
+      <circle
+        className="dark:text-muted/40 text-muted"
+        cx="2"
+        cy="2"
+        r="1"
+        fill="currentColor"
+      />
+    </pattern>
+  );
+};
+
 // Failure Distribution Charts Component
 function FailureDistributionCharts({ distribution }: { distribution: ReturnType<typeof createFailureDistribution> }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-  if (distribution.totalFailures === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Failure Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-50 text-[color:var(--status-success)]" />
-            <p>No failures to analyze!</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Dotted background pattern component
-  const DottedBackgroundPattern = () => {
-    return (
-      <pattern
-        id="highlighted-pattern-dots"
-        x="0"
-        y="0"
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-      >
-        <circle
-          className="dark:text-muted/40 text-muted"
-          cx="2"
-          cy="2"
-          r="1"
-          fill="currentColor"
-        />
-      </pattern>
-    );
-  };
 
   // Create chart config for pie chart (by reason)
   const pieChartConfig = useMemo(() => {
@@ -232,6 +216,23 @@ function FailureDistributionCharts({ distribution }: { distribution: ReturnType<
     return barChartData[activeIndex];
   }, [activeIndex, barChartData]);
 
+  // Early return after all hooks to comply with Rules of Hooks
+  if (distribution.totalFailures === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Failure Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12 text-muted-foreground">
+            <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-50 text-[color:var(--status-success)]" />
+            <p>No failures to analyze!</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Charts */}
@@ -288,7 +289,7 @@ function FailureDistributionCharts({ distribution }: { distribution: ReturnType<
                   y="0"
                   width="100%"
                   height="85%"
-                  fill="url(#highlighted-pattern-dots)"
+                  fill="url(#failure-analysis-pattern-dots)"
                 />
                 <defs>
                   <DottedBackgroundPattern />

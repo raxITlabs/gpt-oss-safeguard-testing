@@ -308,7 +308,7 @@ export default function Home() {
 
             {/* Main Dashboard Tabs - Pill Style */}
             <nav
-              className="flex items-center gap-2 flex-wrap justify-center"
+              className="flex items-center gap-2 flex-wrap justify-start"
               role="navigation"
               aria-label="Main dashboard navigation"
             >
@@ -316,12 +316,12 @@ export default function Home() {
                 role="button"
                 tabIndex={0}
                 variant={selectedTab === "results" ? "default" : "outline"}
-                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                className="h-10 text-base px-4 cursor-pointer transition-all duration-200
                            hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
                            active:scale-[0.97]
                            focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-ring focus-visible:ring-offset-2
-                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                           [&>svg]:h-5 [&>svg]:w-5 gap-1.5"
                 aria-pressed={selectedTab === "results"}
                 aria-label="View test results"
                 onClick={() => setSelectedTab("results")}
@@ -332,7 +332,7 @@ export default function Home() {
                   }
                 }}
               >
-                <FileText className="h-4 w-4" />
+                <FileText className="h-5 w-5" />
                 <span className="hidden sm:inline">Test Results</span>
                 <span className="sm:hidden">Results</span>
               </Badge>
@@ -341,12 +341,12 @@ export default function Home() {
                 role="button"
                 tabIndex={0}
                 variant={selectedTab === "cost" ? "default" : "outline"}
-                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                className="h-10 text-base px-4 cursor-pointer transition-all duration-200
                            hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
                            active:scale-[0.97]
                            focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-ring focus-visible:ring-offset-2
-                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                           [&>svg]:h-5 [&>svg]:w-5 gap-1.5"
                 aria-pressed={selectedTab === "cost"}
                 aria-label="View cost analysis"
                 onClick={() => setSelectedTab("cost")}
@@ -357,7 +357,7 @@ export default function Home() {
                   }
                 }}
               >
-                <DollarSign className="h-4 w-4" />
+                <DollarSign className="h-5 w-5" />
                 <span className="hidden sm:inline">Cost Analysis</span>
                 <span className="sm:hidden">Cost</span>
               </Badge>
@@ -366,12 +366,12 @@ export default function Home() {
                 role="button"
                 tabIndex={0}
                 variant={selectedTab === "performance" ? "default" : "outline"}
-                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                className="h-10 text-base px-4 cursor-pointer transition-all duration-200
                            hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
                            active:scale-[0.97]
                            focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-ring focus-visible:ring-offset-2
-                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                           [&>svg]:h-5 [&>svg]:w-5 gap-1.5"
                 aria-pressed={selectedTab === "performance"}
                 aria-label="View performance analysis"
                 onClick={() => setSelectedTab("performance")}
@@ -382,7 +382,7 @@ export default function Home() {
                   }
                 }}
               >
-                <Activity className="h-4 w-4" />
+                <Activity className="h-5 w-5" />
                 <span className="hidden sm:inline">Performance</span>
                 <span className="sm:hidden">Perf</span>
               </Badge>
@@ -391,12 +391,12 @@ export default function Home() {
                 role="button"
                 tabIndex={0}
                 variant={selectedTab === "failures" ? "default" : "outline"}
-                className="h-8 text-sm px-3 cursor-pointer transition-all duration-200
+                className="h-10 text-base px-4 cursor-pointer transition-all duration-200
                            hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20
                            active:scale-[0.97]
                            focus-visible:outline-none focus-visible:ring-2
                            focus-visible:ring-ring focus-visible:ring-offset-2
-                           [&>svg]:h-4 [&>svg]:w-4 gap-1.5"
+                           [&>svg]:h-5 [&>svg]:w-5 gap-1.5"
                 aria-pressed={selectedTab === "failures"}
                 aria-label="View failure analysis"
                 onClick={() => setSelectedTab("failures")}
@@ -407,7 +407,7 @@ export default function Home() {
                   }
                 }}
               >
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-5 w-5" />
                 <span className="hidden sm:inline">Failure Analysis</span>
                 <span className="sm:hidden">Failures</span>
               </Badge>

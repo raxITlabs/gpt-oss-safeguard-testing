@@ -27,50 +27,76 @@ export function PolicyDialog({ type, children }: PolicyDialogProps) {
       body: (
         <div className="space-y-4 text-sm">
           <section>
-            <h3 className="font-semibold mb-2">1. Information We Collect</h3>
+            <h3 className="font-semibold mb-2">1. Introduction</h3>
             <p className="text-muted-foreground">
-              We collect the following information when you request access to our AI Safety Testing Dashboard:
+              By using the Site or Services, you accept the practices and policies described in this Policy.
+              If you do not agree, please do not access the platform.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">2. Personal Information Collected</h3>
+            <p className="text-muted-foreground">
+              We collect the following information:
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
-              <li>First name and last name</li>
-              <li>Work email address</li>
-              <li>Timestamp of consent acceptance</li>
-              <li>IP address (for security and audit purposes)</li>
+              <li>General identifiers: names, emails, company details, organization, position</li>
+              <li>Online identifiers: device info, IP addresses, browser data</li>
+              <li>Commercial information: marketing preferences, inquiries</li>
+              <li>Professional/employment details: job title, organization</li>
+            </ul>
+            <p className="text-muted-foreground mt-2">
+              We also collect data automatically through cookies, session tracking, and analytics tools like PostHog.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">3. How We Use Your Information</h3>
+            <p className="text-muted-foreground">
+              Your data is used for:
+            </p>
+            <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
+              <li>Service provision and personalization</li>
+              <li>Research and development (including anonymization)</li>
+              <li>Marketing communications (with opt-out options)</li>
+              <li>Legal compliance and fraud prevention</li>
             </ul>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">2. How We Use Your Information</h3>
+            <h3 className="font-semibold mb-2">4. Third-Party Service Providers</h3>
             <p className="text-muted-foreground">
-              Your information is used for:
+              We share data with the following service providers:
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
-              <li>Granting and managing access to the dashboard</li>
-              <li>Lead generation and analytics</li>
-              <li>Security monitoring and abuse prevention</li>
-              <li>Compliance with legal obligations</li>
+              <li>AWS (hosting and Bedrock AI)</li>
+              <li>Vercel (deployment and CDN)</li>
+              <li>PostHog (analytics)</li>
+              <li>OpenRouter (backup AI functionality)</li>
             </ul>
-          </section>
-
-          <section>
-            <h3 className="font-semibold mb-2">3. Data Storage & Security</h3>
-            <p className="text-muted-foreground">
-              Your data is stored securely using industry-standard encryption. Session data is
-              encrypted using AES-256-GCM and stored in secure, HTTP-only cookies. Lead data
-              is stored on secure servers with restricted access.
+            <p className="text-muted-foreground mt-2 font-medium">
+              We do not sell your personal information.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">4. Data Retention</h3>
+            <h3 className="font-semibold mb-2">5. Data Security</h3>
             <p className="text-muted-foreground">
-              Session cookies expire after 30 days. Lead data is retained indefinitely for
-              business purposes but can be deleted upon request.
+              We use AWS Well-Architected principles to secure your data. Session data is encrypted using AES-256-GCM
+              and stored in secure, HTTP-only cookies. However, no method of transmission over the Internet is 100% secure.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">5. Your Rights (GDPR Compliance)</h3>
+            <h3 className="font-semibold mb-2">6. International Data Transfers</h3>
+            <p className="text-muted-foreground">
+              Your data may be transferred to and processed in countries outside your residence.
+              We acknowledge international data transfer requirements and comply accordingly.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">7. Your Rights (GDPR Compliance)</h3>
             <p className="text-muted-foreground">
               You have the right to:
             </p>
@@ -83,29 +109,33 @@ export function PolicyDialog({ type, children }: PolicyDialogProps) {
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">6. Third-Party Services</h3>
+            <h3 className="font-semibold mb-2">8. Children's Privacy</h3>
             <p className="text-muted-foreground">
-              We do not share your data with third parties except as required by law.
+              Our services are not directed to individuals under 13 years of age. We do not knowingly collect
+              personal information from children under 13.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">7. Contact Us</h3>
+            <h3 className="font-semibold mb-2">9. Do Not Track</h3>
+            <p className="text-muted-foreground">
+              We do not currently support Do Not Track signals.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">10. Contact Us</h3>
             <p className="text-muted-foreground">
               For privacy-related questions or to exercise your rights, contact us at:{" "}
-              <a href="mailto:privacy@raxitlabs.com" className="text-primary hover:underline">
-                privacy@raxitlabs.com
+              <a href="mailto:privacy@raxit.ai" className="text-primary hover:underline">
+                privacy@raxit.ai
               </a>
             </p>
           </section>
 
           <section className="pt-4 border-t">
             <p className="text-xs text-muted-foreground">
-              Last updated: {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              Last updated: January 2025
             </p>
           </section>
         </div>
@@ -117,15 +147,31 @@ export function PolicyDialog({ type, children }: PolicyDialogProps) {
       body: (
         <div className="space-y-4 text-sm">
           <section>
-            <h3 className="font-semibold mb-2">1. Acceptance of Terms</h3>
+            <h3 className="font-semibold mb-2">1. Company & Acceptance</h3>
             <p className="text-muted-foreground">
-              By accessing this AI Safety Testing Dashboard, you agree to be bound by these
-              Terms of Service and all applicable laws and regulations.
+              These Terms of Service are between you and <strong>RAXIT LABS PTY LTD (ABN 32 688 231 843)</strong>.
+              BY USING, DOWNLOADING, INSTALLING, OR OTHERWISE ACCESSING THE SERVICES, YOU HEREBY AGREE TO BE BOUND BY THESE TERMS.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">2. Authorized Use Only</h3>
+            <h3 className="font-semibold mb-2">2. Age Requirements</h3>
+            <p className="text-muted-foreground">
+              Users must be 13+ years old. If you are under the legal age of majority, you must have parental consent.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">3. User Content License</h3>
+            <p className="text-muted-foreground">
+              You retain responsibility for all uploaded material. By uploading content, you grant raxIT AI
+              a worldwide, royalty-free, and non-exclusive license to reproduce, adapt, and modify such User Content
+              for the purpose of providing the Services.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">4. Authorized Use</h3>
             <p className="text-muted-foreground">
               Access to this dashboard is granted solely for:
             </p>
@@ -134,83 +180,73 @@ export function PolicyDialog({ type, children }: PolicyDialogProps) {
               <li>Security testing evaluation</li>
               <li>Educational and professional development purposes</li>
             </ul>
-            <p className="text-muted-foreground mt-2">
-              You agree <strong>NOT</strong> to:
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">5. Prohibited Activities</h3>
+            <p className="text-muted-foreground">
+              You agree NOT to:
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
-              <li>Redistribute or share access credentials</li>
-              <li>Use testing examples for malicious purposes</li>
-              <li>Attempt to reverse-engineer or exploit the system</li>
-              <li>Share harmful content examples publicly without proper context</li>
+              <li>Reverse engineer or attempt security circumvention</li>
+              <li>Scrape data or gather competitive intelligence</li>
+              <li>Distribute illegal or harmful content</li>
+              <li>Share access credentials or harmful content examples publicly</li>
             </ul>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">3. Content Warning Acknowledgment</h3>
+            <h3 className="font-semibold mb-2">6. Account Termination</h3>
             <p className="text-muted-foreground">
-              You acknowledge that this dashboard contains:
-            </p>
-            <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
-              <li>Potentially harmful or offensive content</li>
-              <li>Examples of prompt injection attacks</li>
-              <li>Sensitive testing scenarios</li>
-            </ul>
-            <p className="text-muted-foreground mt-2">
-              You accept full responsibility for your use of this information and any
-              consequences arising from exposure to this content.
+              We reserve the right to revoke access at any time for violation of these terms,
+              misuse of data or content, or suspicious/unauthorized activity.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">4. Account Termination</h3>
+            <h3 className="font-semibold mb-2">7. No Warranties</h3>
             <p className="text-muted-foreground">
-              We reserve the right to revoke access at any time for:
-            </p>
-            <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground ml-4">
-              <li>Violation of these terms</li>
-              <li>Misuse of data or content</li>
-              <li>Suspicious or unauthorized activity</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="font-semibold mb-2">5. No Warranties</h3>
-            <p className="text-muted-foreground">
-              The dashboard and its content are provided "as is" without warranties of any kind.
-              We do not guarantee the accuracy, completeness, or reliability of test results.
+              Services provided "AS IS" with explicit warranty disclaimers. We do not guarantee
+              the accuracy, completeness, or reliability of test results.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">6. Limitation of Liability</h3>
+            <h3 className="font-semibold mb-2">8. Limitation of Liability</h3>
             <p className="text-muted-foreground">
-              We are not liable for any damages arising from your use of the dashboard,
-              including but not limited to direct, indirect, incidental, or consequential damages.
+              Our liability is capped at the greater of: (a) the amount you actually paid us in the past twelve months, or
+              (b) one hundred dollars (AUD $100.00).
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">7. Changes to Terms</h3>
+            <h3 className="font-semibold mb-2">9. Intellectual Property</h3>
             <p className="text-muted-foreground">
-              We reserve the right to modify these terms at any time. Continued use of the
-              dashboard after changes constitutes acceptance of the new terms.
+              All content, features, and functionality are owned by raxIT AI and protected by international
+              copyright, trademark, and other intellectual property laws.
             </p>
           </section>
 
           <section>
-            <h3 className="font-semibold mb-2">8. Governing Law</h3>
+            <h3 className="font-semibold mb-2">10. Governing Law & Disputes</h3>
             <p className="text-muted-foreground">
-              These terms are governed by and construed in accordance with applicable laws.
+              These terms are governed by the laws of New South Wales, Australia. Disputes shall be subject to
+              the exclusive jurisdiction of courts in New South Wales. Claims must be filed within one year
+              of the applicable claim date.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold mb-2">11. Changes to Terms</h3>
+            <p className="text-muted-foreground">
+              We reserve the right to modify these terms at any time. Continued use after changes
+              constitutes acceptance of the new terms.
             </p>
           </section>
 
           <section className="pt-4 border-t">
             <p className="text-xs text-muted-foreground">
-              Last updated: {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              Last updated: January 2025
             </p>
           </section>
         </div>
@@ -234,7 +270,7 @@ export function PolicyDialog({ type, children }: PolicyDialogProps) {
           {children}
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh]">
+      <DialogContent className="max-w-2xl max-h-[90vh] w-[95vw] sm:w-full p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-2xl">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
