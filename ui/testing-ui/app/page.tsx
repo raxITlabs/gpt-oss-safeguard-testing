@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Database, DollarSign, Activity, AlertTriangle, FileText, Settings, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { AlertCircle, Database, DollarSign, Activity, AlertTriangle, FileText, Settings, HelpCircle, Filter, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { TestRunData, TestCategory } from "@/types/test-results";
 import { ResultsTable } from "@/components/results-table";
@@ -23,6 +25,7 @@ import { useFilterState } from "@/hooks/use-filter-state";
 import { FilterButtonGroup } from "@/components/filter-button-group";
 import { FilterPresets, FilterPresetsCompact } from "@/components/filter-presets";
 import { TestTypeFilter } from "@/components/test-type-filter";
+import { FILTER_PRESETS } from "@/lib/filter-presets";
 
 function HomeContent() {
   const { strictPolicyValidation, setStrictPolicyValidation } = useSettings();
@@ -132,6 +135,35 @@ function HomeContent() {
                   >
                     Model: OpenAI: gpt-oss-safeguard
                   </Badge>
+
+                  {/* Compact Filter Indicator */}
+                  {!loading && testData && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-4 w-px bg-border" aria-hidden="true" />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Filter className="h-3 w-3" />
+                              <span className="font-medium">
+                                {activePreset?.label || "Custom"}
+                              </span>
+                              {(selectedCategories.length > 0 || selectedTestTypes.length > 0) && (
+                                <Badge variant="secondary" className="h-4 px-1 text-[10px]">
+                                  {selectedCategories.length + selectedTestTypes.length}
+                                </Badge>
+                              )}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-xs">
+                              {activePreset ? activePreset.description : "Custom filter applied"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -200,29 +232,36 @@ function HomeContent() {
         </Card>
         </header>
 
-        {/* Compact Modern Filter System */}
+        {/* Modern Filter Bar with Button Groups */}
         {!loading && testData && (
           <nav aria-label="Test filters">
             <Card>
               <CardContent className="px-3 py-2">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-2">
-                  {/* Filter Presets - Compact */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Quick:
-                    </span>
-                    <FilterPresetsCompact
-                      activePresetId={activePreset?.id}
-                      onPresetSelect={applyPreset}
-                    />
+                <div className="flex flex-col gap-3">
+                  {/* Quick Filter Presets */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground shrink-0">
+                      <Filter className="h-3.5 w-3.5" />
+                      <span>Quick Filters:</span>
+                    </div>
+                    <ButtonGroup>
+                      {FILTER_PRESETS.filter(p => ['all', 'all-baseline', 'all-attacks', 'critical', 'security'].includes(p.id)).map((preset) => (
+                        <Button
+                          key={preset.id}
+                          variant={activePreset?.id === preset.id ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => applyPreset(preset.id)}
+                          className="h-7 text-xs"
+                        >
+                          {preset.label}
+                        </Button>
+                      ))}
+                    </ButtonGroup>
                   </div>
 
-                  {/* Divider */}
-                  <div className="hidden lg:block h-6 w-px bg-border" aria-hidden="true" />
-
-                  {/* Advanced Filters - Inline */}
-                  <div className="flex items-center gap-2 flex-wrap flex-1">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  {/* Custom Filters */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">
                       Custom:
                     </span>
                     <FilterButtonGroup
@@ -234,13 +273,15 @@ function HomeContent() {
                       onTestTypesChange={setTestTypes}
                     />
                     {(selectedCategories.length > 0 || selectedTestTypes.length > 0) && (
-                      <Badge
-                        variant="outline"
-                        className="cursor-pointer hover:bg-destructive/10 hover:border-destructive transition-colors text-xs"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={clearFilters}
+                        className="h-7 text-xs gap-1 hover:bg-destructive/10 hover:text-destructive"
                       >
+                        <X className="h-3 w-3" />
                         Clear All
-                      </Badge>
+                      </Button>
                     )}
                   </div>
                 </div>
