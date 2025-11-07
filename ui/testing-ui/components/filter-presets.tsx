@@ -57,8 +57,10 @@ export function FilterPresets({
               !isActive && "hover:border-primary/50"
             )}
             title={preset.description}
+            aria-label={`${preset.label}: ${preset.description}`}
+            aria-pressed={isActive}
           >
-            {Icon && <Icon className="h-3.5 w-3.5" />}
+            {Icon && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
             <span>{preset.label}</span>
           </Button>
         );
@@ -97,8 +99,18 @@ export function FilterPresetsCompact({
             )}
             onClick={() => onPresetSelect(preset.id)}
             title={preset.description}
+            role="button"
+            aria-label={`${preset.label}: ${preset.description}`}
+            aria-pressed={isActive}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onPresetSelect(preset.id);
+              }
+            }}
           >
-            {Icon && <Icon className="h-3 w-3" />}
+            {Icon && <Icon className="h-3 w-3" aria-hidden="true" />}
             <span className="text-xs font-medium">{preset.label}</span>
           </Badge>
         );
@@ -131,6 +143,8 @@ export function FilterPresetCards({
                 ? "border-primary bg-primary/5 shadow-sm"
                 : "border-border hover:border-primary/50 hover:bg-accent/50"
             )}
+            aria-label={`${preset.label}: ${preset.description}`}
+            aria-pressed={isActive}
           >
             <div className="flex items-center gap-2">
               {Icon && (
@@ -141,6 +155,7 @@ export function FilterPresetCards({
                       ? "bg-primary/10 text-primary"
                       : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
                   )}
+                  aria-hidden="true"
                 >
                   <Icon className="h-4 w-4" />
                 </div>
@@ -158,7 +173,7 @@ export function FilterPresetCards({
               {preset.description}
             </p>
             {isActive && (
-              <div className="absolute right-2 top-2">
+              <div className="absolute right-2 top-2" aria-hidden="true">
                 <div className="h-2 w-2 rounded-full bg-primary" />
               </div>
             )}

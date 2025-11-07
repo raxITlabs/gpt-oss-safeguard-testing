@@ -5,17 +5,17 @@ import Link from "next/link";
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 md:p-8">
+    <main id="main-content" className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <nav className="flex items-center gap-4" aria-label="Page navigation">
           <Link href="/consent">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+            <Button variant="ghost" size="sm" aria-label="Return to consent form">
+              <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
               Back to Consent
             </Button>
           </Link>
-        </div>
+        </nav>
 
         <Card>
           <CardHeader>
@@ -168,10 +168,10 @@ export default function PrivacyPage() {
         </Card>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} raxIT Labs. All rights reserved.
         </p>
       </div>
-    </div>
+    </main>
   );
 }

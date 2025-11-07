@@ -98,7 +98,7 @@ function ConsentPageContent() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col bg-background overflow-hidden">
+    <main id="main-content" className="h-screen w-full flex flex-col bg-background overflow-hidden">
       {/* Mobile Logo */}
       <div className="w-full md:hidden flex items-center justify-center relative overflow-hidden p-4">
         <div className="absolute inset-0 opacity-40">
@@ -136,18 +136,23 @@ function ConsentPageContent() {
                   <SafetyWarning />
 
                   {/* Age Verification */}
-                  <div className="space-y-4 pt-4 border-t">
-                    <div className="space-y-2">
+                  <fieldset className="space-y-4 pt-4 border-t">
+                    <legend className="space-y-2">
                       <h2 className="text-xl font-semibold text-foreground">Age Verification Required</h2>
                       <p className="text-sm text-muted-foreground">
                         Due to the sensitive nature of the content, you must be at least 18 years old to access this dashboard.
                       </p>
-                    </div>
+                    </legend>
 
                     {showUnderageMessage ? (
-                      <div className="p-4 rounded-lg bg-status-error-bg border-2 border-status-error">
+                      <div
+                        className="p-4 rounded-lg bg-status-error-bg border-2 border-status-error"
+                        role="alert"
+                        aria-live="assertive"
+                        aria-atomic="true"
+                      >
                         <div className="flex gap-3">
-                          <ShieldX className="h-5 w-5 text-status-error flex-shrink-0 mt-0.5" />
+                          <ShieldX className="h-5 w-5 text-status-error flex-shrink-0 mt-0.5" aria-hidden="true" />
                           <div>
                             <h3 className="font-semibold text-foreground mb-1">Access Restricted</h3>
                             <p className="text-sm text-foreground/90">
@@ -162,13 +167,14 @@ function ConsentPageContent() {
                     ) : (
                       <div className="space-y-3">
                         <p className="text-sm font-medium text-foreground">Are you 18 years of age or older?</p>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3" role="group" aria-label="Age verification">
                           <Button
                             onClick={() => handleAgeVerification(true)}
                             className="flex-1"
                             size="lg"
+                            aria-label="Yes, I confirm I am 18 years of age or older"
                           >
-                            <ShieldCheck className="h-5 w-5 mr-2" />
+                            <ShieldCheck className="h-5 w-5 mr-2" aria-hidden="true" />
                             Yes, I'm 18+
                           </Button>
                           <Button
@@ -176,13 +182,14 @@ function ConsentPageContent() {
                             variant="outline"
                             className="flex-1"
                             size="lg"
+                            aria-label="No, I am under 18 years of age"
                           >
                             No
                           </Button>
                         </div>
                       </div>
                     )}
-                  </div>
+                  </fieldset>
                 </>
               ) : (
                 <>
@@ -254,7 +261,7 @@ function ConsentPageContent() {
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function SafetyWarning() {
   return (
-    <Card className="border-2 border-status-error bg-status-error-bg">
+    <Card className="border-2 border-status-error bg-status-error-bg" role="alert" aria-live="polite" aria-atomic="true">
       <CardContent className="flex gap-3 p-4">
-        <AlertTriangle className="h-6 w-6 text-status-error flex-shrink-0 mt-0.5" />
+        <AlertTriangle className="h-6 w-6 text-status-error flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div className="space-y-2">
-          <h3 className="text-base font-semibold text-foreground">
+          <h3 className="text-base font-semibold text-foreground" id="safety-warning-title">
             18+ Age Restricted Content - AI Safety Testing
           </h3>
           <div className="text-sm leading-relaxed text-foreground/90 space-y-2">
@@ -35,7 +35,7 @@ export function SafetyWarning() {
               <li>Individuals 18 years or older</li>
               <li>Personnel with legitimate AI safety research or testing needs</li>
             </ul>
-            <p className="text-xs pt-1 text-foreground/80">
+            <p className="text-sm pt-1 text-foreground/80">
               By proceeding, you acknowledge that you understand the explicit and sensitive nature of this content and will use it responsibly for legitimate security research, testing, or educational purposes only.
             </p>
           </div>

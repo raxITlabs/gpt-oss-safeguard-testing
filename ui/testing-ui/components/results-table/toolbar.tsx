@@ -58,11 +58,12 @@ export function DataTableToolbar({
           onChange={(event) =>
             table.getColumn("test_info")?.setFilterValue(event.target.value)
           }
-          className="h-9 w-full sm:w-[250px]"
+          className="min-h-11 w-full sm:w-[250px]"
+          aria-label="Search tests"
         />
 
         <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-          <SelectTrigger className="h-9 w-full sm:w-[180px]">
+          <SelectTrigger className="min-h-11 w-full sm:w-[180px]" aria-label="Filter by test status">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -76,10 +77,11 @@ export function DataTableToolbar({
           <Button
             variant="ghost"
             onClick={() => table.resetColumnFilters()}
-            className="h-9 px-2 lg:px-3"
+            className="min-h-11 px-2 lg:px-3"
+            aria-label="Clear all filters"
           >
             Reset
-            <X className="ml-2 h-4 w-4" />
+            <X className="ml-2 h-4 w-4" aria-hidden="true" />
           </Button>
         )}
       </div>

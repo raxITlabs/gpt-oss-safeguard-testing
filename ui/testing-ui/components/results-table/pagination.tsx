@@ -25,8 +25,8 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
+    <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2" aria-label="Table pagination">
+      <div className="flex-1 text-sm text-muted-foreground" role="status" aria-live="polite" aria-atomic="true">
         Showing {table.getFilteredRowModel().rows.length} of{" "}
         {table.getCoreRowModel().rows.length} test(s)
       </div>
@@ -39,7 +39,7 @@ export function DataTablePagination<TData>({
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="h-9 w-[70px]">
+            <SelectTrigger className="min-h-11 w-[70px]" aria-label="Rows per page">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -59,43 +59,47 @@ export function DataTablePagination<TData>({
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              className="hidden h-9 w-9 p-0 lg:flex"
+              className="hidden min-h-11 min-w-11 p-0 lg:flex"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
+              aria-label="Go to first page"
             >
               <span className="sr-only">Go to first page</span>
-              <ChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               variant="outline"
-              className="h-9 w-9 p-0"
+              className="min-h-11 min-w-11 p-0"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              aria-label="Go to previous page"
             >
               <span className="sr-only">Go to previous page</span>
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               variant="outline"
-              className="h-9 w-9 p-0"
+              className="min-h-11 min-w-11 p-0"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              aria-label="Go to next page"
             >
               <span className="sr-only">Go to next page</span>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               variant="outline"
-              className="hidden h-9 w-9 p-0 lg:flex"
+              className="hidden min-h-11 min-w-11 p-0 lg:flex"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
+              aria-label="Go to last page"
             >
               <span className="sr-only">Go to last page</span>
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronsRight className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
