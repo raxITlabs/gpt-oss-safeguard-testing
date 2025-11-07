@@ -5,8 +5,6 @@ export const TEST_TYPES = [
   "baseline",
   "multi-turn",
   "multi_turn", // backward compatibility
-  "prompt-injection",
-  "prompt_injection", // backward compatibility
   "over-refusal",
   "over_refusal", // backward compatibility
 ] as const;
@@ -28,14 +26,13 @@ export const ALL_BASELINE_CATEGORIES: TestCategory[] = [
   "request-vs-depiction",
   "risk-tiering",
   "unauthorized-actions",
+  "prompt-injection",
 ];
 
 // Attack test types (non-baseline)
 export const ATTACK_TEST_TYPES: TestTypeValue[] = [
   "multi-turn",
   "multi_turn",
-  "prompt-injection",
-  "prompt_injection",
   "over-refusal",
   "over_refusal",
 ];
@@ -60,6 +57,7 @@ export const SECURITY_CATEGORIES: TestCategory[] = [
   "data-exfiltration",
   "unicode",
   "unauthorized-actions",
+  "prompt-injection",
 ];
 
 // Edge case categories
@@ -86,7 +84,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
   {
     label: "Security",
-    categories: ["data-exfiltration", "unicode"],
+    categories: ["data-exfiltration", "unicode", "prompt-injection"],
   },
   {
     label: "Edge Cases",
@@ -121,7 +119,7 @@ export const FILTER_PRESETS: FilterPreset[] = [
   {
     id: "all-attacks",
     label: "All Attacks",
-    description: "All attack scenarios (multi-turn, prompt injection, over-refusal)",
+    description: "All attack scenarios (multi-turn, over-refusal)",
     categories: "all",
     testTypes: ATTACK_TEST_TYPES,
   },
@@ -142,7 +140,7 @@ export const FILTER_PRESETS: FilterPreset[] = [
   {
     id: "security",
     label: "Security",
-    description: "Security-focused: data exfiltration, unicode, unauthorized actions",
+    description: "Security-focused: data exfiltration, unicode, unauthorized actions, prompt injection",
     categories: SECURITY_CATEGORIES,
     testTypes: "all",
   },

@@ -215,7 +215,8 @@ export type TestCategory =
   | "multi-policy"
   | "request-vs-depiction"
   | "risk-tiering"
-  | "unauthorized-actions";
+  | "unauthorized-actions"
+  | "prompt-injection";
 
 export const TEST_CATEGORIES: TestCategory[] = [
   "spam",
@@ -230,7 +231,8 @@ export const TEST_CATEGORIES: TestCategory[] = [
   "multi-policy",
   "request-vs-depiction",
   "risk-tiering",
-  "unauthorized-actions"
+  "unauthorized-actions",
+  "prompt-injection"
 ];
 
 // Test types from CSV

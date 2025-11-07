@@ -27,6 +27,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'request-vs-depiction-baseline': getColor('--chart-3'),
   'risk-tiering-baseline': getColor('--chart-6'),
   'unauthorized-actions-baseline': getColor('--chart-7'),
+  'prompt-injection-baseline': getColor('--priority-high'),
 
   // Multi-turn attacks (slightly darker variations - we'll use color-mix in future)
   'spam-multi-turn': getColor('--status-error'),
@@ -55,8 +56,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'risk-tiering-multi_turn': getColor('--chart-6'),
   'unauthorized-actions-multi-turn': getColor('--chart-7'),
   'unauthorized-actions-multi_turn': getColor('--chart-7'),
+  'prompt-injection-multi-turn': getColor('--priority-high'),
+  'prompt-injection-multi_turn': getColor('--priority-high'),
 
-  // Prompt injection attacks (critical/error tones)
+  // Prompt injection attacks (critical/error tones - kept for backward compatibility)
   'spam-prompt-injection': getColor('--priority-high'),
   'spam-prompt_injection': getColor('--priority-high'),
   'hate-speech-prompt-injection': getColor('--priority-medium'),
@@ -111,6 +114,8 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'risk-tiering-over_refusal': getColor('--status-info'),
   'unauthorized-actions-over-refusal': getColor('--status-info'),
   'unauthorized-actions-over_refusal': getColor('--status-info'),
+  'prompt-injection-over-refusal': getColor('--status-info'),
+  'prompt-injection-over_refusal': getColor('--status-info'),
 
   // Legacy/backward compatibility (category only, no test type)
   'spam': getColor('--chart-1'),
@@ -126,6 +131,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'request-vs-depiction': getColor('--chart-3'),
   'risk-tiering': getColor('--chart-6'),
   'unauthorized-actions': getColor('--chart-7'),
+  'prompt-injection': getColor('--priority-high'),
 
   // Unknown/fallback
   'unknown-baseline': getColor('--muted-foreground'),
@@ -246,6 +252,7 @@ export const ALL_CATEGORIES = [
   'request-vs-depiction',
   'risk-tiering',
   'unauthorized-actions',
+  'prompt-injection',
 ] as const;
 
 /**
@@ -255,8 +262,6 @@ export const ALL_TEST_TYPES = [
   'baseline',
   'multi-turn',
   'multi_turn',
-  'prompt-injection',
-  'prompt_injection',
   'over-refusal',
   'over_refusal',
 ] as const;

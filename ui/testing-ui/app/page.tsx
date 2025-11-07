@@ -21,7 +21,7 @@ import { useSettings } from "@/contexts/settings-context";
 import { BrandLogo } from "@/components/ui/brand-logo";
 import { useFilterState } from "@/hooks/use-filter-state";
 import { FilterButtonGroup } from "@/components/filter-button-group";
-import { FilterPresets } from "@/components/filter-presets";
+import { FilterPresets, FilterPresetsCompact } from "@/components/filter-presets";
 import { TestTypeFilter } from "@/components/test-type-filter";
 
 function HomeContent() {
@@ -200,44 +200,52 @@ function HomeContent() {
         </Card>
         </header>
 
-        {/* New Filter System - Presets and Advanced Filters */}
+        {/* Compact Modern Filter System */}
         {!loading && testData && (
           <nav aria-label="Test filters">
-            <Card className="py-2">
+            <Card>
               <CardContent className="px-3 py-2">
-              <div className="space-y-3">
-                {/* Filter Presets Row */}
-                <FilterPresets
-                  activePresetId={activePreset?.id}
-                  onPresetSelect={applyPreset}
-                />
+                <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+                  {/* Filter Presets - Compact */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                      Quick:
+                    </span>
+                    <FilterPresetsCompact
+                      activePresetId={activePreset?.id}
+                      onPresetSelect={applyPreset}
+                    />
+                  </div>
 
-                {/* Advanced Filters Row */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Filters:
-                  </span>
-                  <FilterButtonGroup
-                    selectedCategories={selectedCategories}
-                    onCategoriesChange={setCategories}
-                  />
-                  <TestTypeFilter
-                    selectedTestTypes={selectedTestTypes}
-                    onTestTypesChange={setTestTypes}
-                  />
-                  {(selectedCategories.length > 0 || selectedTestTypes.length > 0) && (
-                    <Badge
-                      variant="outline"
-                      className="cursor-pointer hover:bg-destructive/10 hover:border-destructive"
-                      onClick={clearFilters}
-                    >
-                      Clear All
-                    </Badge>
-                  )}
+                  {/* Divider */}
+                  <div className="hidden lg:block h-6 w-px bg-border" aria-hidden="true" />
+
+                  {/* Advanced Filters - Inline */}
+                  <div className="flex items-center gap-2 flex-wrap flex-1">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                      Custom:
+                    </span>
+                    <FilterButtonGroup
+                      selectedCategories={selectedCategories}
+                      onCategoriesChange={setCategories}
+                    />
+                    <TestTypeFilter
+                      selectedTestTypes={selectedTestTypes}
+                      onTestTypesChange={setTestTypes}
+                    />
+                    {(selectedCategories.length > 0 || selectedTestTypes.length > 0) && (
+                      <Badge
+                        variant="outline"
+                        className="cursor-pointer hover:bg-destructive/10 hover:border-destructive transition-colors text-xs"
+                        onClick={clearFilters}
+                      >
+                        Clear All
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           </nav>
         )}
 
