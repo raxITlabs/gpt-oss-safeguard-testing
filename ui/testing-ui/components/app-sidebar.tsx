@@ -1,156 +1,104 @@
 "use client"
 
 import * as React from "react"
+import { usePathname } from "next/navigation"
 import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react"
+import { FileText, DollarSign, Activity, AlertTriangle } from "lucide-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { FilterPanel } from "@/components/filter-panel"
+import { BrandLogo } from "@/components/ui/brand-logo"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
+import type { TestCategory } from "@/types/test-results"
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  onSettingsClick: () => void;
+  // Filter props
+  selectedCategories: TestCategory[];
+  selectedTestTypes: string[];
+  onCategoriesChange: (categories: TestCategory[]) => void;
+  onTestTypesChange: (types: string[]) => void;
+  activePresetId?: string;
+  onPresetSelect: (presetId: string) => void;
+  onClearFilters: () => void;
+  filteredCount: number;
+  totalCount: number;
+}
+
+export function AppSidebar({
+  onSettingsClick,
+  selectedCategories,
+  selectedTestTypes,
+  onCategoriesChange,
+  onTestTypesChange,
+  activePresetId,
+  onPresetSelect,
+  onClearFilters,
+  filteredCount,
+  totalCount,
+  ...props
+}: AppSidebarProps) {
+  const pathname = usePathname();
+
+  const navMain = [
     {
       title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
+      url: "/",
+      icon: Activity,
+      isActive: pathname === "/",
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
+      title: "Test Results",
+      url: "/results",
+      icon: FileText,
+      isActive: pathname === "/results",
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
+      title: "Cost Analysis",
+      url: "/cost",
+      icon: DollarSign,
+      isActive: pathname === "/cost",
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
+      title: "Performance",
+      url: "/performance",
+      icon: Activity,
+      isActive: pathname === "/performance",
     },
     {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
+      title: "Failure Analysis",
+      url: "/failures",
+      icon: AlertTriangle,
+      isActive: pathname === "/failures",
     },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
+  ];
+
+  const navSecondary = [
     {
       title: "Settings",
-      url: "#",
+      url: "#settings",
       icon: IconSettings,
+      onClick: onSettingsClick,
     },
     {
       title: "Get Help",
-      url: "#",
+      url: "#help",
       icon: IconHelp,
     },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
-    },
-  ],
-}
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -160,22 +108,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+              <a href="/" className="flex items-center gap-2">
+                <BrandLogo size="sm" />
+                <span className="text-base font-semibold">AI Safety Testing</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={navMain} />
+        <SidebarSeparator />
+        <FilterPanel
+          selectedCategories={selectedCategories}
+          selectedTestTypes={selectedTestTypes}
+          onCategoriesChange={onCategoriesChange}
+          onTestTypesChange={onTestTypesChange}
+          activePresetId={activePresetId}
+          onPresetSelect={onPresetSelect}
+          onClearFilters={onClearFilters}
+          filteredCount={filteredCount}
+          totalCount={totalCount}
+        />
+        <SidebarSeparator />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   )
 }

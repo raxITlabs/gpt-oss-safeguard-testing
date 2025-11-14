@@ -62,7 +62,7 @@ export function FilterButtonGroup({
             <Button
               variant="outline"
               className={cn(
-                "gap-2 transition-colors",
+                "gap-2 transition-colors rounded-lg",
                 hasSelection && "border-primary/50 bg-primary/5"
               )}
             >

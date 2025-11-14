@@ -1,10 +1,17 @@
-/**
- * Enhanced metric card component with threshold indicators and trends
- */
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowUp, ArrowDown, Minus, AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
+import { AlertCircle, CheckCircle2, TrendingUp } from "lucide-react";
 
 export interface MetricCardProps {
   title: string;
@@ -12,20 +19,26 @@ export interface MetricCardProps {
   subtitle?: string;
   icon?: React.ReactNode;
   trend?: {
-    value: number; // Percentage change
     direction: "up" | "down" | "stable";
+    value: string | number;
+    label?: string;
     isPositive?: boolean; // Whether the trend direction is good
   };
+  footer?: {
+    primary: string;
+    secondary: string;
+  };
+  variant?: "default" | "success" | "warning" | "destructive";
+  status?: "excellent" | "good" | "warning" | "critical";
   threshold?: {
     value: number;
     comparison: "above" | "below";
     met: boolean;
   };
-  status?: "excellent" | "good" | "warning" | "critical";
-  className?: string;
   size?: "default" | "large";
   description?: string;
   onClick?: () => void;
+  className?: string;
 }
 
 const statusColors = {
@@ -42,135 +55,117 @@ const statusIcons = {
   critical: AlertCircle,
 };
 
-const statusIconColors = {
-  excellent: "text-[color:var(--status-success)]",
-  good: "text-[color:var(--sla-good)]",
-  warning: "text-[color:var(--status-warning)]",
-  critical: "text-[color:var(--status-error)]",
-};
-
 export function MetricCard({
   title,
   value,
   subtitle,
   icon,
   trend,
-  threshold,
+  footer,
+  variant = "default",
   status,
-  className,
+  threshold,
   size = "default",
   description,
   onClick,
+  className,
 }: MetricCardProps) {
   const StatusIcon = status ? statusIcons[status] : null;
   const statusColor = status ? statusColors[status] : "";
-  const statusIconColor = status ? statusIconColors[status] : "";
 
-  const getTrendIcon = () => {
-    if (!trend) return null;
-
-    const iconClass = cn(
-      "h-3 w-3",
-      trend.isPositive
-        ? "text-[color:var(--trend-positive)]"
-        : "text-[color:var(--trend-negative)]"
-    );
-
-    if (trend.direction === "up") {
-      return <ArrowUp className={iconClass} />;
-    } else if (trend.direction === "down") {
-      return <ArrowDown className={iconClass} />;
-    } else {
-      return <Minus className="h-3 w-3 text-[color:var(--trend-stable)]" />;
-    }
+  const getBadgeVariant = () => {
+    if (status === "excellent") return "default";
+    if (status === "good") return "outline";
+    if (status === "warning") return "secondary";
+    if (status === "critical") return "destructive";
+    if (variant === "success") return "default";
+    if (variant === "warning") return "secondary";
+    if (variant === "destructive") return "destructive";
+    return "outline";
   };
 
   return (
-    <Card
-      className={cn(
-        "transition-all duration-200 py-2 gap-2",
-        status && statusColor,
-        onClick && "cursor-pointer hover:shadow-lg",
-        className
-      )}
-      onClick={onClick}
+    <Card className={cn(
+      "@container/card from-primary/5 to-card dark:to-card bg-gradient-to-t shadow-xs transition-all duration-200",
+      status && statusColor,
+      onClick && "cursor-pointer hover:shadow-lg",
+      className
+    )}
+    onClick={onClick}
     >
-      <CardHeader className={cn("pb-1 px-3 pt-3")}>
+      <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className={cn(
-            "text-[10px] sm:text-xs font-medium text-muted-foreground leading-none",
-            size === "large" && "text-xs sm:text-sm"
+          <CardDescription className={cn(
+            size === "large" && "text-sm"
           )}>
             {title}
-          </CardTitle>
+          </CardDescription>
           {(icon || StatusIcon) && (
             <div className="flex items-center gap-1.5">
               {icon && <div className="text-muted-foreground">{icon}</div>}
-              {StatusIcon && <StatusIcon className={cn("h-3 w-3", statusIconColor)} />}
+              {StatusIcon && <StatusIcon className="h-3 w-3 text-muted-foreground" />}
             </div>
           )}
         </div>
+
+        <CardTitle className={cn(
+          "text-2xl font-semibold tabular-nums @[250px]/card:text-3xl",
+          size === "large" && "text-3xl @[250px]/card:text-4xl"
+        )}>
+          {value}
+        </CardTitle>
+
+        {subtitle && !trend && (
+          <div className="text-xs text-muted-foreground">
+            {subtitle}
+          </div>
+        )}
+
+        {trend && (
+          <CardAction>
+            <Badge variant={getBadgeVariant()}>
+              {trend.direction === "up" ? <IconTrendingUp className="h-3 w-3" /> :
+               trend.direction === "down" ? <IconTrendingDown className="h-3 w-3" /> : null}
+              {trend.label || trend.value}
+            </Badge>
+          </CardAction>
+        )}
+
+        {description && (
+          <p className="text-xs text-muted-foreground mt-1">
+            {description}
+          </p>
+        )}
+
+        {threshold && (
+          <div className="flex items-center gap-1.5 text-xs mt-2">
+            <div className={cn(
+              "h-1.5 w-1.5 rounded-full shrink-0",
+              threshold.met ? "bg-[color:var(--status-success)]" : "bg-[color:var(--status-error)]"
+            )} />
+            <span className="text-muted-foreground">
+              Target: {threshold.comparison === "above" ? ">" : "<"} {threshold.value}
+            </span>
+            <span className="font-medium text-foreground">
+              {threshold.met ? "Met" : "Not Met"}
+            </span>
+          </div>
+        )}
       </CardHeader>
 
-      <CardContent className={cn("px-3 pt-0 pb-3")}>
-        <div className="space-y-1">
-          {/* Main Value */}
-          <div className={cn(
-            "text-xl sm:text-2xl font-bold tracking-tight leading-none",
-            size === "large" && "text-2xl sm:text-3xl"
-          )}>
-            {value}
+      {footer && (
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            {footer.primary}{" "}
+            {trend?.direction === "up" ? (
+              <IconTrendingUp className="size-4" />
+            ) : trend?.direction === "down" ? (
+              <IconTrendingDown className="size-4" />
+            ) : null}
           </div>
-
-          {/* Subtitle or Trend */}
-          {(subtitle || trend) && (
-            <div className="flex items-center gap-1.5 text-[10px] sm:text-xs">
-              {trend && (
-                <div className="flex items-center gap-0.5">
-                  {getTrendIcon()}
-                  <span className={cn(
-                    "font-medium leading-none",
-                    trend.isPositive
-                      ? "text-[color:var(--trend-positive)]"
-                      : "text-[color:var(--trend-negative)]"
-                  )}>
-                    {Math.abs(trend.value).toFixed(1)}%
-                  </span>
-                </div>
-              )}
-              {subtitle && (
-                <span className="text-muted-foreground leading-none">{subtitle}</span>
-              )}
-            </div>
-          )}
-
-          {/* Description */}
-          {description && (
-            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
-              {description}
-            </p>
-          )}
-
-          {/* Threshold Indicator */}
-          {threshold && (
-            <div className="flex items-center gap-1.5 text-[10px] mt-0.5">
-              <div className={cn(
-                "h-1.5 w-1.5 rounded-full shrink-0",
-                threshold.met ? "bg-[color:var(--status-success)]" : "bg-[color:var(--status-error)]"
-              )} />
-              <span className="text-muted-foreground leading-none">
-                Target: {threshold.comparison === "above" ? ">" : "<"} {threshold.value}
-              </span>
-              <span className={cn(
-                "font-medium leading-none",
-                threshold.met ? "text-[color:var(--status-success)]" : "text-[color:var(--status-error)]"
-              )}>
-                {threshold.met ? "Met" : "Not Met"}
-              </span>
-            </div>
-          )}
-        </div>
-      </CardContent>
+          <div className="text-muted-foreground">{footer.secondary}</div>
+        </CardFooter>
+      )}
     </Card>
   );
 }
@@ -280,5 +275,19 @@ export function LatencyMetricCard({
       } : undefined}
       className={className}
     />
+  );
+}
+
+interface MetricCardsSectionProps {
+  metrics: MetricCardProps[];
+}
+
+export function MetricCardsSection({ metrics }: MetricCardsSectionProps) {
+  return (
+    <div className="grid grid-cols-1 gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      {metrics.map((metric, i) => (
+        <MetricCard key={i} {...metric} />
+      ))}
+    </div>
   );
 }

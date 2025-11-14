@@ -98,7 +98,7 @@ export function TestTypeFilter({
             <Button
               variant="outline"
               className={cn(
-                "gap-2 transition-colors",
+                "gap-2 transition-colors rounded-lg",
                 hasSelection && "border-blue-500/50 bg-blue-500/5"
               )}
             >

@@ -32,7 +32,7 @@ export function PositionSelect({ value, onChange, disabled }: PositionSelectProp
   return (
     <div className="relative">
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger id="position" className="pl-9">
+        <SelectTrigger id="position" className="pl-9 w-full">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </div>

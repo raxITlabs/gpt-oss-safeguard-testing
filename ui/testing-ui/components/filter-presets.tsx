@@ -93,7 +93,7 @@ export function FilterPresetsCompact({
             key={preset.id}
             variant={isActive ? "default" : "outline"}
             className={cn(
-              "cursor-pointer gap-1 px-2.5 py-1 transition-colors",
+              "cursor-pointer gap-1 px-3 py-1.5 transition-all hover:scale-105",
               isActive && "shadow-sm",
               !isActive && "hover:border-primary/50 hover:bg-primary/5"
             )}

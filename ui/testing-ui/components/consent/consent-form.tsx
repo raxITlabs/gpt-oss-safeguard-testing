@@ -22,7 +22,7 @@ import {
 import { PolicyDialog } from "./policy-dialogs";
 import { PositionSelect } from "./position-select";
 import { OrganizationInput } from "./organization-input";
-import { Mail, Loader2, ShieldCheck, User } from "lucide-react";
+import { Mail, Loader2, ShieldCheck, User, Briefcase } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
@@ -119,7 +119,7 @@ export function ConsentForm({ onSubmit }: ConsentFormProps) {
 
         <FieldGroup>
           {/* Organization + Position Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Field>
               <FieldLabel htmlFor="organization">Organization *</FieldLabel>
               <OrganizationInput
@@ -150,18 +150,24 @@ export function ConsentForm({ onSubmit }: ConsentFormProps) {
           {form.watch("position") === "other" && (
             <Field>
               <FieldLabel htmlFor="customPosition">Please specify your position *</FieldLabel>
-              <Input
-                id="customPosition"
-                placeholder="e.g., AI Safety Consultant"
-                {...form.register("customPosition")}
-                disabled={isSubmitting}
-              />
+              <InputGroup>
+                <InputGroupAddon position="inline-start">
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                </InputGroupAddon>
+                <InputGroupInput
+                  id="customPosition"
+                  placeholder="e.g., AI Safety Consultant"
+                  autoComplete="organization-title"
+                  {...form.register("customPosition")}
+                  disabled={isSubmitting}
+                />
+              </InputGroup>
               <FieldError errors={form.formState.errors.customPosition ? [{ message: form.formState.errors.customPosition.message || "" }] : undefined} />
             </Field>
           )}
 
           {/* First Name + Last Name Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Field>
               <FieldLabel htmlFor="firstName">First Name *</FieldLabel>
               <Input
@@ -286,25 +292,27 @@ export function ConsentForm({ onSubmit }: ConsentFormProps) {
         </Alert>
       )}
 
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        className="w-full shadow-lg hover:shadow-xl transition-shadow"
-        size="lg"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <span className="flex items-center justify-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span>Processing...</span>
-          </span>
-        ) : (
-          <span className="flex items-center justify-center gap-2">
-            <ShieldCheck className="h-5 w-5" />
-            <span>Access Dashboard</span>
-          </span>
-        )}
-      </Button>
+      {/* Submit Button - Sticky Footer on Mobile */}
+      <div className="sticky bottom-0 -mx-4 md:-mx-6 -mb-4 md:-mb-6 mt-6 bg-background/95 backdrop-blur-sm border-t border-border/40 p-4 md:relative md:border-0 md:mx-0 md:mb-0 md:p-0 md:bg-transparent">
+        <Button
+          type="submit"
+          className="w-full shadow-lg hover:shadow-xl transition-shadow"
+          size="lg"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Processing...</span>
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <ShieldCheck className="h-5 w-5" />
+              <span>Access Dashboard</span>
+            </span>
+          )}
+        </Button>
+      </div>
 
       {/* <p className="text-xs text-center text-muted-foreground">
         By submitting this form, you confirm that all information provided is accurate

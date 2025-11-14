@@ -8,7 +8,7 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MetricCard } from "@/components/ui/metric-card";
+import { MetricCard } from "@/components/metric-card-enhanced";
 import { FailureGroups } from "./failure-groups";
 import {
   ChartContainer,
@@ -27,7 +27,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { AlertCircle, TrendingDown, Lightbulb, CheckCircle2 } from "lucide-react";
+import { Lightbulb, CheckCircle2 } from "lucide-react";
 import type { InferenceEvent } from "@/types/test-results";
 import {
   createFailurePatternGroups,
@@ -85,33 +85,57 @@ export function FailureAnalysisDashboard({
         <MetricCard
           title="Total Failures"
           value={failedTests}
-          subtitle={`${totalTests} total tests`}
-          icon={<AlertCircle className="h-4 w-4" />}
-          status={failedTests === 0 ? "excellent" : failedTests < totalTests * 0.05 ? "good" : failedTests < totalTests * 0.1 ? "warning" : "critical"}
+          variant={failedTests === 0 ? "success" : failedTests < totalTests * 0.05 ? "default" : failedTests < totalTests * 0.1 ? "warning" : "destructive"}
+          trend={{
+            direction: failedTests === 0 ? "down" : "up",
+            value: failedTests.toString(),
+            label: failedTests === 0 ? "Perfect" : failedTests < totalTests * 0.05 ? "Low" : failedTests < totalTests * 0.1 ? "Moderate" : "High",
+          }}
+          footer={{
+            primary: failedTests === 0 ? "No failures detected" : "Failures detected",
+            secondary: `${totalTests} total tests`,
+          }}
         />
 
         <MetricCard
           title="Pass Rate"
           value={`${passRate.toFixed(1)}%`}
-          subtitle={`${passedTests} passed`}
-          icon={<CheckCircle2 className="h-4 w-4" />}
-          status={passRate >= 95 ? "excellent" : passRate >= 90 ? "good" : passRate >= 80 ? "warning" : "critical"}
+          variant={passRate >= 95 ? "success" : passRate >= 90 ? "default" : passRate >= 80 ? "warning" : "destructive"}
+          trend={{
+            direction: passRate >= 90 ? "up" : "down",
+            value: `${passRate.toFixed(1)}%`,
+            label: passRate >= 95 ? "Excellent" : passRate >= 90 ? "Good" : passRate >= 80 ? "Fair" : "Poor",
+          }}
+          footer={{
+            primary: `${passedTests} passed`,
+            secondary: "Tests successfully completed",
+          }}
           size="large"
         />
 
         <MetricCard
           title="Failure Patterns"
           value={failureGroups.length}
-          subtitle="Distinct types"
-          icon={<TrendingDown className="h-4 w-4" />}
+          variant="default"
+          footer={{
+            primary: "Distinct types",
+            secondary: "Unique failure categories identified",
+          }}
         />
 
         <MetricCard
           title="Action Items"
           value={highPriorityRecommendations.length}
-          subtitle="High priority"
-          icon={<Lightbulb className="h-4 w-4" />}
-          status={highPriorityRecommendations.length > 0 ? "warning" : "good"}
+          variant={highPriorityRecommendations.length > 0 ? "warning" : "success"}
+          trend={{
+            direction: highPriorityRecommendations.length > 0 ? "up" : "down",
+            value: highPriorityRecommendations.length.toString(),
+            label: highPriorityRecommendations.length > 0 ? "Action needed" : "All clear",
+          }}
+          footer={{
+            primary: "High priority",
+            secondary: highPriorityRecommendations.length > 0 ? "Recommendations pending" : "No urgent actions",
+          }}
         />
       </div>
 

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ConsentForm } from "@/components/consent/consent-form";
 import { SafetyWarning } from "@/components/consent/safety-warning";
 import { ConsentFormData } from "@/lib/consent-validation";
-import { Loader2, ShieldCheck, ShieldX } from "lucide-react";
+import { Loader2, ShieldCheck, ShieldX, ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { GrainGradient } from "@paper-design/shaders-react";
@@ -98,7 +98,35 @@ function ConsentPageContent() {
   };
 
   return (
-    <main id="main-content" className="h-screen w-full flex flex-col bg-background overflow-hidden">
+    <main id="main-content" className="min-h-screen w-full flex flex-col bg-background">
+      {/* Mobile Sticky Header */}
+      <header className="sticky top-0 z-50 md:hidden w-full bg-background/95 backdrop-blur-sm border-b border-border/40 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <Image
+            src="/raxIT_webapp_logo_light.svg"
+            alt="raxIT AI"
+            width={100}
+            height={32}
+            className="object-contain"
+            priority
+          />
+          {step === 'form' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setStep('verification');
+                setShowUnderageMessage(false);
+              }}
+              aria-label="Back to age verification"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+          )}
+        </div>
+      </header>
+
       {/* Mobile Logo */}
       <div className="w-full md:hidden flex items-center justify-center relative overflow-hidden p-4">
         <div className="absolute inset-0 opacity-40">
@@ -126,10 +154,21 @@ function ConsentPageContent() {
 
       <div className="flex flex-col md:flex-row flex-1">
         {/* Form Section */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4 md:p-8 overflow-hidden">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4 md:p-8 overflow-y-auto">
           <div className="w-full max-w-2xl space-y-4">
             {/* Card Container */}
             <div className="space-y-4 rounded-lg bg-card p-4 md:p-6 shadow-2xl">
+              {/* Progress Indicator */}
+              <div className="mb-6" role="region" aria-label="Form progress">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`flex-1 h-1.5 rounded-full transition-all ${step === 'verification' ? 'bg-primary' : 'bg-primary'}`} />
+                  <div className={`flex-1 h-1.5 rounded-full transition-all ${step === 'form' ? 'bg-primary' : 'bg-muted'}`} />
+                </div>
+                <p className="text-xs text-center text-muted-foreground">
+                  Step {step === 'verification' ? '1' : '2'} of 2: {step === 'verification' ? 'Age Verification' : 'Access Request'}
+                </p>
+              </div>
+
               {step === "verification" ? (
                 <>
                   {/* Safety Warning */}

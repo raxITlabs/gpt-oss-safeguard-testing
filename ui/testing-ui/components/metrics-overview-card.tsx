@@ -58,7 +58,7 @@ export function MetricsOverviewCard({ test }: MetricsOverviewCardProps) {
 
         {/* Cost Efficiency Indicator */}
         {totalTokens > 0 && (
-          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 p-2 rounded text-xs">
+          <div className="bg-[color:var(--status-info-bg)] border border-[color:var(--status-info)] p-2 rounded text-xs">
             <p className="text-muted-foreground">
               Cost per 1K tokens: <span className="font-mono font-semibold">
                 ${((cost / totalTokens) * 1000).toFixed(4)}

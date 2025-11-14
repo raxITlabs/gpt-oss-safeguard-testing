@@ -10,7 +10,7 @@ interface SettingsContextType {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [strictPolicyValidation, setStrictPolicyValidation] = useState(true);
+  const [strictPolicyValidation, setStrictPolicyValidation] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   // Set client flag after mount

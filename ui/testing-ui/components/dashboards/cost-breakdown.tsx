@@ -7,7 +7,7 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MetricCard } from "@/components/ui/metric-card";
+import { MetricCard } from "@/components/metric-card-enhanced";
 import {
   ChartContainer,
   ChartConfig,
@@ -169,13 +169,7 @@ export function CostBreakdown({ categoryBreakdown, tokenEconomics, className }: 
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <MetricCard
-          title="Total Cost"
-          value={`$${totalCost.toFixed(6)}`}
-          subtitle={`Across ${categoryBreakdown.length} categories`}
-          icon={<DollarSign className="h-4 w-4" />}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <MetricCard
           title="Most Expensive Category"

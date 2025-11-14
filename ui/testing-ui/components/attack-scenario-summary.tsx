@@ -90,62 +90,51 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
   };
 
   return (
-    <Card className="py-2 gap-2">
-      <CardHeader className="pb-2 px-3">
-        <CardTitle className="text-sm flex items-center justify-between">
-          <div className="flex items-center gap-1.5 flex-wrap flex-1">
-            <Shield className="h-3 w-3 text-muted-foreground shrink-0" />
-            <span className="text-[10px] sm:text-xs text-muted-foreground leading-none">
-              All Attack Scenarios
-            </span>
-            <Badge variant={getSuccessRateVariant(parseFloat(overallSuccessRate))} className="h-4 text-[9px] px-1 leading-none">
-              {parseFloat(overallSuccessRate) >= 90 ? "Good" : parseFloat(overallSuccessRate) >= 70 ? "Fair" : "Poor"}
-            </Badge>
-          </div>
-          <div className="text-right">
-            <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
-              {overallSuccessRate}%
-            </div>
-            <div className="text-[10px] text-muted-foreground leading-none">
-              {totalAttacks} test{totalAttacks !== 1 ? 's' : ''}
-            </div>
-          </div>
-        </CardTitle>
+    <Card className="@container/card from-primary/5 to-card dark:to-card bg-gradient-to-t shadow-xs">
+      <CardHeader>
+        <CardTitle className="text-base">Attack Scenario Defense</CardTitle>
+        <div className="text-3xl font-semibold tabular-nums">
+          {overallSuccessRate}%
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {totalPassed} of {totalAttacks} tests passed
+        </div>
       </CardHeader>
-      <CardContent className="px-3 pt-0">
+      <CardContent className="space-y-3">
         {/* Per Attack Type Breakdown */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="space-y-2">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
               <div
                 key={stat.testType}
-                className="flex flex-col items-start space-y-0.5 p-2 border rounded hover:bg-muted/30 transition-colors"
+                className="flex items-center justify-between p-2 border rounded-lg hover:bg-muted/30 transition-colors"
               >
-                <div className="flex items-center gap-1.5 flex-wrap w-full">
-                  <Icon className={`h-3 w-3 ${getStatusColor(stat.successRate)} shrink-0`} />
-                  <div className="text-[10px] sm:text-xs text-muted-foreground leading-none flex-1">
-                    {stat.label}
+                <div className="flex items-center gap-2 flex-1">
+                  <Icon className={`h-4 w-4 ${getStatusColor(stat.successRate)} shrink-0`} />
+                  <div className="flex flex-col">
+                    <div className="text-sm font-medium">
+                      {stat.label}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3 text-[color:var(--status-success)]" />
+                        {stat.passed}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <XCircle className="h-3 w-3 text-[color:var(--status-error)]" />
+                        {stat.failed}
+                      </span>
+                    </div>
                   </div>
-                  <Badge variant={getSuccessRateVariant(stat.successRate)} className="h-4 text-[9px] px-1 leading-none">
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-lg font-semibold tabular-nums">
+                    {stat.successRate}%
+                  </div>
+                  <Badge variant={getSuccessRateVariant(stat.successRate)} className="text-xs">
                     {stat.successRate >= 90 ? "Good" : stat.successRate >= 70 ? "Fair" : "Poor"}
                   </Badge>
-                </div>
-                <div className="text-xl sm:text-2xl font-bold tracking-tight leading-none">
-                  {stat.successRate}%
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <span className="inline-flex items-center gap-0.5">
-                    <CheckCircle2 className="h-2.5 w-2.5 text-[color:var(--status-success)] shrink-0" />
-                    {stat.passed}
-                  </span>
-                  <span className="inline-flex items-center gap-0.5">
-                    <XCircle className="h-2.5 w-2.5 text-[color:var(--status-error)] shrink-0" />
-                    {stat.failed}
-                  </span>
-                  <span className="text-muted-foreground ml-1">
-                    · {stat.total} total
-                  </span>
                 </div>
               </div>
             );
