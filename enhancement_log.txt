@@ -1,0 +1,217 @@
+======================================================================
+COMPREHENSIVE DATASET ENHANCEMENT - ALL CATEGORIES
+======================================================================
+
+Adding 50% more test cases to each category from HuggingFace datasets
+Existing tests will remain untouched
+
+
+======================================================================
+CATEGORY: DATA-EXFILTRATION
+======================================================================
+  Existing tests: 100
+  Target new tests: 50
+  CSV structure: test_id, test_name, category, extraction_type...
+  ✓ Generated 50 examples
+  ✓ Backup: tests.backup_20251115_161851.csv
+  ✓ Enhancement complete!
+  Total tests: 100 → 150 (+50)
+
+======================================================================
+CATEGORY: FRAUD
+======================================================================
+  Existing tests: 89
+  Target new tests: 44
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  Loading nvidia/Aegis-AI-Content-Safety-Dataset-1.0...
+  ✓ Generated 44 examples
+  ✓ Backup: tests.backup_20251115_161855.csv
+  ✓ Enhancement complete!
+  Total tests: 89 → 133 (+44)
+
+======================================================================
+CATEGORY: HATE-SPEECH
+======================================================================
+  Existing tests: 139
+  Target new tests: 69
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  Loading ucberkeley-dlab/measuring-hate-speech...
+  ✓ Generated 68 examples
+  ✓ Backup: tests.backup_20251115_161929.csv
+  ✓ Enhancement complete!
+  Total tests: 139 → 207 (+68)
+
+======================================================================
+CATEGORY: ILLEGAL-ACTIVITY
+======================================================================
+  Existing tests: 89
+  Target new tests: 44
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  ✓ Generated 44 examples
+  ✓ Backup: tests.backup_20251115_161929.csv
+  ✓ Enhancement complete!
+  Total tests: 89 → 133 (+44)
+
+======================================================================
+CATEGORY: MULTI-POLICY
+======================================================================
+  Existing tests: 50
+  Target new tests: 25
+  CSV structure: test_id, test_name, test_content, violated_policies...
+  ✓ Generated 25 examples
+  ✓ Backup: tests.backup_20251115_161930.csv
+  ✓ Enhancement complete!
+  Total tests: 50 → 75 (+25)
+
+======================================================================
+CATEGORY: MULTI-TURN
+======================================================================
+  Existing tests: 84
+  Target new tests: 42
+  CSV structure: test_name, conversation_id, turn_number, category...
+  ⚠️  Multi-turn has special structure, skipping automated enhancement
+  ⚠️  No examples generated
+
+======================================================================
+CATEGORY: OVER-REFUSAL
+======================================================================
+  Existing tests: 185
+  Target new tests: 92
+  CSV structure: test_name, test_id, category, context_type...
+  ✓ Generated 92 examples
+  ✓ Backup: tests.backup_20251115_161937.csv
+  ✓ Enhancement complete!
+  Total tests: 185 → 277 (+92)
+
+======================================================================
+CATEGORY: PROMPT-INJECTION
+======================================================================
+  Existing tests: 100
+  Target new tests: 50
+  CSV structure: test_id, test_name, category, injection_type...
+  Loading allenai/wildjailbreak...
+  ✓ Generated 50 examples
+  ✓ Backup: tests.backup_20251115_161940.csv
+  ✓ Enhancement complete!
+  Total tests: 100 → 150 (+50)
+
+======================================================================
+CATEGORY: REQUEST-VS-DEPICTION
+======================================================================
+  Existing tests: 50
+  Target new tests: 25
+  CSV structure: test_id, test_name, test_content, policy...
+  ✓ Generated 25 examples
+  ✓ Backup: request_tests.backup_20251115_161941.csv
+  ✓ Enhancement complete!
+  Total tests: 50 → 75 (+25)
+
+======================================================================
+CATEGORY: RISK-TIERING
+======================================================================
+  Existing tests: 80
+  Target new tests: 40
+  CSV structure: test_id, test_name, input_trust, data_sensitivity...
+  ✓ Generated 40 examples
+  ✓ Backup: tests.backup_20251115_161941.csv
+  ✓ Enhancement complete!
+  Total tests: 80 → 120 (+40)
+
+======================================================================
+CATEGORY: SELF-HARM
+======================================================================
+  Existing tests: 89
+  Target new tests: 44
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  ✓ Generated 44 examples
+  ✓ Backup: tests.backup_20251115_161941.csv
+  ✓ Enhancement complete!
+  Total tests: 89 → 133 (+44)
+
+======================================================================
+CATEGORY: SEXUAL-CONTENT
+======================================================================
+  Existing tests: 105
+  Target new tests: 52
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  Loading ontocord/OIG-moderation...
+  ✓ Generated 48 examples
+  ✓ Backup: tests.backup_20251115_161943.csv
+  ✓ Enhancement complete!
+  Total tests: 105 → 153 (+48)
+
+======================================================================
+CATEGORY: SPAM
+======================================================================
+  Existing tests: 70
+  Target new tests: 35
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  ✓ Generated 35 examples
+  ✓ Backup: tests.backup_20251115_161943.csv
+  ✓ Enhancement complete!
+  Total tests: 70 → 105 (+35)
+
+======================================================================
+CATEGORY: UNAUTHORIZED-ACTIONS
+======================================================================
+  Existing tests: 115
+  Target new tests: 57
+  CSV structure: test_id, test_name, category, action_type...
+  ✓ Generated 57 examples
+  ✓ Backup: tests.backup_20251115_161943.csv
+  ✓ Enhancement complete!
+  Total tests: 115 → 172 (+57)
+
+======================================================================
+CATEGORY: UNICODE
+======================================================================
+  Existing tests: 155
+  Target new tests: 77
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  ✓ Generated 77 examples
+  ✓ Backup: tests.backup_20251115_161943.csv
+  ✓ Enhancement complete!
+  Total tests: 155 → 232 (+77)
+
+======================================================================
+CATEGORY: VIOLENCE
+======================================================================
+  Existing tests: 119
+  Target new tests: 59
+  CSV structure: test_id, test_name, test_content, gpt-oss-safeguard classification...
+  ✓ Generated 59 examples
+  ✓ Backup: tests.backup_20251115_161943.csv
+  ✓ Enhancement complete!
+  Total tests: 119 → 178 (+59)
+
+======================================================================
+ENHANCEMENT SUMMARY
+======================================================================
+
+📊 Overall Statistics:
+  Categories enhanced: 15
+  Total existing tests: 1535
+  Total new tests: 758
+  Final total: 2293
+  Percentage increase: 49.4%
+
+📁 By Category:
+  data-exfiltration     100 →  150 (+50)
+  fraud                  89 →  133 (+44)
+  hate-speech           139 →  207 (+68)
+  illegal-activity       89 →  133 (+44)
+  multi-policy           50 →   75 (+25)
+  over-refusal          185 →  277 (+92)
+  prompt-injection      100 →  150 (+50)
+  request-vs-depiction   50 →   75 (+25)
+  risk-tiering           80 →  120 (+40)
+  self-harm              89 →  133 (+44)
+  sexual-content        105 →  153 (+48)
+  spam                   70 →  105 (+35)
+  unauthorized-actions  115 →  172 (+57)
+  unicode               155 →  232 (+77)
+  violence              119 →  178 (+59)
+
+✓ Enhancement complete!
+  Backups saved with timestamp
+  Ready to test enhanced datasets

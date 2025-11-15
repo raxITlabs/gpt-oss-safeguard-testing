@@ -25,7 +25,8 @@ import { analyzeFailure } from "@/lib/failure-analyzer"
 import {
   ArrowLeft,
   AlertCircle,
-  Share2,
+  Copy,
+  Check,
   FileText,
   MessageSquare,
   Bot,
@@ -51,6 +52,7 @@ export default function TestDetailPage({ params }: TestDetailPageProps) {
   const [test, setTest] = useState<InferenceEvent | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     params.then(p => setTestId(p.testId))
@@ -103,26 +105,19 @@ export default function TestDetailPage({ params }: TestDetailPageProps) {
     fetchTest()
   }, [testId])
 
-  const handleShare = async () => {
-    const url = window.location.href
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Test Result: ${test?.test_name || testId}`,
-          url,
-        })
-      } catch (err) {
-        // User cancelled share or error occurred
-        console.error("Error sharing:", err)
-      }
-    } else {
-      // Fallback: copy to clipboard
-      try {
-        await navigator.clipboard.writeText(url)
-        alert("Link copied to clipboard!")
-      } catch (err) {
-        console.error("Error copying to clipboard:", err)
-      }
+  const handleExportPolicy = async () => {
+    const policyText = extractPolicy(test)
+
+    if (!policyText) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(policyText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Error copying to clipboard:", err)
     }
   }
 
@@ -204,10 +199,19 @@ export default function TestDetailPage({ params }: TestDetailPageProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleShare}
+              onClick={handleExportPolicy}
             >
-              <Share2 className="size-4 mr-2" />
-              Share
+              {copied ? (
+                <>
+                  <Check className="size-4 mr-2" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="size-4 mr-2" />
+                  Export Policy
+                </>
+              )}
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/results">
