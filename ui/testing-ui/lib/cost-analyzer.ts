@@ -56,9 +56,11 @@ function getTokens(inf: InferenceEvent): { prompt: number; completion: number; t
 
 /**
  * Extract test result (handles both old and new formats)
+ * @param inf - Inference event
+ * @param strictPolicyValidation - Whether to use strict policy validation
  */
-function getPassed(inf: InferenceEvent): boolean {
-  return inf.passed ?? inf.test_result?.passed ?? false;
+function getPassed(inf: InferenceEvent, strictPolicyValidation: boolean = true): boolean {
+  return analyzeFailure(inf, strictPolicyValidation) === null;
 }
 
 /**
@@ -158,7 +160,7 @@ export function calculateCostEfficiency(
 /**
  * Analyze cost breakdown by category
  */
-export function analyzeCostByCategory(inferences: InferenceEvent[]): CategoryCostBreakdown[] {
+export function analyzeCostByCategory(inferences: InferenceEvent[], strictPolicyValidation: boolean = true): CategoryCostBreakdown[] {
   // Group by composite category-test_type key
   const byCategory = inferences.reduce((acc, inf) => {
     const testType = inf.test_type || 'baseline';
@@ -178,7 +180,7 @@ export function analyzeCostByCategory(inferences: InferenceEvent[]): CategoryCos
     const totalTokens = tests.reduce((sum, t) => sum + getTokens(t).total, 0);
     const totalLatency = tests.reduce((sum, t) => sum + getLatency(t), 0);
 
-    const passedTests = tests.filter(t => getPassed(t));
+    const passedTests = tests.filter(t => getPassed(t, strictPolicyValidation));
     const costOfPassedTests = passedTests.reduce((sum, t) => sum + getCost(t), 0);
 
     return {
@@ -415,7 +417,7 @@ export function identifyOptimizationOpportunities(
   }
 
   // Opportunity 3: Identify expensive failures
-  const expensiveFailures = inferences.filter(inf => !getPassed(inf) && getCost(inf) > costEfficiency.costPerTest * 1.5);
+  const expensiveFailures = inferences.filter(inf => !getPassed(inf, strictPolicyValidation) && getCost(inf) > costEfficiency.costPerTest * 1.5);
   if (expensiveFailures.length > 0) {
     opportunities.push({
       type: "model_selection",

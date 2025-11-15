@@ -82,6 +82,27 @@ export function createColumns(strictPolicyValidation: boolean): ColumnDef<Infere
       maxSize: 400,
     },
     {
+      id: "model",
+      accessorKey: "request.model",
+      header: "Model",
+      cell: ({ row }) => {
+        const model = row.original.request.model || row.original.response.model;
+        return (
+          <a
+            href={`/model/${encodeURIComponent(model)}`}
+            className="text-sm text-primary hover:underline font-medium"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {model}
+          </a>
+        );
+      },
+      enableSorting: false,
+      size: 140,
+      minSize: 120,
+      maxSize: 180,
+    },
+    {
       id: "test_type",
       accessorKey: "test_type",
       header: "Test Type",

@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, Database } from "lucide-react";
-import type { TestRunData } from "@/types/test-results";
+import type { TestRunData, InferenceEvent } from "@/types/test-results";
 import { MetricCard } from "@/components/metric-card-enhanced";
 import { AttackScenarioSummary } from "@/components/attack-scenario-summary";
 import { ResultsTable } from "@/components/results-table";
@@ -13,8 +14,10 @@ import { useSettings } from "@/contexts/settings-context";
 import { useFilterState } from "@/hooks/use-filter-state";
 import { analyzeFailure } from "@/lib/failure-analyzer";
 import { getTestData } from "@/actions/get-test-data";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function ResultsPage() {
+  const router = useRouter();
   const { strictPolicyValidation } = useSettings();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +27,15 @@ export default function ResultsPage() {
     categories: selectedCategories,
     testTypes: selectedTestTypes,
   } = useFilterState();
+
+  // Handle row click to navigate to test detail
+  const handleRowClick = (inference: InferenceEvent) => {
+    const testId = inference.test_id || inference.test_number?.toString() ||
+                   testData?.inferences.indexOf(inference).toString();
+    if (testId) {
+      router.push(`/results/${testId}`);
+    }
+  };
 
   // Fetch test data using cached server action
   useEffect(() => {
@@ -84,12 +96,10 @@ export default function ResultsPage() {
 
   return (
     <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 space-y-6 lg:px-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Test Results</h1>
-        <p className="text-muted-foreground mt-1">
-          Detailed view of all test executions and their outcomes
-        </p>
-      </div>
+      <PageHeader
+        title="Test Results"
+        description="Detailed test execution results filtered by your criteria"
+      />
 
       {/* Error Display */}
       {error && (
@@ -171,9 +181,13 @@ export default function ResultsPage() {
           <Card>
             <CardContent className="p-6">
               <h2 className="text-lg font-semibold mb-4">Test Execution Details</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Click any row to view detailed test information
+              </p>
               <ResultsTable
                 inferences={filteredInferences}
                 strictPolicyValidation={strictPolicyValidation}
+                onRowClick={handleRowClick}
               />
             </CardContent>
           </Card>

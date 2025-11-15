@@ -9,6 +9,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { useFilterState } from "@/hooks/use-filter-state";
+import { BreadcrumbProvider } from "@/contexts/breadcrumb-context";
 
 function DashboardContent({
   children,
@@ -80,21 +81,23 @@ export default function DashboardLayout({
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-        } as React.CSSProperties
-      }
-    >
-      <Suspense fallback={<div>Loading...</div>}>
-        <DashboardContent
-          settingsOpen={settingsOpen}
-          setSettingsOpen={setSettingsOpen}
-        >
-          {children}
-        </DashboardContent>
-      </Suspense>
-    </SidebarProvider>
+    <BreadcrumbProvider>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+          } as React.CSSProperties
+        }
+      >
+        <Suspense fallback={<div>Loading...</div>}>
+          <DashboardContent
+            settingsOpen={settingsOpen}
+            setSettingsOpen={setSettingsOpen}
+          >
+            {children}
+          </DashboardContent>
+        </Suspense>
+      </SidebarProvider>
+    </BreadcrumbProvider>
   );
 }

@@ -3,6 +3,7 @@
  */
 
 import type { InferenceEvent } from "@/types/test-results";
+import { analyzeFailure } from "./failure-analyzer";
 
 export interface PerformanceMetrics {
   avgLatency: number;
@@ -71,7 +72,7 @@ function calculateRange(values: number[]): { min: number; max: number; median: n
 /**
  * Analyze overall performance metrics
  */
-export function analyzePerformance(inferences: InferenceEvent[]): PerformanceMetrics {
+export function analyzePerformance(inferences: InferenceEvent[], strictPolicyValidation: boolean = true): PerformanceMetrics {
   if (inferences.length === 0) {
     return {
       avgLatency: 0,
@@ -100,7 +101,7 @@ export function analyzePerformance(inferences: InferenceEvent[]): PerformanceMet
   const totalCost = inferences.reduce((sum, inf) => sum + (inf.metrics?.cost_usd || 0), 0);
 
   // Calculate pass rate
-  const passed = inferences.filter((inf) => inf.test_result?.passed).length;
+  const passed = inferences.filter((inf) => analyzeFailure(inf, strictPolicyValidation) === null).length;
   const passRate = (passed / inferences.length) * 100;
 
   // Get value arrays for range calculations
@@ -142,7 +143,7 @@ export function analyzePerformance(inferences: InferenceEvent[]): PerformanceMet
 /**
  * Analyze performance by category
  */
-export function analyzeCategoryPerformance(inferences: InferenceEvent[]): CategoryPerformance[] {
+export function analyzeCategoryPerformance(inferences: InferenceEvent[], strictPolicyValidation: boolean = true): CategoryPerformance[] {
   // Group by category
   const byCategory = inferences.reduce((acc, inf) => {
     const category = inf.category || inf.test_type || "Unknown";
@@ -155,7 +156,7 @@ export function analyzeCategoryPerformance(inferences: InferenceEvent[]): Catego
 
   // Calculate stats for each category
   return Object.entries(byCategory).map(([category, tests]) => {
-    const passed = tests.filter((t) => t.test_result?.passed).length;
+    const passed = tests.filter((t) => analyzeFailure(t, strictPolicyValidation) === null).length;
     const failed = tests.length - passed;
     const passRate = (passed / tests.length) * 100;
 

@@ -14,6 +14,7 @@ import type {
   PerformanceMetricsSummary,
   CategoryPerformanceMetrics,
 } from "@/types/analytics";
+import { analyzeFailure } from "./failure-analyzer";
 
 /**
  * Extract latency from inference event (handles both old and new formats)
@@ -38,9 +39,11 @@ function getTotalTokens(inf: InferenceEvent): number {
 
 /**
  * Extract test result (handles both old and new formats)
+ * @param inf - Inference event
+ * @param strictPolicyValidation - Whether to use strict policy validation
  */
-function getPassed(inf: InferenceEvent): boolean {
-  return inf.passed ?? inf.test_result?.passed ?? false;
+function getPassed(inf: InferenceEvent, strictPolicyValidation: boolean = true): boolean {
+  return analyzeFailure(inf, strictPolicyValidation) === null;
 }
 
 /**
@@ -73,7 +76,7 @@ function calculatePercentile(sortedValues: number[], percentile: number): number
 /**
  * Calculate comprehensive latency percentiles
  */
-export function calculateLatencyPercentiles(inferences: InferenceEvent[]): LatencyPercentiles {
+export function calculateLatencyPercentiles(inferences: InferenceEvent[], strictPolicyValidation: boolean = true): LatencyPercentiles {
   if (inferences.length === 0) {
     return {
       p50: 0,
@@ -114,7 +117,7 @@ export function calculateLatencyPercentiles(inferences: InferenceEvent[]): Laten
       category: getCombinedCategory(inf.category, inf.test_type),
       cost: getCost(inf),
       tokens: getTotalTokens(inf),
-      passed: getPassed(inf),
+      passed: getPassed(inf, strictPolicyValidation),
     }))
     .sort((a, b) => b.latency - a.latency);
 
@@ -135,7 +138,8 @@ export function calculateLatencyPercentiles(inferences: InferenceEvent[]): Laten
  */
 export function prepareLatencyDistribution(
   inferences: InferenceEvent[],
-  binCount: number = 10
+  binCount: number = 10,
+  strictPolicyValidation: boolean = true
 ): LatencyDistribution {
   if (inferences.length === 0) {
     return {
@@ -172,7 +176,7 @@ export function prepareLatencyDistribution(
     });
   }
 
-  const percentiles = calculateLatencyPercentiles(inferences);
+  const percentiles = calculateLatencyPercentiles(inferences, strictPolicyValidation);
 
   return {
     bins,
@@ -187,7 +191,8 @@ export function prepareLatencyDistribution(
  */
 export function calculateSLACompliance(
   inferences: InferenceEvent[],
-  slaThreshold: number
+  slaThreshold: number,
+  strictPolicyValidation: boolean = true
 ): SLACompliance {
   if (inferences.length === 0) {
     return {
@@ -215,7 +220,7 @@ export function calculateSLACompliance(
         category: getCombinedCategory(inf.category, inf.test_type),
         cost: getCost(inf),
         tokens: getTotalTokens(inf),
-        passed: getPassed(inf),
+        passed: getPassed(inf, strictPolicyValidation),
       });
       totalViolationAmount += latency - slaThreshold;
     }
@@ -239,7 +244,7 @@ export function calculateSLACompliance(
 /**
  * Analyze correlation between latency and tokens
  */
-export function analyzeLatencyTokenCorrelation(inferences: InferenceEvent[]): LatencyTokenCorrelation {
+export function analyzeLatencyTokenCorrelation(inferences: InferenceEvent[], strictPolicyValidation: boolean = true): LatencyTokenCorrelation {
   if (inferences.length === 0) {
     return {
       dataPoints: [],
@@ -254,7 +259,7 @@ export function analyzeLatencyTokenCorrelation(inferences: InferenceEvent[]): La
     tokens: getTotalTokens(inf),
     latency: getLatency(inf),
     category: getCombinedCategory(inf.category, inf.test_type),
-    passed: getPassed(inf),
+    passed: getPassed(inf, strictPolicyValidation),
     cost: getCost(inf),
   }));
 
@@ -332,9 +337,10 @@ export function analyzePerformanceByCategory(inferences: InferenceEvent[]): Cate
  */
 export function generatePerformanceSummary(
   inferences: InferenceEvent[],
-  slaThreshold?: number
+  slaThreshold?: number,
+  strictPolicyValidation: boolean = true
 ): PerformanceMetricsSummary {
-  const latencyPercentiles = calculateLatencyPercentiles(inferences);
+  const latencyPercentiles = calculateLatencyPercentiles(inferences, strictPolicyValidation);
   const categoryPerformance = analyzePerformanceByCategory(inferences);
 
   // Find fastest and slowest tests
@@ -351,7 +357,7 @@ export function generatePerformanceSummary(
     category: getCombinedCategory(fastestInf.category, fastestInf.test_type),
     cost: getCost(fastestInf),
     tokens: getTotalTokens(fastestInf),
-    passed: getPassed(fastestInf),
+    passed: getPassed(fastestInf, strictPolicyValidation),
   };
 
   const slowestTest: TestOutlier = {
@@ -363,7 +369,7 @@ export function generatePerformanceSummary(
     category: getCombinedCategory(slowestInf.category, slowestInf.test_type),
     cost: getCost(slowestInf),
     tokens: getTotalTokens(slowestInf),
-    passed: getPassed(slowestInf),
+    passed: getPassed(slowestInf, strictPolicyValidation),
   };
 
   // Calculate token economics (simplified version)

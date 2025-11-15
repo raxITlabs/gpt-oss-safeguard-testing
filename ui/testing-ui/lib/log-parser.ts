@@ -10,6 +10,7 @@ import type {
   LogFileInfo,
   TestCategory
 } from "@/types/test-results";
+import { analyzeFailure } from "./failure-analyzer";
 
 // Path to logs directory (relative to project root, not UI directory)
 // When running Next.js, process.cwd() is the ui/testing-ui directory
@@ -40,8 +41,10 @@ export async function parseLogFile(filePath: string): Promise<LogEntry[]> {
 
 /**
  * Parse and aggregate log entries into structured test run data
+ * @param entries - Log entries to aggregate
+ * @param strictPolicyValidation - Whether to use strict policy validation for failure detection
  */
-export function aggregateLogData(entries: LogEntry[]): TestRunData {
+export function aggregateLogData(entries: LogEntry[], strictPolicyValidation: boolean = true): TestRunData {
   const data: TestRunData = {
     sessionStart: null,
     sessionSummary: null,
@@ -127,7 +130,7 @@ export function aggregateLogData(entries: LogEntry[]): TestRunData {
   // Compute failures from inferences if session_summary exists but has no failures
   if (data.sessionSummary && data.sessionSummary.failures.length === 0 && data.inferences.length > 0) {
     data.sessionSummary.failures = data.inferences
-      .filter(inf => inf.test_result && !inf.test_result.passed)
+      .filter(inf => analyzeFailure(inf, strictPolicyValidation) !== null)
       .map(inf => ({
         test_name: inf.test_name,
         expected: inf.test_result?.expected || "",

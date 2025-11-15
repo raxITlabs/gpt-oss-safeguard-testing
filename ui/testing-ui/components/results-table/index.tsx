@@ -10,19 +10,26 @@ interface ResultsTableProps {
   inferences: InferenceEvent[];
   externalStatusFilter?: "all" | "passed" | "failed";
   strictPolicyValidation?: boolean;
+  onRowClick?: (inference: InferenceEvent) => void;
 }
 
 export function ResultsTable({
   inferences,
   externalStatusFilter,
   strictPolicyValidation = true,
+  onRowClick,
 }: ResultsTableProps) {
   const [selectedTest, setSelectedTest] = useState<InferenceEvent | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleViewDetails = (test: InferenceEvent) => {
-    setSelectedTest(test);
-    setDialogOpen(true);
+    // If custom onRowClick is provided, use it; otherwise use default dialog behavior
+    if (onRowClick) {
+      onRowClick(test);
+    } else {
+      setSelectedTest(test);
+      setDialogOpen(true);
+    }
   };
 
   // Create columns with current strictPolicyValidation setting

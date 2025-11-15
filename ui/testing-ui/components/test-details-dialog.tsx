@@ -116,7 +116,7 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Model Classified As</p>
                   <Badge
-                    variant={test.test_result?.passed ? "default" : "destructive"}
+                    variant={isPassed ? "default" : "destructive"}
                     className="text-lg p-2"
                   >
                     {test.test_result?.actual ?? "N/A"}
@@ -133,7 +133,7 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
                 <h3 className="text-base font-semibold mb-2">Model Classification</h3>
                 <div className="bg-muted p-4 rounded-md text-center">
                   <Badge
-                    variant={test.test_result?.passed ? "default" : "destructive"}
+                    variant={isPassed ? "default" : "destructive"}
                     className="text-2xl p-3"
                   >
                     {test.response.content}
@@ -148,8 +148,8 @@ export function TestDetailsDialog({ test, open, onOpenChange, strictPolicyValida
                 </div>
                 <div className="space-y-2">
                   <p className="font-semibold">Result:</p>
-                  <StatusBadge passed={test.test_result?.passed ?? false} showIcon={true} />
-                  {!test.test_result?.passed && (
+                  <StatusBadge passed={isPassed} showIcon={true} />
+                  {!isPassed && (
                     <p className="text-xs text-destructive mt-2">
                       ⚠️ Classification mismatch - review policy and reasoning
                     </p>

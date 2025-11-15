@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Target, RefreshCw, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { Shield, Target, RefreshCw, AlertTriangle, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import type { InferenceEvent } from "@/types/test-results";
 import { analyzeFailure } from "@/lib/failure-analyzer";
 
@@ -105,10 +106,13 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
         <div className="space-y-2">
           {stats.map((stat) => {
             const Icon = stat.icon;
+            // Normalize test type for URL (replace underscores with hyphens)
+            const urlTestType = stat.testType.replace(/_/g, '-');
             return (
-              <div
+              <Link
                 key={stat.testType}
-                className="flex items-center justify-between p-2 border rounded-lg hover:bg-muted/30 transition-colors"
+                href={`/method/${urlTestType}`}
+                className="flex items-center justify-between p-2 border rounded-lg hover:bg-muted/30 hover:border-primary transition-colors group"
               >
                 <div className="flex items-center gap-2 flex-1">
                   <Icon className={`h-4 w-4 ${getStatusColor(stat.successRate)} shrink-0`} />
@@ -135,8 +139,9 @@ export function AttackScenarioSummary({ inferences, strictPolicyValidation = tru
                   <Badge variant={getSuccessRateVariant(stat.successRate)} className="text-xs">
                     {stat.successRate >= 90 ? "Good" : stat.successRate >= 70 ? "Fair" : "Poor"}
                   </Badge>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
