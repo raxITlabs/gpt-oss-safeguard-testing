@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { DateDisplay } from "@/components/date-display";
 
 export default function TermsPage() {
   return (
@@ -21,11 +22,7 @@ export default function TermsPage() {
           <CardHeader>
             <CardTitle className="text-3xl">Terms of Service</CardTitle>
             <CardDescription>
-              Last updated: {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+              Last updated: <DateDisplay format="full" />
             </CardDescription>
           </CardHeader>
           <CardContent className="prose prose-slate dark:prose-invert max-w-none">
@@ -220,7 +217,7 @@ export default function TermsPage() {
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} raxIT Labs. All rights reserved.
+          © <DateDisplay format="year" /> raxIT Labs. All rights reserved.
         </p>
       </div>
     </main>

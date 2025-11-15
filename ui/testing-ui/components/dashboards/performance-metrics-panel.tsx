@@ -235,7 +235,7 @@ export function PerformanceMetricsPanel({
           value={`${Math.round(fastestTest.latency)}ms`}
           variant="success"
           footer={{
-            primary: fastestTest.testName,
+            primary: fastestTest.testName ?? "Unknown test",
             secondary: `${fastestTest.category} • ${fastestTest.tokens} tokens • $${fastestTest.cost.toFixed(6)}`,
           }}
           size="large"
@@ -246,7 +246,7 @@ export function PerformanceMetricsPanel({
           value={`${Math.round(slowestTest.latency)}ms`}
           variant="destructive"
           footer={{
-            primary: slowestTest.testName,
+            primary: slowestTest.testName ?? "Unknown test",
             secondary: `${slowestTest.category} • ${slowestTest.tokens} tokens • $${slowestTest.cost.toFixed(6)}`,
           }}
           size="large"
@@ -275,7 +275,7 @@ export function PerformanceMetricsPanel({
                   label: "Above average",
                 }}
                 footer={{
-                  primary: outlier.testName,
+                  primary: outlier.testName ?? "Unknown test",
                   secondary: `${outlier.category} • ${outlier.tokens} tokens • $${outlier.cost.toFixed(6)}`,
                 }}
                 onClick={() => onOutlierClick?.(outlier)}
