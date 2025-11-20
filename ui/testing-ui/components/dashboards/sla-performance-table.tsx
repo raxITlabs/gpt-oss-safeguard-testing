@@ -43,14 +43,14 @@ export function SLAPerformanceTable({
       value: sla.testsViolatingSLA,
       details: `${violationPercentage}% of total tests`,
       status: sla.testsViolatingSLA === 0 ? "None" : "Failed",
-      variant: (sla.testsViolatingSLA === 0 ? "success" : "destructive") as const,
+      variant: sla.testsViolatingSLA === 0 ? "success" as const : "destructive" as const,
     },
     {
       metric: "Avg Violation Amount",
       value: sla.testsViolatingSLA > 0 ? `+${Math.round(sla.avgViolationAmount)}ms` : "N/A",
       details: sla.testsViolatingSLA > 0 ? "Over threshold per violation" : "No violations",
       status: sla.avgViolationAmount > 500 ? "High" : sla.testsViolatingSLA > 0 ? "Moderate" : "None",
-      variant: (sla.avgViolationAmount > 500 ? "destructive" : sla.testsViolatingSLA > 0 ? "warning" : "success") as const,
+      variant: sla.avgViolationAmount > 500 ? "destructive" as const : sla.testsViolatingSLA > 0 ? "warning" as const : "success" as const,
     },
   ];
 

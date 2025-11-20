@@ -83,6 +83,12 @@ export function AppSidebar({
       icon: AlertTriangle,
       isActive: pathname === "/failures",
     },
+    {
+      title: "Export",
+      url: "/export",
+      icon: FileText,
+      isActive: pathname === "/export",
+    },
   ];
 
   const navSecondary = [
