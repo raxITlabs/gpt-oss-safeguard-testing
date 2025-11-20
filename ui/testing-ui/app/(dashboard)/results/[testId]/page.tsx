@@ -106,6 +106,8 @@ export default function TestDetailPage({ params }: TestDetailPageProps) {
   }, [testId])
 
   const handleExportPolicy = async () => {
+    if (!test) return
+
     const policyText = extractPolicy(test)
 
     if (!policyText) {

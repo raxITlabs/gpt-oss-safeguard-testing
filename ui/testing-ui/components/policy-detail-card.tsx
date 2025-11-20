@@ -79,7 +79,7 @@ export function PolicyDetailCard({ category, tests, strictPolicyValidation = tru
             </p>
           </div>
 
-          <Badge className={cn("border", getStatusColor())}>
+          <Badge className={cn("border", getStatusColor()) + " text-foreground"}>
             {passRate.toFixed(1)}% Pass Rate
           </Badge>
         </div>

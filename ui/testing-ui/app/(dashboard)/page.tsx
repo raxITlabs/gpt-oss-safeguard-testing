@@ -10,7 +10,7 @@ import type { TestRunData } from "@/types/test-results";
 import { CompactMetricsBar } from "@/components/compact-metrics-bar";
 import { AttackScenarioSummary } from "@/components/attack-scenario-summary";
 import { DashboardTestContext } from "@/components/dashboard-test-context";
-import { AggregatedMetricsCard } from "@/components/aggregated-metrics-card";
+import { MetricCard } from "@/components/metric-card-enhanced";
 import { useSettings } from "@/contexts/settings-context";
 import { useFilterState } from "@/hooks/use-filter-state";
 import { useBreadcrumbs } from "@/contexts/breadcrumb-context";
@@ -131,21 +131,32 @@ export default function DashboardOverviewPage() {
 
       {/* Test Data Display */}
       {!loading && testData && testData.sessionSummary && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Test Context */}
           <DashboardTestContext inferences={filteredInferences} strictPolicyValidation={strictPolicyValidation} />
 
-          {/* Metrics Cards */}
-          <CompactMetricsBar
-            summary={testData.sessionSummary}
-            inferences={filteredInferences}
-            strictPolicyValidation={strictPolicyValidation}
-          />
+          {/* Primary Metrics Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">Key Metrics</h2>
+              <InfoTooltip content="Core performance indicators across all tests" />
+            </div>
+            <CompactMetricsBar
+              summary={testData.sessionSummary}
+              inferences={filteredInferences}
+              strictPolicyValidation={strictPolicyValidation}
+            />
+          </div>
 
-          {/* Insights Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* Secondary Metrics / Insights Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">Insights</h2>
+              <InfoTooltip content="Detailed analysis and actionable insights" />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {/* Failed Tests */}
-            <AggregatedMetricsCard
+            <MetricCard
               title="Failed Tests"
               value={`${failedTests.length} / ${filteredInferences.length}`}
               subtitle={filteredInferences.length > 0
@@ -162,7 +173,7 @@ export default function DashboardOverviewPage() {
             />
 
             {/* Cost Efficiency */}
-            <AggregatedMetricsCard
+            <MetricCard
               title="Cost Efficiency"
               value={`$${costPerCorrectTest.toFixed(4)}`}
               subtitle="Per correct test"
@@ -176,7 +187,7 @@ export default function DashboardOverviewPage() {
             />
 
             {/* SLA Compliance */}
-            <AggregatedMetricsCard
+            <MetricCard
               title="SLA Compliance"
               value={`${slaCompliance.toFixed(1)}%`}
               subtitle={`${testsWithinSLA.length} / ${filteredInferences.length} tests`}
@@ -193,10 +204,15 @@ export default function DashboardOverviewPage() {
                 secondary: "Click to view performance"
               }}
             />
+            </div>
           </div>
 
-          {/* Attack Scenario Summary */}
-          <div id="attack-scenarios">
+          {/* Attack Scenario Summary Section */}
+          <div id="attack-scenarios" className="space-y-3">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">Attack Scenarios</h2>
+              <InfoTooltip content="Breakdown of test results by attack scenario type" />
+            </div>
             <AttackScenarioSummary
               inferences={filteredInferences}
               strictPolicyValidation={strictPolicyValidation}

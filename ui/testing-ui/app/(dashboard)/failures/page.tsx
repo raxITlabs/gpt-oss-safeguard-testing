@@ -13,6 +13,7 @@ import { useSettings } from "@/contexts/settings-context";
 import { useFilterState } from "@/hooks/use-filter-state";
 import { analyzeFailure } from "@/lib/failure-analyzer";
 import { getTestData } from "@/actions/get-test-data";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function FailuresPage() {
   const { strictPolicyValidation } = useSettings();
@@ -71,6 +72,7 @@ export default function FailuresPage() {
   let passedTests = 0;
   let failedTests = 0;
   let criticalFailures = 0;
+  let totalFailureLatency = 0;
 
   filteredInferences.forEach(inf => {
     const failureAnalysis = analyzeFailure(inf, strictPolicyValidation);
@@ -82,19 +84,20 @@ export default function FailuresPage() {
       if (failureAnalysis.priority === 'high') {
         criticalFailures++;
       }
+      // Accumulate latency for failed tests
+      totalFailureLatency += (inf.latency_ms ?? inf.metrics?.latency_ms ?? 0);
     }
   });
 
   const failureRate = totalTests > 0 ? (failedTests / totalTests) * 100 : 0;
+  const avgFailureLatency = failedTests > 0 ? totalFailureLatency / failedTests : 0;
 
   return (
     <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 space-y-6 lg:px-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Failure Analysis</h1>
-        <p className="text-muted-foreground mt-1">
-          Investigate root causes and get actionable recommendations
-        </p>
-      </div>
+      <PageHeader
+        title="Failure Analysis"
+        description="Investigate root causes and get actionable recommendations"
+      />
 
       {/* Error Display */}
       {error && (
@@ -107,8 +110,8 @@ export default function FailuresPage() {
       {/* Loading State */}
       {loading && (
         <div className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
               <Card key={i}>
                 <CardContent className="p-6">
                   <Skeleton className="h-4 w-24 mb-2" />
@@ -124,7 +127,9 @@ export default function FailuresPage() {
       {!loading && testData && (
         <div className="space-y-6">
           {/* Contextual Metrics - Failures Specific */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <section aria-labelledby="failure-metrics-heading">
+            <h2 id="failure-metrics-heading" className="text-lg font-semibold mb-3">Failure Metrics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
               title="Failed Tests"
               value={failedTests.toString()}
@@ -169,19 +174,41 @@ export default function FailuresPage() {
                 secondary: `${((criticalFailures / Math.max(failedTests, 1)) * 100).toFixed(0)}% of failures`
               }}
             />
-          </div>
+
+            <MetricCard
+              title="Avg Failure Latency"
+              value={failedTests > 0 ? `${avgFailureLatency.toFixed(0)}ms` : "N/A"}
+              variant={avgFailureLatency <= 500 ? "success" : avgFailureLatency <= 1000 ? "warning" : "destructive"}
+              trend={{
+                direction: avgFailureLatency <= 500 ? "up" : "down",
+                value: failedTests > 0 ? `${avgFailureLatency.toFixed(0)}ms` : "N/A",
+                label: avgFailureLatency <= 500 ? "Fast" : avgFailureLatency <= 1000 ? "Moderate" : "Slow"
+              }}
+              footer={{
+                primary: failedTests > 0 ? "Response time of failed tests" : "No failures",
+                secondary: failedTests > 0 ? `Across ${failedTests} failures` : ""
+              }}
+            />
+            </div>
+          </section>
 
           {/* Attack Scenario Summary for context */}
-          <AttackScenarioSummary
-            inferences={filteredInferences}
-            strictPolicyValidation={strictPolicyValidation}
-          />
+          <section aria-labelledby="attack-scenarios-heading">
+            <h2 id="attack-scenarios-heading" className="text-lg font-semibold mb-3">Attack Scenarios</h2>
+              <AttackScenarioSummary
+              inferences={filteredInferences}
+              strictPolicyValidation={strictPolicyValidation}
+            />
+          </section>
 
           {/* Failure Analysis Dashboard */}
-          <FailureAnalysisDashboard
-            inferences={filteredInferences}
-            strictPolicyValidation={strictPolicyValidation}
-          />
+          <section aria-labelledby="detailed-analysis-heading">
+            <h2 id="detailed-analysis-heading" className="text-lg font-semibold mb-3">Detailed Analysis</h2>
+              <FailureAnalysisDashboard
+              inferences={filteredInferences}
+              strictPolicyValidation={strictPolicyValidation}
+            />
+          </section>
         </div>
       )}
 

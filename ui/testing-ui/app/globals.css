@@ -309,4 +309,21 @@
     clip: auto;
     white-space: normal;
   }
+
+  /* Typography utilities for consistent text styling */
+  .heading-page {
+    @apply text-2xl font-bold text-foreground tracking-tight;
+  }
+
+  .heading-section {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .heading-card {
+    @apply text-2xl font-semibold tabular-nums;
+  }
+
+  .text-description {
+    @apply text-sm text-muted-foreground;
+  }
 }

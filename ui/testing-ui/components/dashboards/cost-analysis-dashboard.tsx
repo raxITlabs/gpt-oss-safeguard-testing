@@ -46,7 +46,7 @@ export function CostAnalysisDashboard({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="Total Cost"
           value={`$${costEfficiency.totalCost.toFixed(6)}`}
@@ -79,6 +79,16 @@ export function CostAnalysisDashboard({
           footer={{
             primary: "Token efficiency",
             secondary: "Per thousand tokens"
+          }}
+        />
+
+        <MetricCard
+          title="Total Tokens"
+          value={(tokenEconomics.totalPromptTokens + tokenEconomics.totalCompletionTokens + tokenEconomics.totalReasoningTokens).toLocaleString()}
+          variant="default"
+          footer={{
+            primary: `Prompt: ${tokenEconomics.totalPromptTokens.toLocaleString()}`,
+            secondary: `Completion: ${tokenEconomics.totalCompletionTokens.toLocaleString()}`
           }}
         />
       </div>

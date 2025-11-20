@@ -2,10 +2,14 @@
 
 /**
  * Performance Metrics Panel
- * Large metric cards displaying P50/P95/P99 latency and key performance indicators
+ * Displays 4 primary performance metric cards and detailed tables
  */
 
 import { MetricCard } from "@/components/metric-card-enhanced";
+import { LatencyDistributionTable } from "./latency-distribution-table";
+import { SLAPerformanceTable } from "./sla-performance-table";
+import { ExtremeTestsTable } from "./extreme-tests-table";
+import { PerformanceOutliersTable } from "./performance-outliers-table";
 import type { PerformanceMetricsSummary, TestOutlier } from "@/types/analytics";
 
 export interface PerformanceMetricsPanelProps {
@@ -25,8 +29,26 @@ export function PerformanceMetricsPanel({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Primary Percentile Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Primary Performance Metrics - 4 Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard
+          title="Average Latency"
+          value={`${Math.round(latency.mean)}ms`}
+          variant={
+            latency.mean <= slaThreshold * 0.7
+              ? "success"
+              : latency.mean <= slaThreshold
+              ? "default"
+              : latency.mean <= slaThreshold * 1.2
+              ? "warning"
+              : "destructive"
+          }
+          footer={{
+            primary: "Mean latency",
+            secondary: "Across all tests"
+          }}
+        />
+
         <MetricCard
           title="P50 Latency (Median)"
           value={`${Math.round(latency.p50)}ms`}
@@ -55,7 +77,6 @@ export function PerformanceMetricsPanel({
             primary: "Half of all tests complete faster than this",
             secondary: "50% of requests (median)",
           }}
-          size="large"
         />
 
         <MetricCard
@@ -86,94 +107,9 @@ export function PerformanceMetricsPanel({
             primary: "Most users experience this or better",
             secondary: "95% of requests",
           }}
-          size="large"
         />
 
-        <MetricCard
-          title="P99 Latency"
-          value={`${Math.round(latency.p99)}ms`}
-          variant={
-            latency.p99 <= slaThreshold * 0.7
-              ? "success"
-              : latency.p99 <= slaThreshold
-              ? "default"
-              : latency.p99 <= slaThreshold * 1.5
-              ? "warning"
-              : "destructive"
-          }
-          trend={{
-            direction: latency.p99 <= slaThreshold * 1.5 ? "down" : "up",
-            value: `${Math.round(latency.p99)}ms`,
-            label:
-              latency.p99 <= slaThreshold * 0.7
-                ? "Excellent"
-                : latency.p99 <= slaThreshold
-                ? "Good"
-                : latency.p99 <= slaThreshold * 1.5
-                ? "Acceptable"
-                : "Critical",
-          }}
-          footer={{
-            primary: "Worst-case scenario for most users",
-            secondary: "99% of requests",
-          }}
-          size="large"
-        />
-      </div>
-
-      {/* Latency Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
-          title="Average Latency"
-          value={`${Math.round(latency.mean)}ms`}
-          variant={
-            latency.mean <= slaThreshold * 0.7
-              ? "success"
-              : latency.mean <= slaThreshold
-              ? "default"
-              : latency.mean <= slaThreshold * 1.2
-              ? "warning"
-              : "destructive"
-          }
-          footer={{
-            primary: "Mean latency",
-            secondary: "Across all tests"
-          }}
-        />
-
-        <MetricCard
-          title="Minimum Latency"
-          value={`${Math.round(latency.min)}ms`}
-          variant="success"
-          footer={{
-            primary: "Best case",
-            secondary: "Fastest test response"
-          }}
-        />
-
-        <MetricCard
-          title="Maximum Latency"
-          value={`${Math.round(latency.max)}ms`}
-          variant={latency.max > slaThreshold * 2 ? "destructive" : "warning"}
-          footer={{
-            primary: "Worst case",
-            secondary: "Slowest test response"
-          }}
-        />
-
-        <MetricCard
-          title="Latency Range"
-          value={`${Math.round(latency.max - latency.min)}ms`}
-          footer={{
-            primary: "Spread",
-            secondary: `Min: ${Math.round(latency.min)}ms, Max: ${Math.round(latency.max)}ms`
-          }}
-        />
-      </div>
-
-      {/* SLA Compliance */}
-      {sla && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {sla && (
           <MetricCard
             title="SLA Compliance"
             value={`${sla.compliancePercentage.toFixed(1)}%`}
@@ -193,101 +129,23 @@ export function PerformanceMetricsPanel({
               primary: `Target: ${sla.threshold}ms`,
               secondary: `${sla.testsWithinSLA + sla.testsViolatingSLA} total tests`,
             }}
-            size="large"
           />
-
-          <MetricCard
-            title="Tests Within SLA"
-            value={sla.testsWithinSLA}
-            variant="success"
-            footer={{
-              primary: "Passing tests",
-              secondary: `${((sla.testsWithinSLA / (sla.testsWithinSLA + sla.testsViolatingSLA)) * 100).toFixed(1)}% of total`,
-            }}
-          />
-
-          <MetricCard
-            title="SLA Violations"
-            value={sla.testsViolatingSLA}
-            variant={sla.testsViolatingSLA === 0 ? "success" : "destructive"}
-            footer={{
-              primary: sla.testsViolatingSLA === 0 ? "No violations" : "Failed tests",
-              secondary: `${((sla.testsViolatingSLA / (sla.testsWithinSLA + sla.testsViolatingSLA)) * 100).toFixed(1)}% of total`,
-            }}
-          />
-
-          <MetricCard
-            title="Avg Violation Amount"
-            value={`+${Math.round(sla.avgViolationAmount)}ms`}
-            variant={sla.avgViolationAmount > 500 ? "destructive" : "warning"}
-            footer={{
-              primary: "Over threshold",
-              secondary: sla.testsViolatingSLA > 0 ? "Per violation" : "No violations",
-            }}
-          />
-        </div>
-      )}
-
-      {/* Extreme Values */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <MetricCard
-          title={`Fastest Test (#${fastestTest.testNumber})`}
-          value={`${Math.round(fastestTest.latency)}ms`}
-          variant="success"
-          footer={{
-            primary: fastestTest.testName ?? "Unknown test",
-            secondary: `${fastestTest.category} • ${fastestTest.tokens} tokens • $${fastestTest.cost.toFixed(6)}`,
-          }}
-          size="large"
-        />
-
-        <MetricCard
-          title={`Slowest Test (#${slowestTest.testNumber})`}
-          value={`${Math.round(slowestTest.latency)}ms`}
-          variant="destructive"
-          footer={{
-            primary: slowestTest.testName ?? "Unknown test",
-            secondary: `${slowestTest.category} • ${slowestTest.tokens} tokens • $${slowestTest.cost.toFixed(6)}`,
-          }}
-          size="large"
-        />
+        )}
       </div>
 
-      {/* Performance Outliers */}
-      {latency.outliers.length > 0 && (
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Performance Outliers</h3>
-            <p className="text-sm text-muted-foreground">
-              Tests significantly slower than average ({latency.outliers.length} detected)
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {latency.outliers.slice(0, 6).map((outlier, index) => (
-              <MetricCard
-                key={`${outlier.testNumber}-${outlier.testName}-${index}`}
-                title={`Test #${outlier.testNumber}`}
-                value={`${Math.round(outlier.latency)}ms`}
-                variant={outlier.passed ? "warning" : "destructive"}
-                trend={{
-                  direction: "up",
-                  value: `+${Math.round(outlier.deviationFromMean)}ms`,
-                  label: "Above average",
-                }}
-                footer={{
-                  primary: outlier.testName ?? "Unknown test",
-                  secondary: `${outlier.category} • ${outlier.tokens} tokens • $${outlier.cost.toFixed(6)}`,
-                }}
-                onClick={() => onOutlierClick?.(outlier)}
-              />
-            ))}
-          </div>
-          {latency.outliers.length > 6 && (
-            <p className="text-center text-sm text-muted-foreground">
-              +{latency.outliers.length - 6} more outliers not shown
-            </p>
-          )}
-        </div>
+      {/* Detailed Tables */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <LatencyDistributionTable latency={latency} slaThreshold={slaThreshold} />
+        {sla && <SLAPerformanceTable sla={sla} />}
+      </div>
+
+      <ExtremeTestsTable fastestTest={fastestTest} slowestTest={slowestTest} />
+
+      {latency.outliers && latency.outliers.length > 0 && (
+        <PerformanceOutliersTable
+          outliers={latency.outliers}
+          onOutlierClick={onOutlierClick}
+        />
       )}
     </div>
   );

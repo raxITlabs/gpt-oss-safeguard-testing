@@ -26,6 +26,7 @@ export default function ResultsPage() {
   const {
     categories: selectedCategories,
     testTypes: selectedTestTypes,
+    status,
   } = useFilterState();
 
   // Handle row click to navigate to test detail
@@ -75,6 +76,19 @@ export default function ResultsPage() {
       }
     }
 
+    // Filter by status (passed/failed)
+    if (status !== "all") {
+      const failureAnalysis = analyzeFailure(inference, strictPolicyValidation);
+      const hasFailed = failureAnalysis !== null;
+
+      if (status === "failed" && !hasFailed) {
+        return false;
+      }
+      if (status === "passed" && hasFailed) {
+        return false;
+      }
+    }
+
     return true;
   }) || [];
 
@@ -94,6 +108,12 @@ export default function ResultsPage() {
 
   const passRate = totalTests > 0 ? (passedTests / totalTests) * 100 : 0;
 
+  // Calculate average latency
+  const totalLatency = filteredInferences.reduce((sum, inf) =>
+    sum + (inf.latency_ms ?? inf.metrics?.latency_ms ?? 0), 0
+  );
+  const avgLatency = totalTests > 0 ? totalLatency / totalTests : 0;
+
   return (
     <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 space-y-6 lg:px-6">
       <PageHeader
@@ -112,8 +132,8 @@ export default function ResultsPage() {
       {/* Loading State */}
       {loading && (
         <div className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
               <Card key={i}>
                 <CardContent className="p-6">
                   <Skeleton className="h-4 w-24 mb-2" />
@@ -129,7 +149,9 @@ export default function ResultsPage() {
       {!loading && testData && (
         <div className="space-y-6">
           {/* Contextual Metrics - Results Specific */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <section aria-labelledby="test-metrics-heading">
+            <h2 id="test-metrics-heading" className="text-lg font-semibold mb-3">Test Metrics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
               title="Pass Rate"
               value={`${passRate.toFixed(1)}%`}
@@ -169,7 +191,23 @@ export default function ResultsPage() {
                 secondary: `${selectedCategories.length > 0 || selectedTestTypes.length > 0 ? 'Filtered view' : 'All tests'}`
               }}
             />
-          </div>
+
+            <MetricCard
+              title="Avg Latency"
+              value={`${avgLatency.toFixed(0)}ms`}
+              variant={avgLatency <= 500 ? "success" : avgLatency <= 1000 ? "warning" : "destructive"}
+              trend={{
+                direction: avgLatency <= 500 ? "up" : "down",
+                value: `${avgLatency.toFixed(0)}ms`,
+                label: avgLatency <= 500 ? "Fast" : avgLatency <= 1000 ? "Moderate" : "Slow"
+              }}
+              footer={{
+                primary: avgLatency <= 500 ? "Excellent response time" : avgLatency <= 1000 ? "Acceptable performance" : "Performance needs improvement",
+                secondary: `Across ${totalTests} tests`
+              }}
+            />
+            </div>
+          </section>
 
           {/* Attack Scenario Summary */}
           {/* <AttackScenarioSummary
@@ -178,9 +216,10 @@ export default function ResultsPage() {
           /> */}
 
           {/* Results Table */}
-          <Card>
+          <section aria-labelledby="test-execution-heading">
+              <Card>
             <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Test Execution Details</h2>
+              <h2 id="test-execution-heading" className="text-lg font-semibold mb-4">Test Execution Details</h2>
               <p className="text-sm text-muted-foreground mb-4">
                 Click any row to view detailed test information
               </p>
@@ -190,7 +229,8 @@ export default function ResultsPage() {
                 onRowClick={handleRowClick}
               />
             </CardContent>
-          </Card>
+            </Card>
+          </section>
         </div>
       )}
 

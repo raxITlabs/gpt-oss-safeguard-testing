@@ -9,8 +9,9 @@ import { useBreadcrumbs } from "@/contexts/breadcrumb-context"
 import { useSettings } from "@/contexts/settings-context"
 import { analyzeFailure } from "@/lib/failure-analyzer"
 import { PageHeader } from "@/components/ui/page-header"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { MetricCard } from "@/components/metric-card-enhanced"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { InfoTooltip } from "@/components/ui/info-tooltip"
@@ -106,10 +107,10 @@ export default function MethodPage({ params }: MethodPageProps) {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
-              <div className="p-6">
+              <CardContent className="p-6">
                 <Skeleton className="h-4 w-24 mb-2" />
                 <Skeleton className="h-8 w-32" />
-              </div>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -200,43 +201,46 @@ export default function MethodPage({ params }: MethodPageProps) {
 
       {/* Summary Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className={getStatusColor() + " p-4 border-2"}>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="text-xs font-medium text-muted-foreground">Pass Rate</div>
-            <InfoTooltip content="Percentage of tests that passed" />
-          </div>
-          <div className="text-2xl font-bold text-foreground">{passRate.toFixed(1)}%</div>
-        </Card>
+        <MetricCard
+          title="Pass Rate"
+          value={`${passRate.toFixed(1)}%`}
+          variant={passRate >= 95 ? "success" : passRate >= 80 ? "warning" : "destructive"}
+          className={getStatusColor() + " border-2"}
+          footer={{
+            primary: `${passedTests} passed`,
+            secondary: `${failedTests} failed`
+          }}
+        />
 
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="text-xs font-medium text-muted-foreground">Total Tests</div>
-            <InfoTooltip content="Total number of tests run" />
-          </div>
-          <div className="text-2xl font-bold text-foreground">{totalTests}</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {passedTests} passed / {failedTests} failed
-          </div>
-        </Card>
+        <MetricCard
+          title="Total Tests"
+          value={totalTests.toString()}
+          variant="default"
+          footer={{
+            primary: "Test executions",
+            secondary: `${passedTests} passed / ${failedTests} failed`
+          }}
+        />
 
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="text-xs font-medium text-muted-foreground">Avg Latency</div>
-            <InfoTooltip content="Average response latency" />
-          </div>
-          <div className="text-2xl font-bold text-foreground">{avgLatency.toFixed(0)}ms</div>
-        </Card>
+        <MetricCard
+          title="Avg Latency"
+          value={`${avgLatency.toFixed(0)}ms`}
+          variant={avgLatency < 1000 ? "success" : avgLatency < 2000 ? "warning" : "default"}
+          footer={{
+            primary: "Response time",
+            secondary: avgLatency < 1000 ? "Within SLA" : "Above target"
+          }}
+        />
 
-        <Card className="p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="text-xs font-medium text-muted-foreground">Total Cost</div>
-            <InfoTooltip content="Total cost across all tests" />
-          </div>
-          <div className="text-2xl font-bold text-foreground">${totalCost.toFixed(4)}</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            ${(totalCost / totalTests).toFixed(4)} per test
-          </div>
-        </Card>
+        <MetricCard
+          title="Total Cost"
+          value={`$${totalCost.toFixed(4)}`}
+          variant="default"
+          footer={{
+            primary: `$${(totalCost / totalTests).toFixed(4)} per test`,
+            secondary: "Average cost"
+          }}
+        />
       </div>
 
       {/* By Category */}
@@ -332,20 +336,22 @@ export default function MethodPage({ params }: MethodPageProps) {
       </CollapsibleSection>
 
       {/* View all tests */}
-      <Card className="p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">View All Tests</h3>
-            <p className="text-sm text-muted-foreground">
-              See detailed results in the test results table
-            </p>
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">View All Tests</h3>
+              <p className="text-sm text-muted-foreground">
+                See detailed results in the test results table
+              </p>
+            </div>
+            <Button asChild>
+              <Link href={`/results?testType=${testType}`}>
+                View Results
+              </Link>
+            </Button>
           </div>
-          <Button asChild>
-            <Link href={`/results?testType=${testType}`}>
-              View Results
-            </Link>
-          </Button>
-        </div>
+        </CardContent>
       </Card>
     </main>
   )

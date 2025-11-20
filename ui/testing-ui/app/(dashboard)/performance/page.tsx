@@ -10,6 +10,7 @@ import { PerformanceDashboard } from "@/components/dashboards/performance-dashbo
 import { useSettings } from "@/contexts/settings-context";
 import { useFilterState } from "@/hooks/use-filter-state";
 import { getTestData } from "@/actions/get-test-data";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function PerformancePage() {
   const { strictPolicyValidation } = useSettings();
@@ -67,12 +68,10 @@ export default function PerformancePage() {
 
   return (
     <main id="main-content" tabIndex={-1} className="flex-1 px-4 py-6 space-y-6 lg:px-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Performance Analysis</h1>
-        <p className="text-muted-foreground mt-1">
-          Monitor latency, throughput, and SLA compliance metrics
-        </p>
-      </div>
+      <PageHeader
+        title="Performance Analysis"
+        description="Monitor latency, throughput, and SLA compliance metrics"
+      />
 
       {/* Error Display */}
       {error && (
